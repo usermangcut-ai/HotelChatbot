@@ -1,0 +1,23 @@
+{"input": "Phòng Deluxe Queen giá bao nhiêu", "expect_tool": ["knowledge_tool"], "expect_contains": "3.150.000", "note": "giá phòng cụ thể"}
+{"input": "phòng nào có hồ bơi riêng", "expect_tool": ["knowledge_tool"], "expect_contains": "Villa", "note": "lọc theo tiện ích + test đồng nghĩa hồ bơi->Hồ bơi riêng"}
+{"input": "khách sạn có mấy loại phòng vậy", "expect_tool": ["knowledge_tool"], "expect_contains": "8", "note": "tổng số hạng phòng"}
+{"input": "Villa 3 Bedroom Beachfront ở tối đa mấy người", "expect_tool": ["knowledge_tool"], "expect_contains": "6", "note": "thông số cụ thể 1 hạng"}
+{"input": "giới thiệu về resort đi", "expect_tool": ["knowledge_tool", "show_photos_tool"], "expect_contains": "", "note": "giới thiệu tổng quan -> phải kèm ảnh (subject=hotel)"}
+{"input": "số điện thoại lễ tân là gì vậy ạ", "expect_tool": "any", "expect_contains": "999", "note": "fact rủi ro cao (SĐT), nhúng sẵn trong prompt nên có thể không cần gọi tool"}
+{"input": "mấy giờ nhận phòng vậy", "expect_tool": ["knowledge_tool"], "expect_contains": "15:00", "note": "giờ check-in"}
+{"input": "buffet sáng phục vụ tới mấy giờ", "expect_tool": ["knowledge_tool"], "expect_contains": "", "note": "giờ giấc - không ép substring cứng (model có thể viết 06:00 hoặc 6 giờ)"}
+{"input": "khách sạn có cho mang chó mèo không", "expect_tool": ["knowledge_tool"], "expect_contains": "không", "note": "nội quy thú cưng"}
+{"input": "phòng nào được hút thuốc vậy", "expect_tool": ["knowledge_tool"], "expect_contains": "không", "note": "bẫy phủ định kép - KHÔNG phòng nào được hút thuốc"}
+{"input": "khách dưới 18 tuổi có tự đặt phòng được không", "expect_tool": ["knowledge_tool"], "expect_contains": "18", "note": "độ tuổi đứng tên nhận phòng"}
+{"input": "spa ở đây có những dịch vụ gì", "expect_tool": ["knowledge_tool"], "expect_contains": "massage", "note": "regression 2026-07-21: từng bị coi spa là ngoài phạm vi 4 tool, từ chối bậy"}
+{"input": "resort có mấy nhà hàng", "expect_tool": ["knowledge_tool"], "expect_contains": "4", "note": "info nhà hàng"}
+{"input": "chưa bao gồm ăn sáng thì buffet tính bao nhiêu tiền", "expect_tool": ["knowledge_tool"], "expect_contains": "650.000", "note": "giá buffet phụ thu"}
+{"input": "còn phòng Deluxe Twin trống không", "expect_tool": ["availability_tool"], "expect_contains": "", "note": "hỏi trống không kèm ngày -> mặc định HÔM NAY, không được hỏi ngược ngày"}
+{"input": "từ 2026-08-10 đến 2026-08-12 còn phòng villa nào trống không", "expect_tool": ["availability_tool"], "expect_contains": "", "note": "hỏi trống có ngày cụ thể"}
+{"input": "hôm nay còn trống bao nhiêu phòng mỗi hạng", "expect_tool": ["availability_tool"], "expect_contains": "", "note": "đếm trống tất cả hạng"}
+{"input": "Đặt cho mình Deluxe Queen từ 2026-08-01 đến 2026-08-03 cho 2 người", "expect_tool": ["open_booking_form_tool"], "expect_contains": "", "note": "regression 2026-07-21: ý định rõ + đủ info phải mở phiếu ngay, từng bị hỏi lại 'số lượng phòng' (field không tồn tại)"}
+{"input": "Đặt phòng Deluxe Twin từ hôm nay đến ngày mai cho 2 người", "expect_tool": ["open_booking_form_tool"], "expect_contains": "", "note": "ngày tương đối - phải tính đúng năm thật 2026, không bịa năm cũ"}
+{"input": "mình muốn đặt phòng", "expect_tool": [], "expect_contains": "", "note": "ý định đặt nhưng chưa có hạng/ngày/khách nào -> phải hỏi lại, không tự mở phiếu trống"}
+{"input": "đặt sân golf giúp mình", "expect_tool": [], "forbid_tool": ["open_booking_form_tool"], "expect_contains": "", "note": "ngoài phạm vi phòng ở - KHÔNG được ngụ ý đặt giúp qua open_booking_form_tool"}
+{"input": "thời tiết hôm nay thế nào", "expect_tool": [], "expect_contains": "", "note": "hoàn toàn ngoài phạm vi resort - không bịa dự báo"}
+{"input": "chào shop, cho mình hỏi chút", "expect_tool": [], "expect_contains": "", "note": "xã giao mở đầu - không gọi tool"}

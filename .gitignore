@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+logs/
+.pytest_cache/
+.deepeval/
+
+# Tài liệu lên kế hoạch/thiết kế & lịch sử các phiên bản trong lúc phát triển — giữ lại cục bộ để
+# tham khảo riêng, không public cùng bản final.
+docs/superpowers/
+
+# Frontend build artifact — sinh lại được bằng `npm ci && npm run build`, không cần track.
+frontend/node_modules/
+frontend/dist/
+
+# chứa plaintext password (staff_accounts/guest_accounts) + toàn bộ dữ liệu thật — KHÔNG public
+data/hotel.db
+data/hotel.db.bak
+data/hotel_view.json

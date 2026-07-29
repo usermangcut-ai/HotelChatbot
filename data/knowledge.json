@@ -1,0 +1,529 @@
+{
+  "hotel": {
+    "name": "Shanghai Resort",
+    "text": "Khu nghỉ dưỡng 5 sao ven biển, 533 phòng, cách sân bay quốc tế ~25 km."
+  },
+  "rooms": {
+    "index": {
+      "id": "rooms_index",
+      "type": "index",
+      "branch": "rooms",
+      "title": "Các hạng phòng",
+      "text": "Khách sạn có 8 hạng phòng: Deluxe Queen, Deluxe Twin, Deluxe Ocean View Queen, Deluxe Ocean View Twin, Deluxe Grand Ocean View, Deluxe Park Suite, Villa 3 Bedroom Ocean View, Villa 3 Bedroom Beachfront.",
+      "children": [
+        "room_deluxe_queen",
+        "room_deluxe_twin",
+        "room_deluxe_ocean_view_queen",
+        "room_deluxe_ocean_view_twin",
+        "room_deluxe_grand_ocean_view",
+        "room_deluxe_park_suite",
+        "room_villa_3_bedroom_ocean_view",
+        "room_villa_3_bedroom_beachfront"
+      ]
+    },
+    "types": [
+      {
+        "id": "room_deluxe_queen",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Deluxe Queen",
+        "text": "Lựa chọn lý tưởng cho cặp đôi hoặc khách công tác, phòng Deluxe Queen 32m² được trang bị đầy đủ tiện nghi cho một kỳ nghỉ thoải mái. Không gian rộng thoáng, ngập ánh sáng tự nhiên cùng chiếc giường Queen êm ái mang lại cảm giác thư giãn trọn vẹn sau một ngày khám phá thành phố. Điểm nổi bật: Diện tích 32m² rộng thoáng, nhiều ánh sáng tự nhiên; Giường Queen êm ái, chăn ga cao cấp; Ban công/cửa sổ lớn đón nắng.",
+        "fields": {
+          "price_vnd": 3150000,
+          "max_occupancy": 2,
+          "view": "Tiêu chuẩn",
+          "size_m2": 32,
+          "bed_type": "1 giường Queen",
+          "breakfast_included": true,
+          "ideal_for": "Cặp đôi, khách công tác",
+          "amenities": [
+            "Wifi miễn phí",
+            "Điều hòa",
+            "Phòng tắm riêng",
+            "Minibar",
+            "TV",
+            "Máy sấy tóc",
+            "Két an toàn",
+            "Đồng hồ báo thức",
+            "Phòng không hút thuốc"
+          ]
+        }
+      },
+      {
+        "id": "room_deluxe_twin",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Deluxe Twin",
+        "text": "Lựa chọn lý tưởng cho nhóm bạn hoặc đồng nghiệp công tác, phòng Deluxe Twin được bố trí thông minh với hai giường đơn êm ái, không gian rộng thoáng và ánh sáng tự nhiên chan hòa. Diện tích 32m² đầy đủ tiện nghi giúp mỗi khách đều có sự riêng tư và thoải mái trong suốt kỳ nghỉ. Điểm nổi bật: Hai giường đơn tách biệt, riêng tư; Bố trí thông minh, không gian rộng thoáng; Ánh sáng tự nhiên chan hòa.",
+        "fields": {
+          "price_vnd": 3150000,
+          "max_occupancy": 2,
+          "view": "Tiêu chuẩn",
+          "size_m2": 32,
+          "bed_type": "2 giường đơn",
+          "breakfast_included": true,
+          "ideal_for": "Nhóm bạn, đồng nghiệp công tác",
+          "amenities": [
+            "Wifi miễn phí",
+            "Điều hòa",
+            "Phòng tắm riêng",
+            "Minibar",
+            "TV",
+            "Máy sấy tóc",
+            "Két an toàn",
+            "Đồng hồ báo thức",
+            "Phòng không hút thuốc"
+          ]
+        }
+      },
+      {
+        "id": "room_deluxe_ocean_view_queen",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Deluxe Ocean View Queen",
+        "text": "Nằm nép mình bên bãi biển với tầm nhìn hướng biển ngoạn mục, phòng Deluxe Ocean View Queen 32m² là lựa chọn hoàn hảo cho cặp đôi. Thức dậy cùng ánh bình minh trên vịnh, tận hưởng làn gió biển từ ban công và không gian ấm cúng với chiếc giường Queen êm ái. Điểm nổi bật: Tầm nhìn hướng biển tuyệt đẹp; Giường Queen êm ái, ban công đón gió biển; Nằm sát bãi biển.",
+        "fields": {
+          "price_vnd": 3900000,
+          "max_occupancy": 2,
+          "view": "Hướng biển",
+          "size_m2": 32,
+          "bed_type": "1 giường Queen",
+          "breakfast_included": true,
+          "ideal_for": "Cặp đôi, tuần trăng mật",
+          "amenities": [
+            "Wifi miễn phí",
+            "Điều hòa",
+            "Phòng tắm riêng",
+            "Minibar",
+            "TV",
+            "Máy sấy tóc",
+            "Két an toàn",
+            "Đồng hồ báo thức",
+            "Phòng không hút thuốc"
+          ]
+        }
+      },
+      {
+        "id": "room_deluxe_ocean_view_twin",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Deluxe Ocean View Twin",
+        "text": "Phòng Deluxe Ocean View Twin 32m² nằm cạnh bãi biển với tầm nhìn tuyệt đẹp ra vịnh, lý tưởng cho bạn bè hoặc gia đình nhỏ. Hai giường đơn êm ái cùng ban công đón gió biển mang đến kỳ nghỉ vừa riêng tư vừa gần gũi thiên nhiên. Điểm nổi bật: Hai giường đơn, hướng biển; Ban công ngắm vịnh biển; Sát bãi biển, thuận tiện tắm biển.",
+        "fields": {
+          "price_vnd": 3900000,
+          "max_occupancy": 2,
+          "view": "Hướng biển",
+          "size_m2": 32,
+          "bed_type": "2 giường đơn",
+          "breakfast_included": true,
+          "ideal_for": "Bạn bè, gia đình nhỏ",
+          "amenities": [
+            "Wifi miễn phí",
+            "Điều hòa",
+            "Phòng tắm riêng",
+            "Minibar",
+            "TV",
+            "Máy sấy tóc",
+            "Két an toàn",
+            "Đồng hồ báo thức",
+            "Phòng không hút thuốc"
+          ]
+        }
+      },
+      {
+        "id": "room_deluxe_grand_ocean_view",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Deluxe Grand Ocean View",
+        "text": "Rộng rãi hơn với 42m², phòng Deluxe Grand Ocean View mang đến sự thoải mái vượt trội cùng chiếc giường King sang trọng và tầm nhìn hướng biển khoáng đạt. Phù hợp cho gia đình nhỏ hoặc cặp đôi mong muốn thêm không gian thư giãn, có thể bố trí giường phụ cho khách thứ ba. Điểm nổi bật: Diện tích rộng 42m²; Giường King sang trọng, hướng biển; Có thể kê thêm giường phụ cho khách thứ 3.",
+        "fields": {
+          "price_vnd": 5500000,
+          "max_occupancy": 3,
+          "view": "Hướng biển",
+          "size_m2": 42,
+          "bed_type": "1 giường King",
+          "breakfast_included": true,
+          "ideal_for": "Gia đình nhỏ, cặp đôi cần không gian rộng",
+          "amenities": [
+            "Wifi miễn phí",
+            "Điều hòa",
+            "Phòng tắm riêng",
+            "Minibar",
+            "TV",
+            "Máy sấy tóc",
+            "Két an toàn",
+            "Đồng hồ báo thức",
+            "Phòng không hút thuốc"
+          ]
+        }
+      },
+      {
+        "id": "room_deluxe_park_suite",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Deluxe Park Suite",
+        "text": "Deluxe Park Suite 55m² là không gian nghỉ dưỡng đẳng cấp với phòng khách riêng biệt và ban công/sân hiên hướng ra khu vườn xanh mát. Sự tách biệt giữa khu sinh hoạt và phòng ngủ mang lại trải nghiệm thư thái, riêng tư — lựa chọn lý tưởng cho gia đình hoặc khách yêu thích không gian suite rộng rãi. Điểm nổi bật: Suite 55m² có phòng khách riêng; Ban công/sân hiên hướng vườn xanh mát; Không gian sinh hoạt tách biệt phòng ngủ.",
+        "fields": {
+          "price_vnd": 6800000,
+          "max_occupancy": 3,
+          "view": "Hướng vườn",
+          "size_m2": 55,
+          "bed_type": "1 giường King",
+          "breakfast_included": true,
+          "ideal_for": "Gia đình, khách muốn không gian suite",
+          "amenities": [
+            "Wifi miễn phí",
+            "Điều hòa",
+            "Phòng tắm riêng",
+            "Minibar",
+            "TV",
+            "Máy sấy tóc",
+            "Két an toàn",
+            "Phòng khách riêng",
+            "Ban công",
+            "Phòng không hút thuốc"
+          ]
+        }
+      },
+      {
+        "id": "room_villa_3_bedroom_ocean_view",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Villa 3 Bedroom Ocean View",
+        "text": "Không gian lý tưởng để gắn kết và trân trọng từng khoảnh khắc bên người thân — dù là buổi sum họp gia đình ấm cúng hay kỳ nghỉ lãng mạn. Villa 3 phòng ngủ hướng biển ~200m² mang kiến trúc truyền thống Việt với nội thất gỗ tinh tế, hồ bơi riêng, Jacuzzi và ban công rộng nhìn thẳng ra vịnh biển tuyệt đẹp. Điểm nổi bật: Villa 3 phòng ngủ ~200m², hồ bơi riêng; Kiến trúc truyền thống Việt, nội thất gỗ; Ban công rộng nhìn ra vịnh, có Jacuzzi.",
+        "fields": {
+          "price_vnd": 15000000,
+          "max_occupancy": 6,
+          "view": "Hướng biển",
+          "size_m2": 200,
+          "bed_type": "3 giường King",
+          "breakfast_included": true,
+          "ideal_for": "Gia đình lớn, nhóm bạn, kỳ nghỉ sum họp",
+          "amenities": [
+            "3 phòng ngủ",
+            "Hồ bơi riêng",
+            "Phòng khách riêng",
+            "Bếp nhỏ",
+            "Jacuzzi",
+            "Ban công",
+            "Wifi miễn phí",
+            "Điều hòa",
+            "TV",
+            "Minibar",
+            "Két an toàn"
+          ]
+        }
+      },
+      {
+        "id": "room_villa_3_bedroom_beachfront",
+        "type": "leaf",
+        "branch": "rooms",
+        "parent": "rooms_index",
+        "title": "Villa 3 Bedroom Beachfront",
+        "text": "Đẳng cấp nhất trong các hạng phòng, Villa 3 phòng ngủ Beachfront ~220m² nằm sát biển với lối đi riêng ra bãi cát. Sở hữu hồ bơi riêng, Jacuzzi và sân hiên rộng, villa mang đến sự riêng tư tuyệt đối cùng nội thất gỗ truyền thống sang trọng — điểm đến hoàn hảo cho gia đình lớn hay nhóm bạn tìm kiếm kỳ nghỉ xa hoa bên bờ biển. Điểm nổi bật: Villa sát biển ~220m², lối ra thẳng bãi biển; Hồ bơi riêng và Jacuzzi; Riêng tư tuyệt đối, nội thất gỗ sang trọng.",
+        "fields": {
+          "price_vnd": 18000000,
+          "max_occupancy": 6,
+          "view": "Sát biển (Beachfront)",
+          "size_m2": 220,
+          "bed_type": "3 giường King",
+          "breakfast_included": true,
+          "ideal_for": "Gia đình lớn, nhóm bạn cao cấp",
+          "amenities": [
+            "3 phòng ngủ",
+            "Hồ bơi riêng",
+            "Lối ra bãi biển",
+            "Phòng khách riêng",
+            "Bếp nhỏ",
+            "Jacuzzi",
+            "Ban công",
+            "Wifi miễn phí",
+            "Điều hòa",
+            "TV",
+            "Minibar",
+            "Két an toàn"
+          ]
+        }
+      }
+    ]
+  },
+  "amenities": {
+    "id": "amenities_index",
+    "type": "index",
+    "branch": "amenities",
+    "title": "Tiện ích (vocab chuẩn hóa)",
+    "vocab": [
+      "3 phòng ngủ",
+      "Ban công",
+      "Bếp nhỏ",
+      "Hồ bơi riêng",
+      "Jacuzzi",
+      "Két an toàn",
+      "Lối ra bãi biển",
+      "Minibar",
+      "Máy sấy tóc",
+      "Phòng khách riêng",
+      "Phòng không hút thuốc",
+      "Phòng tắm riêng",
+      "TV",
+      "Wifi miễn phí",
+      "Điều hòa",
+      "Đồng hồ báo thức"
+    ],
+    "synonyms": {
+      "hồ bơi": "Hồ bơi riêng",
+      "bể bơi": "Hồ bơi riêng",
+      "pool": "Hồ bơi riêng",
+      "chỗ bơi": "Hồ bơi riêng",
+      "jacuzzi": "Jacuzzi",
+      "bồn sục": "Jacuzzi",
+      "ban công": "Ban công",
+      "balcony": "Ban công",
+      "sân hiên": "Ban công",
+      "bếp": "Bếp nhỏ",
+      "nấu ăn": "Bếp nhỏ",
+      "kitchen": "Bếp nhỏ",
+      "wifi": "Wifi miễn phí",
+      "internet": "Wifi miễn phí",
+      "két": "Két an toàn",
+      "safe": "Két an toàn",
+      "phòng khách": "Phòng khách riêng",
+      "living room": "Phòng khách riêng",
+      "ra biển": "Lối ra bãi biển",
+      "beachfront": "Lối ra bãi biển"
+    },
+    "amenity_to_rooms": {
+      "Wifi miễn phí": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Điều hòa": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Phòng tắm riêng": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite"
+      ],
+      "Minibar": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "TV": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Máy sấy tóc": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite"
+      ],
+      "Két an toàn": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Đồng hồ báo thức": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View"
+      ],
+      "Phòng không hút thuốc": [
+        "Deluxe Queen",
+        "Deluxe Twin",
+        "Deluxe Ocean View Queen",
+        "Deluxe Ocean View Twin",
+        "Deluxe Grand Ocean View",
+        "Deluxe Park Suite"
+      ],
+      "Phòng khách riêng": [
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Ban công": [
+        "Deluxe Park Suite",
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "3 phòng ngủ": [
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Hồ bơi riêng": [
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Bếp nhỏ": [
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Jacuzzi": [
+        "Villa 3 Bedroom Ocean View",
+        "Villa 3 Bedroom Beachfront"
+      ],
+      "Lối ra bãi biển": [
+        "Villa 3 Bedroom Beachfront"
+      ]
+    }
+  },
+  "info": [
+    {
+      "id": "info_thong_tin_chung",
+      "type": "section",
+      "branch": "info",
+      "title": "Thông tin chung",
+      "text": "- **Hạng:** Khu nghỉ dưỡng 5 sao. Khai trương 2003, cải tạo 2016.\n- **Vị trí:** Ven biển, trung tâm thành phố.\n- **Quy mô:** 533 phòng.\n- **Khoảng cách:** Sân bay quốc tế ~25 km.\n- **Liên hệ:** +84-999-1234567 · contact@shanghairesort.com\n- **Đánh giá:** 8.9/10 (901 review).",
+      "summary": "Giới thiệu resort: hạng sao, vị trí, quy mô, liên hệ, đánh giá.",
+      "keywords": [
+        "giới thiệu",
+        "vị trí",
+        "địa chỉ",
+        "quy mô",
+        "liên hệ",
+        "số điện thoại",
+        "đánh giá"
+      ]
+    },
+    {
+      "id": "info_gio_hoat_dong",
+      "type": "section",
+      "branch": "info",
+      "title": "Giờ hoạt động",
+      "text": "- Nhận phòng (check-in): 15:00 – 24:00\n- Trả phòng (check-out): trước 12:00\n- Lễ tân: 24/24\n- Buffet sáng: 06:00 – 10:30\n- Hồ bơi ngoài trời: 06:00 – 22:00\n- Room service: 24/24",
+      "summary": "Giờ check-in/check-out, buffet sáng, hồ bơi, lễ tân, room service.",
+      "keywords": [
+        "mấy giờ",
+        "giờ",
+        "check-in",
+        "check-out",
+        "hồ bơi",
+        "buffet",
+        "lễ tân",
+        "mở",
+        "đóng"
+      ]
+    },
+    {
+      "id": "info_tien_ich_dich_vu",
+      "type": "section",
+      "branch": "info",
+      "title": "Tiện ích & Dịch vụ",
+      "text": "- **Giải trí & sức khỏe:** hồ bơi ngoài trời (có cầu trượt trẻ em), bãi biển riêng dài 700 m với nhiều môn thể thao dưới nước, Spa (massage, tẩy tế bào chết, facial), sauna, gym, sân tennis, sân golf 18 hố, khu lặn biển, mini-golf, kids' club & khu vui chơi.\n- **Dịch vụ khác:** concierge, đặt tour/vé, wifi miễn phí, business center, giặt ủi & giặt khô, đưa đón sân bay (phụ phí), valet parking miễn phí, salon tóc & làm đẹp, trông trẻ.\n- **Áp dụng:** tất cả tiện ích chung nêu trên (hồ bơi ngoài trời, bãi biển riêng, gym, tennis, golf, khu lặn biển, mini-golf, kids' club...) đều mở cho khách lưu trú ở mọi hạng phòng, không phân biệt hạng phòng đã đặt.",
+      "summary": "Tiện ích chung của resort: hồ bơi, spa, gym, bãi biển, tennis, golf, concierge, wifi, đưa đón; áp dụng cho mọi hạng phòng.",
+      "keywords": [
+        "tiện ích",
+        "dịch vụ",
+        "spa",
+        "gym",
+        "bãi biển",
+        "tennis",
+        "golf",
+        "wifi",
+        "đưa đón",
+        "giặt",
+        "mọi hạng phòng",
+        "áp dụng"
+      ]
+    },
+    {
+      "id": "info_nha_hang_quay_bar",
+      "type": "section",
+      "branch": "info",
+      "title": "Nhà hàng & Quầy bar",
+      "text": "- **4 nhà hàng:** Orchid, Beachcomber, Lotus (món Việt, Á, quốc tế) và nhà hàng buffet.\n- **3 quầy bar:** bar hồ bơi, bar bãi biển, và **Seaview Lounge** có nhạc piano trực tiếp.\n- Room service phục vụ 24/24.",
+      "summary": "Các nhà hàng, quầy bar và room service của resort.",
+      "keywords": [
+        "nhà hàng",
+        "quầy bar",
+        "bar",
+        "ăn uống",
+        "room service",
+        "ẩm thực"
+      ]
+    },
+    {
+      "id": "info_buffet_sang",
+      "type": "section",
+      "branch": "info",
+      "title": "Buffet sáng",
+      "text": "- Phục vụ 06:00 – 10:30, gồm món Âu, Á, Trung Hoa, Continental. Đã bao gồm trong hầu hết hạng phòng.\n- Giá cho khách chưa bao gồm ăn sáng: **650.000đ/người lớn**, **650.000đ trẻ 12–17 tuổi**, **375.000đ trẻ ≤ 11 tuổi**.",
+      "summary": "Giờ phục vụ buffet sáng, món ăn, và giá cho khách chưa bao gồm ăn sáng.",
+      "keywords": [
+        "buffet",
+        "ăn sáng",
+        "bữa sáng",
+        "giá buffet"
+      ]
+    },
+    {
+      "id": "info_noi_quy_chinh_sach",
+      "type": "section",
+      "branch": "info",
+      "title": "Nội quy & Chính sách",
+      "text": "- **Quy trình đặt phòng:** Quý khách liên hệ hotline/email lễ tân (xem mục \"Thông tin chung\") hoặc nhờ trợ lý ảo lập phiếu đặt phòng trực tuyến — cung cấp ngày nhận phòng, ngày trả phòng, hạng phòng và số khách để được báo giá và tình trạng phòng còn trống. Đặt phòng được xác nhận chính thức sau khi thanh toán đặt cọc.\n- **Đặt cọc:** 1.000.000đ/đêm khi nhận phòng (có thể thanh toán cọc trước qua phiếu đặt phòng trực tuyến, quét mã QR).\n- **Hủy đặt phòng:** hủy trước 3 ngày so với ngày nhận phòng được hoàn 100% tiền cọc; hủy trong vòng 3 ngày hoặc không đến nhận phòng (no-show) sẽ mất tiền cọc.\n- **Đổi ngày lưu trú:** miễn phí nếu báo trước 3 ngày và còn phòng phù hợp; có thể phát sinh chênh lệch giá nếu đổi sang hạng phòng khác.\n- **Độ tuổi:** khách đứng tên nhận phòng phải từ 18 tuổi trở lên.\n- **Trẻ em:** đón mọi độ tuổi; nôi/cũi miễn phí cho trẻ ≤ 3 tuổi; giường phụ tùy hạng phòng, có thể phụ phí.\n- **Thú cưng:** không cho phép mang thú cưng.\n- **Hút thuốc:** tất cả phòng là phòng không hút thuốc; hút thuốc trong phòng có thể bị phí vệ sinh.\n- **Thanh toán:** nhiều loại thẻ tín dụng, thanh toán điện tử, quét mã QR hoặc tiền mặt (VND).",
+      "summary": "Quy trình đặt phòng, đặt cọc, hủy/đổi lịch, độ tuổi, trẻ em, thú cưng, hút thuốc, thanh toán.",
+      "keywords": [
+        "nội quy",
+        "chính sách",
+        "đặt phòng",
+        "quy trình",
+        "đặt cọc",
+        "hủy phòng",
+        "đổi ngày",
+        "thú cưng",
+        "chó",
+        "mèo",
+        "hút thuốc",
+        "trẻ em",
+        "thanh toán",
+        "độ tuổi"
+      ]
+    }
+  ]
+}

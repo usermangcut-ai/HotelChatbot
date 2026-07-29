@@ -1,0 +1,153 @@
+# Shanghai Resort — Hotel Chatbot
+
+Chatbot lễ tân ảo **tiếng Việt** cho một khu nghỉ dưỡng, đóng vai một quản lý lễ tân thật: trả lời
+câu hỏi có căn cứ (không bịa số liệu), nhớ ngữ cảnh nhiều lượt, và có thể **thực hiện hành động thật**
+— đặt phòng, đặt dịch vụ nhà hàng/spa — chứ không chỉ trò chuyện suông.
+
+Toàn bộ hệ thống chạy qua một cổng duy nhất: **FastAPI** (`api/`) phục vụ cả API lẫn giao diện
+**React** (`frontend/`) đã build, có **đăng nhập phân quyền theo 4 vai trò** (khách vãng lai, khách
+đang lưu trú, nhân viên, quản trị viên).
+
+## Tính năng
+
+- **Hỏi–đáp thông tin resort**: hạng phòng, giá, tiện ích, giờ giấc, nội quy, quy trình đặt phòng —
+  trả lời dựa trên dữ liệu thật (`data/knowledge.json`), không suy diễn.
+- **Đặt phòng theo khoảng ngày**, có kiểm tra phòng trống chống overbook, sinh phiếu đặt phòng + mã
+  QR (demo) → khách xác nhận trên giao diện mới thật sự ghi vào cơ sở dữ liệu → tự động cấp tài khoản
+  khách lưu trú (mật khẩu ngẫu nhiên, hiển thị đúng một lần).
+- **Đặt dịch vụ nhà hàng/spa** — chỉ dành cho khách đang lưu trú (đã đăng nhập), thao tác trực tiếp
+  trên giao diện, không đi qua chatbot.
+- **Ảnh minh họa phòng/resort** được chatbot tự quyết định gửi kèm khi phù hợp ngữ cảnh.
+- **Quản trị (Admin)**: xem/sửa/hủy toàn bộ đặt phòng và yêu cầu dịch vụ; tạo/xóa tài khoản nhân
+  viên; tự đổi mật khẩu.
+- **Nhân viên (Staff)**: hàng đợi yêu cầu dịch vụ + hỗ trợ phòng, đánh dấu đã xử lý.
+- **Khách lưu trú**: gọi nhân viên / yêu cầu hỗ trợ nhanh (dọn phòng, báo hỏng thiết bị...) không
+  cần nhập lại thông tin, xem lịch sử yêu cầu.
+
+## Kiến trúc hệ thống
+
+### Agent trả lời — mô hình tool-use, không router cứng
+
+```
+Câu khách ─► [guardrail: độ dài + LLM scope-classifier] ─► [Memory: nạp N lượt] ─► [LLM + 4 tool]
+                                                                                        │
+                              ┌───────────────┬────────────────┬───────────────┐
+                              ▼               ▼                ▼               ▼
+                       knowledge_tool  availability_tool  open_booking_   show_photos_tool
+                         (title)     (room_types?, ngày?)  form_tool        (subject)
+                        Thông tin    Phòng CÒN TRỐNG —    Mở phiếu đặt    Gửi ảnh minh
+                        TĨNH từ      không ngày = mặc     phòng (marker,  họa phòng/
+                        knowledge    định HÔM NAY, luôn   KHÔNG tự ghi    resort (data/
+                        .json        tính từ reservations  DB) → UI hiện  images/)
+                                                            phiếu + QR giả
+```
+
+- LLM tự quyết định gọi tool nào (kể cả nhiều tool trong cùng một lượt) — không có logic if/else định
+  tuyến câu hỏi.
+- **LLM không bao giờ tự ghi cơ sở dữ liệu.** `open_booking_form_tool` chỉ trả về một marker JSON;
+  frontend đọc marker để hiển thị phiếu đặt phòng, và chỉ ghi `hotel.db` khi khách **bấm xác nhận
+  trên giao diện** — con người luôn là bước cuối cùng cho một hành động có ràng buộc thật (đặt phòng).
+- **Grounding**: mọi số liệu chatbot đưa ra chỉ lấy từ kết quả tool; các thông tin rủi ro cao (số điện
+  thoại, đánh giá...) được nhúng thẳng từ `knowledge.json` vào system prompt — một nguồn duy nhất,
+  không thể lệch giữa các lần trả lời.
+- **Guardrail hai lớp**:
+  1. `agent/guardrail.py` chạy **trước** agent chính — chặn input quá dài, và phân loại phạm vi câu
+     hỏi bằng một lệnh LLM riêng (đúng phạm vi / ngoài phạm vi / có dấu hiệu prompt injection), có kèm
+     lịch sử hội thoại để không chặn nhầm câu cụt nối tiếp ngữ cảnh.
+  2. `agent/tools.py` tự chặn loại dịch vụ/hạng phòng/ngày tháng sai trước khi mở phiếu đặt phòng —
+     kiểm tra tất định bằng code, không phụ thuộc vào "trí nhớ" của model.
+- Lịch sử hội thoại được đưa thẳng vào messages gửi cho LLM (multi-turn, không cần bước rewrite câu
+  hỏi riêng).
+
+### Phân quyền 4 vai trò (RBAC)
+
+Đăng nhập bằng session cookie, phiên lưu trong bảng `sessions` của `hotel.db`.
+
+| Vai trò               | Đăng nhập bằng                                             | Vào được                       |
+| ---------------------- | -------------------------------------------------------------- | ---------------------------------- |
+| Khách vãng lai       | (không cần đăng nhập)                                     | Trang chủ, đặt phòng           |
+| Khách đang lưu trú | Số phòng + mật khẩu (cấp tự động khi thanh toán xong) | Trang tài khoản, đặt dịch vụ |
+| Nhân viên            | Tên đăng nhập + mật khẩu                                 | Hàng đợi xử lý yêu cầu      |
+| Quản trị viên       | Tên đăng nhập + mật khẩu                                 | Bảng quản trị toàn hệ thống  |
+
+Route đặt dịch vụ (`/dich-vu`, `/api/service-requests`) chỉ chấp nhận vai trò khách đang lưu trú —
+khách vãng lai vào sẽ thấy màn chặn trên giao diện, gọi thẳng API sẽ nhận `401`/`403`.
+
+Mật khẩu được hash bằng **bcrypt** (salt riêng mỗi lần hash, cố ý tính toán chậm để chống dò mật khẩu
+hàng loạt) — không lưu trữ hay so sánh mật khẩu ở dạng chữ rõ khi xác thực.
+
+## Cấu trúc thư mục
+
+```
+agent/     Mã nguồn lõi: config · memory · trace · knowledge · db (dữ liệu + RBAC) · tools · agent ·
+           prompts · photos · run · llm_client — dùng chung cho CLI lẫn API, không phụ thuộc web framework
+api/       FastAPI: main.py (khởi tạo app + phục vụ frontend tĩnh) · auth.py (session) · schemas.py ·
+           routes/ (chat, bookings, service_requests, auth, admin, staff, guest) — chỉ bọc agent/*
+           thành route HTTP, không chứa logic nghiệp vụ riêng
+frontend/  React + Vite + TypeScript + Tailwind: src/pages/ (trang chủ, đặt phòng, dịch vụ, đăng
+           nhập, quản trị, nhân viên, tài khoản khách), src/components/, src/AuthContext.tsx, src/api.ts
+data/      knowledge.json (dữ liệu tĩnh) · hotel.db (SQLite — nguồn dữ liệu thật duy nhất, không
+           track git) · images/ (ảnh phòng/resort, phục vụ qua /images/...)
+eval/      Bộ đánh giá chất lượng agent: golden.jsonl (case đơn lượt) · golden_multi.jsonl (hội
+           thoại nhiều lượt) · run_eval.py
+tests/     Unit test Python cho agent/ và api/ (tiêm fake LLM/DB, không gọi mạng thật)
+logs/      traces.jsonl — mỗi lượt chat 1 dòng JSON, phục vụ debug (không track git)
+docs/      Tài liệu vận hành/nghiệp vụ bổ sung
+```
+
+## Cài đặt & chạy
+
+### Bằng Docker (khuyến nghị)
+
+```bash
+copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_MODEL
+docker compose up -d --build
+```
+
+Truy cập `http://localhost:8000`. Dữ liệu (`data/`) và log (`logs/`) được mount ra ngoài container
+nên khởi động lại không mất dữ liệu.
+
+> Trên Windows dùng Git Bash: chạy bằng `docker compose`, không dùng `docker run -v ...` trực tiếp —
+> Git Bash tự dịch đường dẫn kiểu Unix trong tham số `-v`, có thể làm sai đường dẫn mount.
+
+### Thủ công
+
+```bash
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_MODEL
+
+cd frontend
+npm install
+npm run build
+cd ..
+
+.venv\Scripts\python -m uvicorn api.main:app --reload
+```
+
+Provider LLM cần theo chuẩn OpenAI `/chat/completions` và **hỗ trợ function-calling**.
+
+Tài khoản quản trị mặc định khi khởi tạo lần đầu: `admin` / `admin123` — nên đổi mật khẩu ngay sau
+lần đăng nhập đầu tiên (mục "Tài khoản" trong bảng quản trị).
+
+## Kiểm thử & chất lượng
+
+```bash
+.venv\Scripts\python -m pytest                # unit test agent/ + api/, không cần .env
+.venv\Scripts\python eval\run_eval.py         # đánh giá chất lượng trả lời của agent, cần .env
+.venv\Scripts\python -m agent.run             # chat trực tiếp qua CLI, không cần frontend
+```
+
+Bộ eval (`eval/golden.jsonl`, `eval/golden_multi.jsonl`) gồm các case đơn lượt và hội thoại nhiều
+lượt, thiết kế bao phủ: thông tin phòng/resort, giờ giấc & nội quy (kèm câu hỏi phủ định dễ gây nhầm),
+đặt phòng (đủ thông tin / ngày tương đối / thiếu thông tin), từ chối câu hỏi ngoài phạm vi, và chống
+prompt injection giữa hội thoại.
+
+## Ghi chú vận hành
+
+- `data/hotel.db` là **nguồn dữ liệu thật duy nhất** — các bảng nghiệp vụ được tạo tự động (idempotent)
+  ngay khi ứng dụng khởi động, không cần chạy migration thủ công.
+- Trace debug từng lượt chat nằm ở `logs/traces.jsonl`, lọc theo `session_id`.
+- Phạm vi có chủ đích **không bao gồm**: cá nhân hóa/ghi nhớ khách qua nhiều phiên, embedding/RAG (kho
+  kiến thức hiện đủ nhỏ để nhúng thẳng vào prompt), cổng thanh toán thật (QR hiện là bản demo),
+  OAuth/SSO.
