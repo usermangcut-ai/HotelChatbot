@@ -31,11 +31,16 @@ class SoldOutError(Exception):
 
 
 def _connect(db_path=DB_PATH):
-    return sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    conn.execute("PRAGMA busy_timeout=5000")   # chờ tối đa 5s thay vì lỗi ngay khi có writer khác
+    return conn
 
 
 def _connect_rw(db_path=DB_PATH):
-    return sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path)
+    conn.execute("PRAGMA busy_timeout=5000")
+    conn.execute("PRAGMA journal_mode=WAL")    # cho phép đọc song song trong lúc đang ghi
+    return conn
 
 
 def _ensure_schema(db_path=DB_PATH):
@@ -363,12 +368,23 @@ def create_reservation(room_type, check_in, check_out, guest_name, guest_phone, 
     """Kiểm tra còn trống theo ngày rồi ghi 1 dòng reservation status='paid'. Ném SoldOutError nếu hết
     phòng (chống overbook). Gán luôn 1 phòng vật lý (room_id) và cấp tài khoản khách lưu trú
     (guest_accounts, mật khẩu ngẫu nhiên) ngay khi thanh toán thành công — đúng quyết định đã chốt
-    trong spec RBAC."""
-    counts = available_counts([room_type], check_in, check_out, db_path)
-    if counts.get(room_type, 0) <= 0:
-        raise SoldOutError(f"Hết phòng {room_type} trong khoảng {check_in} - {check_out}")
+    trong spec RBAC.
+
+    Check trống + ghi nằm trong CÙNG một transaction (BEGIN IMMEDIATE giữ write-lock ngay từ đầu) —
+    nếu không, 2 request đặt đồng thời phòng cuối cùng có thể cùng đọc thấy "còn 1 phòng" trước khi
+    request nào commit, dẫn tới overbook."""
     conn = _connect_rw(db_path)
     try:
+        conn.execute("BEGIN IMMEDIATE")
+        totals = _room_type_totals(conn, [room_type])
+        booked = conn.execute(
+            "SELECT COUNT(*) FROM reservations WHERE status='paid' AND room_type=? "
+            "AND check_in < ? AND check_out > ?",
+            (room_type, check_out, check_in)).fetchone()[0]
+        if totals.get(room_type, 0) - booked <= 0:
+            conn.execute("ROLLBACK")
+            raise SoldOutError(f"Hết phòng {room_type} trong khoảng {check_in} - {check_out}")
+
         now = datetime.now().isoformat(timespec="seconds")
         room_id = _pick_room_id(conn, room_type, check_in, check_out)
         cur = conn.execute(
