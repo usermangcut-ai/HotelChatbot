@@ -26,4 +26,6 @@ def create_booking(body: BookingRequest):
             body.guest_phone, body.guest_email, body.num_guests)
     except agent_db.SoldOutError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except agent_db.InvalidDateRangeError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     return BookingResponse(**result)

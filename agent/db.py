@@ -30,6 +30,10 @@ class SoldOutError(Exception):
     """Ném ra khi hạng phòng đã hết trống trong khoảng ngày yêu cầu."""
 
 
+class InvalidDateRangeError(Exception):
+    """Ném ra khi check_out không sau check_in."""
+
+
 def _connect(db_path=DB_PATH):
     conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     conn.execute("PRAGMA busy_timeout=5000")   # chờ tối đa 5s thay vì lỗi ngay khi có writer khác
@@ -373,6 +377,9 @@ def create_reservation(room_type, check_in, check_out, guest_name, guest_phone, 
     Check trống + ghi nằm trong CÙNG một transaction (BEGIN IMMEDIATE giữ write-lock ngay từ đầu) —
     nếu không, 2 request đặt đồng thời phòng cuối cùng có thể cùng đọc thấy "còn 1 phòng" trước khi
     request nào commit, dẫn tới overbook."""
+    if check_out <= check_in:   # so sánh string ISO 8601 (YYYY-MM-DD) sort đúng như so ngày
+        raise InvalidDateRangeError(
+            f"Ngày trả phòng ({check_out}) phải sau ngày nhận phòng ({check_in}).")
     conn = _connect_rw(db_path)
     try:
         conn.execute("BEGIN IMMEDIATE")

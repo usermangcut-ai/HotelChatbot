@@ -18,3 +18,5 @@ frontend/dist/
 data/hotel.db
 data/hotel.db.bak
 data/hotel_view.json
+
+docs/AGENT_KNOWLEDGE.md

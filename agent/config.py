@@ -13,3 +13,4 @@ LOG_PATH = os.path.join(ROOT, "logs", "traces.jsonl")
 HISTORY_TURNS = 6        # số lượt (mỗi lượt = 1 user + 1 assistant) đưa vào context
 MAX_TOOL_ITERS = 5       # trần số vòng gọi tool trong một lượt chat
 MAX_INPUT_CHARS = 500    # ~150-200 token tiếng Việt — đủ cho câu hỏi thật dài nhất, chặn wall-of-text
+AGENT_EXECUTOR_WORKERS = 8   # luồng chạy song song guardrail + lượt gọi LLM đầu tiên mỗi request

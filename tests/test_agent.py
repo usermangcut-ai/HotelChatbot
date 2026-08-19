@@ -81,12 +81,13 @@ def test_system_message_includes_current_date():
     assert "sys" in seen["system"]
 
 
-def test_guardrail_blocks_before_llm():
-    llm_calls = {"n": 0}
-
+def test_guardrail_blocks_discards_speculative_llm_result():
+    # Agent chạy song song guardrail + lượt gọi LLM đầu tiên (để cắt latency khi được phép) — khi
+    # guardrail chặn, LLM chính CÓ THỂ vẫn được gọi (chạy nền, không chờ), nhưng kết quả của nó không
+    # bao giờ được dùng: reply luôn là câu từ chối, không tool nào được dispatch.
     def llm(messages, tools=None, tool_choice="auto"):
-        llm_calls["n"] += 1
-        return {"role": "assistant", "content": "should not be reached"}
+        return {"role": "assistant", "content": None, "tool_calls": [
+            {"id": "c1", "type": "function", "function": {"name": "echo", "arguments": "{}"}}]}
 
     def guardrail(text, history):
         return False, "Ngoài phạm vi hỗ trợ ạ."
@@ -94,7 +95,6 @@ def test_guardrail_blocks_before_llm():
     agent = Agent(llm=llm, tools={}, system_prompt="sys", memory=Memory(), guardrail=guardrail)
     out = agent.handle("s1", "1 + 1 bằng mấy")
     assert out["reply"] == "Ngoài phạm vi hỗ trợ ạ."
-    assert llm_calls["n"] == 0
     assert out["trace"]["blocked"] is True
     assert out["trace"]["tool_calls"] == []
 

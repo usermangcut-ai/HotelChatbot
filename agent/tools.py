@@ -133,12 +133,19 @@ def open_booking_form_tool(args):
         return (f"Không nhận diện được hạng phòng '{room_type}'. Vui lòng chọn lại đúng tên hạng "
                 f"phòng trong catalog (dùng knowledge_tool 'Danh sách hạng phòng' nếu cần).")
 
+    parsed_dates = {}
     for field in ("check_in", "check_out"):
         parsed = _parse_date(args.get(field))
         if parsed == "invalid":
             return f"Ngày '{args.get(field)}' không đúng định dạng YYYY-MM-DD. Vui lòng nhập lại."
         if isinstance(parsed, date) and parsed < date.today():
             return f"Ngày {args.get(field)} đã ở quá khứ. Vui lòng chọn ngày từ hôm nay trở đi."
+        parsed_dates[field] = parsed
+
+    if parsed_dates["check_in"] and parsed_dates["check_out"] and \
+            parsed_dates["check_out"] <= parsed_dates["check_in"]:
+        return (f"Ngày trả phòng ({args['check_out']}) phải sau ngày nhận phòng "
+                f"({args['check_in']}). Vui lòng nhập lại.")
 
     payload = {"action": "open_booking_form", "room_type": room_type,
                "check_in": args.get("check_in"), "check_out": args.get("check_out"),
