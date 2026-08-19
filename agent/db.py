@@ -411,6 +411,10 @@ def create_reservation(room_type, check_in, check_out, guest_name, guest_phone, 
     Check trống + ghi nằm trong CÙNG một transaction (BEGIN IMMEDIATE giữ write-lock ngay từ đầu) —
     nếu không, 2 request đặt đồng thời phòng cuối cùng có thể cùng đọc thấy "còn 1 phòng" trước khi
     request nào commit, dẫn tới overbook."""
+    today = date.today().isoformat()
+    if check_in <= today:
+        raise InvalidDateRangeError(
+            f"Ngày nhận phòng ({check_in}) phải sau ngày hiện tại ({today}).")
     if check_out <= check_in:   # so sánh string ISO 8601 (YYYY-MM-DD) sort đúng như so ngày
         raise InvalidDateRangeError(
             f"Ngày trả phòng ({check_out}) phải sau ngày nhận phòng ({check_in}).")

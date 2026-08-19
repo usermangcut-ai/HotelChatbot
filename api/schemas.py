@@ -34,9 +34,11 @@ class BookingRequest(BaseModel):
     @classmethod
     def _valid_date_format(cls, v: str) -> str:
         try:
-            date.fromisoformat(v)
+            parsed = date.fromisoformat(v)
         except ValueError:
             raise ValueError("Ngày phải đúng định dạng YYYY-MM-DD") from None
+        if parsed <= date.today():
+            raise ValueError("Ngày nhận/trả phòng phải sau ngày hiện tại")
         return v
 
     @field_validator("check_out")

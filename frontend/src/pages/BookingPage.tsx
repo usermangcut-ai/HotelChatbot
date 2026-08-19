@@ -45,6 +45,14 @@ export default function BookingPage() {
     guest_password?: string | null;
   } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minCheckIn = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+  const minCheckOut = checkIn
+    ? new Date(`${checkIn}T00:00:00`)
+    : tomorrow;
+  minCheckOut.setDate(minCheckOut.getDate() + 1);
+  const minCheckOutValue = `${minCheckOut.getFullYear()}-${String(minCheckOut.getMonth() + 1).padStart(2, "0")}-${String(minCheckOut.getDate()).padStart(2, "0")}`;
 
   useEffect(() => {
     fetchRooms().then((data) => {
@@ -63,7 +71,11 @@ export default function BookingPage() {
   function handleContinue(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!checkIn || !checkOut || checkOut <= checkIn) {
+    if (!checkIn || checkIn < minCheckIn) {
+      setError("Ngày nhận phòng phải từ ngày mai trở đi.");
+      return;
+    }
+    if (!checkOut || checkOut <= checkIn) {
       setError("Ngày trả phòng phải sau ngày nhận phòng.");
       return;
     }
@@ -181,6 +193,7 @@ export default function BookingPage() {
             </label>
             <input
               type="date"
+              min={minCheckIn}
               value={checkIn}
               onChange={(e) => setCheckIn(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
@@ -192,6 +205,7 @@ export default function BookingPage() {
             </label>
             <input
               type="date"
+              min={minCheckOutValue}
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"

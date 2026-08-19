@@ -32,33 +32,41 @@ def test_available_counts_without_dates_equals_explicit_today(tmp_db):
 
 
 def test_available_counts_with_dates_subtracts_overlapping_reservation(tmp_db):
-    db.create_reservation("Deluxe Park Suite", "2026-08-01", "2026-08-03",
+    db.create_reservation("Deluxe Park Suite", "2099-08-01", "2099-08-03",
                            "Nguyen Van A", "0900000000", "a@test.com", 2, db_path=tmp_db)
-    counts = db.available_counts(["Deluxe Park Suite"], "2026-08-02", "2026-08-04", db_path=tmp_db)
+    counts = db.available_counts(["Deluxe Park Suite"], "2099-08-02", "2099-08-04", db_path=tmp_db)
     assert counts["Deluxe Park Suite"] == 1   # tổng 2 phòng, 1 bị chồng lấn ngày
 
 
 def test_available_counts_with_dates_no_overlap_full_available(tmp_db):
-    db.create_reservation("Deluxe Park Suite", "2026-08-01", "2026-08-03",
+    db.create_reservation("Deluxe Park Suite", "2099-08-01", "2099-08-03",
                            "Nguyen Van A", "0900000000", "a@test.com", 2, db_path=tmp_db)
-    counts = db.available_counts(["Deluxe Park Suite"], "2026-08-05", "2026-08-06", db_path=tmp_db)
+    counts = db.available_counts(["Deluxe Park Suite"], "2099-08-05", "2099-08-06", db_path=tmp_db)
     assert counts["Deluxe Park Suite"] == 2   # không chồng lấn -> đủ 2 phòng
 
 
 def test_create_reservation_raises_when_sold_out(tmp_db):
-    db.create_reservation("Deluxe Park Suite", "2026-08-01", "2026-08-03",
+    db.create_reservation("Deluxe Park Suite", "2099-08-01", "2099-08-03",
                            "A", "090", "a@test.com", 2, db_path=tmp_db)
-    db.create_reservation("Deluxe Park Suite", "2026-08-01", "2026-08-03",
+    db.create_reservation("Deluxe Park Suite", "2099-08-01", "2099-08-03",
                            "B", "091", "b@test.com", 2, db_path=tmp_db)
     with pytest.raises(db.SoldOutError):
-        db.create_reservation("Deluxe Park Suite", "2026-08-01", "2026-08-03",
-                               "C", "092", "c@test.com", 2, db_path=tmp_db)
+        db.create_reservation("Deluxe Park Suite", "2099-08-01", "2099-08-03",
+                              "C", "092", "c@test.com", 2, db_path=tmp_db)
+
+
+def test_create_reservation_rejects_today_at_business_layer(tmp_db):
+    today = date.today().isoformat()
+    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    with pytest.raises(db.InvalidDateRangeError):
+        db.create_reservation("Deluxe Park Suite", today, tomorrow,
+                              "A", "090", "a@test.com", 2, db_path=tmp_db)
 
 
 def test_list_reservations_returns_newest_first(tmp_db):
-    db.create_reservation("Deluxe Park Suite", "2026-09-01", "2026-09-02", "A", "090",
+    db.create_reservation("Deluxe Park Suite", "2099-09-01", "2099-09-02", "A", "090",
                            "a@t.com", 2, db_path=tmp_db)
-    db.create_reservation("Deluxe Park Suite", "2026-09-03", "2026-09-04", "B", "091",
+    db.create_reservation("Deluxe Park Suite", "2099-09-03", "2099-09-04", "B", "091",
                            "b@t.com", 2, db_path=tmp_db)
     rows = db.list_reservations(db_path=tmp_db)
     assert rows[0]["guest_name"] == "B"
@@ -66,25 +74,25 @@ def test_list_reservations_returns_newest_first(tmp_db):
 
 
 def test_list_service_requests_returns_newest_first(tmp_db):
-    db.create_service_request("spa", "A", "090", "2026-09-01 10:00", 2, "note1", db_path=tmp_db)
-    db.create_service_request("restaurant", "B", "091", "2026-09-02 19:00", 4, "note2", db_path=tmp_db)
+    db.create_service_request("spa", "A", "090", "2099-09-01 10:00", 2, "note1", db_path=tmp_db)
+    db.create_service_request("restaurant", "B", "091", "2099-09-02 19:00", 4, "note2", db_path=tmp_db)
     rows = db.list_service_requests(db_path=tmp_db)
     assert rows[0]["guest_name"] == "B"
 
 
 def test_cancel_reservation_sets_status_cancelled(tmp_db):
-    res = db.create_reservation("Deluxe Park Suite", "2026-09-10", "2026-09-11", "A", "090",
+    res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "A", "090",
                                  "a@t.com", 2, db_path=tmp_db)
     assert db.cancel_reservation(res["id"], db_path=tmp_db) is True
     assert db.list_reservations(db_path=tmp_db)[0]["status"] == "cancelled"
 
 
 def test_cancel_reservation_frees_up_availability(tmp_db):
-    res = db.create_reservation("Deluxe Park Suite", "2026-09-10", "2026-09-11", "A", "090",
+    res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "A", "090",
                                  "a@t.com", 2, db_path=tmp_db)
-    before = db.available_counts(["Deluxe Park Suite"], "2026-09-10", "2026-09-11", db_path=tmp_db)
+    before = db.available_counts(["Deluxe Park Suite"], "2099-09-10", "2099-09-11", db_path=tmp_db)
     db.cancel_reservation(res["id"], db_path=tmp_db)
-    after = db.available_counts(["Deluxe Park Suite"], "2026-09-10", "2026-09-11", db_path=tmp_db)
+    after = db.available_counts(["Deluxe Park Suite"], "2099-09-10", "2099-09-11", db_path=tmp_db)
     assert after["Deluxe Park Suite"] == before["Deluxe Park Suite"] + 1
 
 
@@ -93,7 +101,7 @@ def test_cancel_reservation_unknown_id_returns_false(tmp_db):
 
 
 def test_cancel_service_request_sets_status_cancelled(tmp_db):
-    out = db.create_service_request("spa", "A", "090", "2026-09-01 10:00", 2, "note", db_path=tmp_db)
+    out = db.create_service_request("spa", "A", "090", "2099-09-01 10:00", 2, "note", db_path=tmp_db)
     assert db.cancel_service_request(out["id"], db_path=tmp_db) is True
     assert db.list_service_requests(db_path=tmp_db)[0]["status"] == "cancelled"
 
@@ -147,7 +155,7 @@ def test_delete_staff_account_unknown_returns_false(tmp_db):
 
 
 def test_delete_reservation_cascades_to_guest_account(tmp_db):
-    res = db.create_reservation("Deluxe Park Suite", "2026-09-10", "2026-09-11", "Nguyen Van A",
+    res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "Nguyen Van A",
                                  "0900000000", "a@t.com", 2, db_path=tmp_db)
     assert db.get_guest_contact(res["room_id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
     db.delete_reservation(res["id"], db_path=tmp_db)
@@ -160,7 +168,7 @@ def test_delete_reservation_cascades_to_guest_account(tmp_db):
 
 
 def test_get_guest_contact_returns_reservation_name_phone(tmp_db):
-    res = db.create_reservation("Deluxe Park Suite", "2026-09-10", "2026-09-11", "Nguyen Van A",
+    res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "Nguyen Van A",
                                  "0900000000", "a@t.com", 2, db_path=tmp_db)
     name, phone = db.get_guest_contact(res["room_id"], db_path=tmp_db)
     assert (name, phone) == ("Nguyen Van A", "0900000000")
@@ -171,7 +179,7 @@ def test_get_guest_contact_unknown_room_returns_none(tmp_db):
 
 
 def test_create_service_request_inserts_row(tmp_db):
-    out = db.create_service_request("spa", "A", "090", "2026-08-01 15:00", 2, "massage",
+    out = db.create_service_request("spa", "A", "090", "2099-08-01 15:00", 2, "massage",
                                      db_path=tmp_db)
     assert out["status"] == "received"
     conn = sqlite3.connect(tmp_db)
@@ -184,9 +192,16 @@ def test_create_service_request_inserts_row(tmp_db):
 def test_checkout_expired_stays_completes_booking_and_removes_guest_access(tmp_db):
     yesterday = (date.today() - timedelta(days=1)).isoformat()
     today = date.today().isoformat()
-    res = db.create_reservation("Deluxe Park Suite", yesterday, today, "A", "090",
+    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    day_after = (date.today() + timedelta(days=2)).isoformat()
+    res = db.create_reservation("Deluxe Park Suite", tomorrow, day_after, "A", "090",
                                 "a@t.com", 2, db_path=tmp_db)
     session_id = db.create_session("guest_account", res["room_id"], "guest", db_path=tmp_db)
+    conn = sqlite3.connect(tmp_db)
+    conn.execute("UPDATE reservations SET check_in=?, check_out=? WHERE id=?",
+                 (yesterday, today, res["id"]))
+    conn.commit()
+    conn.close()
 
     assert db.checkout_expired_stays(tmp_db) == 1
 
@@ -200,3 +215,4 @@ def test_checkout_expired_stays_completes_booking_and_removes_guest_access(tmp_d
     assert status == "completed"
     assert account_count == 0
     assert session_count == 0
+

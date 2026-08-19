@@ -109,7 +109,15 @@ def test_open_booking_form_tool_rejects_past_check_in():
     _, fn = tools.build_tools()["open_booking_form_tool"]
     out = fn({"room_type": "Deluxe Queen", "check_in": "2020-01-01",
               "check_out": "2020-01-03", "num_guests": 2})
-    assert "quá khứ" in out.lower()
+    assert "sau ngày hiện tại" in out.lower()
+    assert "action" not in out
+
+
+def test_open_booking_form_tool_rejects_today():
+    _, fn = tools.build_tools()["open_booking_form_tool"]
+    out = fn({"room_type": "Deluxe Queen", "check_in": date.today().isoformat(),
+              "check_out": (date.today() + timedelta(days=1)).isoformat(), "num_guests": 2})
+    assert "sau ngày hiện tại" in out.lower()
     assert "action" not in out
 
 

@@ -138,8 +138,9 @@ def open_booking_form_tool(args):
         parsed = _parse_date(args.get(field))
         if parsed == "invalid":
             return f"Ngày '{args.get(field)}' không đúng định dạng YYYY-MM-DD. Vui lòng nhập lại."
-        if isinstance(parsed, date) and parsed < date.today():
-            return f"Ngày {args.get(field)} đã ở quá khứ. Vui lòng chọn ngày từ hôm nay trở đi."
+        if isinstance(parsed, date) and parsed <= date.today():
+            return (f"Ngày {args.get(field)} phải sau ngày hiện tại. "
+                    "Vui lòng chọn từ ngày mai trở đi.")
         parsed_dates[field] = parsed
 
     if parsed_dates["check_in"] and parsed_dates["check_out"] and \
