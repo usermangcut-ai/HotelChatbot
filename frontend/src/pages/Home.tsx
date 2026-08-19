@@ -48,10 +48,14 @@ export default function Home() {
       const res = await postChat(sessionId, text);
 
       let imageUrl: string | undefined;
-      const photoIdx = res.tool_calls.findIndex((c) => c.name === "show_photos_tool");
-      if (photoIdx !== -1) {
+      const photoIndexes = res.tool_calls
+        .map((call, index) => (call.name === "show_photos_tool" ? index : -1))
+        .filter((index) => index !== -1);
+      // Một reply chỉ hiển thị ảnh khi agent chọn đúng MỘT ảnh. Nếu model gọi nhiều ảnh (ví dụ
+      // giới thiệu cả catalog), không tự lấy ảnh đầu tiên làm đại diện vì sẽ gây hiểu nhầm.
+      if (photoIndexes.length === 1) {
         try {
-          const payload = JSON.parse(res.tool_results[photoIdx]) as { image_path?: string };
+          const payload = JSON.parse(res.tool_results[photoIndexes[0]]) as { image_path?: string };
           imageUrl = payload.image_path;
         } catch {
           imageUrl = undefined;
