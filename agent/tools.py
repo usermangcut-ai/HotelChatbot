@@ -1,21 +1,9 @@
 """Schema + hàm thực thi các tool; build_tools() gom lại."""
 import json
-from datetime import date
 
 from agent import db, knowledge, photos
 
 SERVICE_TYPES = ("restaurant", "spa")
-
-
-def _parse_date(s):
-    """Trả date hoặc None nếu s rỗng/sai định dạng YYYY-MM-DD."""
-    if not s:
-        return None
-    try:
-        return date.fromisoformat(s)
-    except ValueError:
-        return "invalid"
-
 
 # ---------- knowledge_tool ----------
 
@@ -108,50 +96,20 @@ def _open_booking_form_schema():
         "function": {
             "name": "open_booking_form_tool",
             "description": (
-                "Mở PHIẾU ĐẶT PHÒNG cho khách điền và thanh toán trên giao diện, khi khách đã chốt ý "
-                "định đặt phòng (kể cả chưa đủ hết thông tin — phiếu sẽ hỏi tiếp phần còn thiếu). "
-                "KHÔNG tự ghi đặt phòng — việc đặt chỉ hoàn tất khi khách xác nhận trên phiếu."),
+                "Mở PHIẾU ĐẶT PHÒNG TRỐNG ngay khi khách thể hiện ý định đặt/book/lấy phòng. "
+                "Không thu thập, suy luận hay truyền hạng phòng, ngày hoặc số khách từ hội thoại; "
+                "khách tự điền và hệ thống validate trên phiếu. KHÔNG tự ghi đặt phòng."),
             "parameters": {
                 "type": "object",
-                "properties": {
-                    "room_type": {"type": "string",
-                                  "description": "Hạng phòng khách muốn đặt, nếu đã biết."},
-                    "check_in": {"type": "string",
-                                 "description": "Ngày nhận phòng YYYY-MM-DD, nếu đã biết."},
-                    "check_out": {"type": "string",
-                                  "description": "Ngày trả phòng YYYY-MM-DD, nếu đã biết."},
-                    "num_guests": {"type": "integer", "description": "Số khách, nếu đã biết."},
-                },
+                "properties": {},
+                "additionalProperties": False,
             },
         },
     }
 
 
 def open_booking_form_tool(args):
-    room_type = args.get("room_type")
-    if room_type and room_type not in knowledge.room_titles():
-        return (f"Không nhận diện được hạng phòng '{room_type}'. Vui lòng chọn lại đúng tên hạng "
-                f"phòng trong catalog (dùng knowledge_tool 'Danh sách hạng phòng' nếu cần).")
-
-    parsed_dates = {}
-    for field in ("check_in", "check_out"):
-        parsed = _parse_date(args.get(field))
-        if parsed == "invalid":
-            return f"Ngày '{args.get(field)}' không đúng định dạng YYYY-MM-DD. Vui lòng nhập lại."
-        if isinstance(parsed, date) and parsed <= date.today():
-            return (f"Ngày {args.get(field)} phải sau ngày hiện tại. "
-                    "Vui lòng chọn từ ngày mai trở đi.")
-        parsed_dates[field] = parsed
-
-    if parsed_dates["check_in"] and parsed_dates["check_out"] and \
-            parsed_dates["check_out"] <= parsed_dates["check_in"]:
-        return (f"Ngày trả phòng ({args['check_out']}) phải sau ngày nhận phòng "
-                f"({args['check_in']}). Vui lòng nhập lại.")
-
-    payload = {"action": "open_booking_form", "room_type": room_type,
-               "check_in": args.get("check_in"), "check_out": args.get("check_out"),
-               "num_guests": args.get("num_guests")}
-    return json.dumps(payload, ensure_ascii=False)
+    return json.dumps({"action": "open_booking_form"}, ensure_ascii=False)
 
 
 # ---------- show_photos_tool ----------
