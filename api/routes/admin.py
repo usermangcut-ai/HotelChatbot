@@ -11,6 +11,7 @@ router = APIRouter(dependencies=[Depends(require_role("admin"))])
 
 @router.get("/api/admin/bookings", response_model=list[ReservationRecord])
 def list_bookings():
+    agent_db.checkout_expired_stays()
     return agent_db.list_reservations(limit=200)
 
 

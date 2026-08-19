@@ -287,6 +287,39 @@ def _rooms_status_public(db_path=DB_PATH):
         conn.close()
 
 
+def checkout_expired_stays(db_path=DB_PATH, as_of=None):
+    """Hoàn tất booking tới ngày trả phòng và thu hồi account/session của khách."""
+    cutoff = as_of or date.today().isoformat()
+    conn = _connect_rw(db_path)
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        expired = conn.execute(
+            "SELECT id, room_id FROM reservations WHERE status='paid' AND check_out <= ?",
+            (cutoff,)).fetchall()
+        if expired:
+            reservation_ids = [row[0] for row in expired]
+            room_ids = list({row[1] for row in expired if row[1]})
+            reservation_marks = ",".join("?" * len(reservation_ids))
+            conn.execute(
+                f"UPDATE reservations SET status='completed' WHERE id IN ({reservation_marks})",
+                reservation_ids)
+            conn.execute(
+                f"DELETE FROM guest_accounts WHERE reservation_id IN ({reservation_marks})",
+                reservation_ids)
+            if room_ids:
+                room_marks = ",".join("?" * len(room_ids))
+                conn.execute(
+                    f"DELETE FROM sessions WHERE identity_type='guest_account' "
+                    f"AND identity_id IN ({room_marks})",
+                    room_ids)
+        conn.commit()
+    finally:
+        conn.close()
+    if expired:
+        _export_json_view(db_path)
+    return len(expired)
+
+
 def _export_json_view(db_path=DB_PATH):
     """Ghi lại toàn bộ dữ liệu hiện tại ra data/hotel_view.json — gọi sau MỌI lần ghi vào SQLite, để
     file này luôn khớp thật với DB. Chỉ để người xem mở bằng text editor, không phải nguồn dữ liệu —
@@ -306,6 +339,7 @@ def _export_json_view(db_path=DB_PATH):
 
 _ensure_schema()   # chạy 1 lần khi module được import — đảm bảo hotel.db thật có đủ bảng
 seed_default_admin()   # tài khoản admin/admin123 mặc định nếu chưa có ai (demo)
+checkout_expired_stays()   # app restart cũng tự chốt booking đã qua ngày trả phòng
 
 
 def _room_type_totals(conn, room_types=None):
@@ -616,6 +650,7 @@ def get_guest_contact(room_id, db_path=DB_PATH):
 
 def verify_guest_login(room_id, password, db_path=DB_PATH):
     """Trả True nếu đúng số phòng + mật khẩu tài khoản khách lưu trú."""
+    checkout_expired_stays(db_path)
     conn = _connect(db_path)
     try:
         row = conn.execute("SELECT password_hash FROM guest_accounts WHERE room_id=?",
@@ -643,6 +678,7 @@ def create_session(identity_type, identity_id, role, ttl_hours=24, db_path=DB_PA
 
 def get_session(session_id, db_path=DB_PATH):
     """Trả {'identity_type','identity_id','role'} nếu session còn hạn, None nếu không có/hết hạn."""
+    checkout_expired_stays(db_path)
     conn = _connect(db_path)
     try:
         row = conn.execute(

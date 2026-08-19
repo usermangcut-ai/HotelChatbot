@@ -17,6 +17,8 @@ frontend/dist/
 # chứa plaintext password (staff_accounts/guest_accounts) + toàn bộ dữ liệu thật — KHÔNG public
 data/hotel.db
 data/hotel.db.bak
+data/hotel.db-shm
+data/hotel.db-wal
 data/hotel_view.json
 
 docs/AGENT_KNOWLEDGE.md

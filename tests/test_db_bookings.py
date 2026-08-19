@@ -1,5 +1,6 @@
 import shutil
 import sqlite3
+from datetime import date, timedelta
 
 import pytest
 
@@ -178,3 +179,24 @@ def test_create_service_request_inserts_row(tmp_db):
                         (out["id"],)).fetchone()
     conn.close()
     assert row[0] == "spa"
+
+
+def test_checkout_expired_stays_completes_booking_and_removes_guest_access(tmp_db):
+    yesterday = (date.today() - timedelta(days=1)).isoformat()
+    today = date.today().isoformat()
+    res = db.create_reservation("Deluxe Park Suite", yesterday, today, "A", "090",
+                                "a@t.com", 2, db_path=tmp_db)
+    session_id = db.create_session("guest_account", res["room_id"], "guest", db_path=tmp_db)
+
+    assert db.checkout_expired_stays(tmp_db) == 1
+
+    conn = sqlite3.connect(tmp_db)
+    status = conn.execute("SELECT status FROM reservations WHERE id=?", (res["id"],)).fetchone()[0]
+    account_count = conn.execute(
+        "SELECT COUNT(*) FROM guest_accounts WHERE reservation_id=?", (res["id"],)).fetchone()[0]
+    session_count = conn.execute(
+        "SELECT COUNT(*) FROM sessions WHERE session_id=?", (session_id,)).fetchone()[0]
+    conn.close()
+    assert status == "completed"
+    assert account_count == 0
+    assert session_count == 0

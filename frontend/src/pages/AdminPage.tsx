@@ -117,7 +117,13 @@ export default function AdminPage() {
                         b.status === "paid" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
                       }`}
                     >
-                      {b.status}
+                      {b.status === "paid"
+                        ? "Đang lưu trú"
+                        : b.status === "completed"
+                          ? "Đã trả phòng"
+                          : b.status === "cancelled"
+                            ? "Đã hủy"
+                            : b.status}
                     </span>
                   </td>
                   <td className="px-4 py-3 space-x-2">

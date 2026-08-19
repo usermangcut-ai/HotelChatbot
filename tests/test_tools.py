@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 
 from agent import tools
 
@@ -88,8 +89,10 @@ def test_availability_tool_with_dates_uses_room_total():
 
 def test_open_booking_form_tool_returns_marker():
     _, fn = tools.build_tools()["open_booking_form_tool"]
-    out = json.loads(fn({"room_type": "Deluxe Queen", "check_in": "2026-08-01",
-                          "check_out": "2026-08-03", "num_guests": 2}))
+    check_in = (date.today() + timedelta(days=1)).isoformat()
+    check_out = (date.today() + timedelta(days=3)).isoformat()
+    out = json.loads(fn({"room_type": "Deluxe Queen", "check_in": check_in,
+                         "check_out": check_out, "num_guests": 2}))
     assert out["action"] == "open_booking_form"
     assert out["room_type"] == "Deluxe Queen"
 
