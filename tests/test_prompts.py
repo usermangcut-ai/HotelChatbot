@@ -28,9 +28,6 @@ def test_prompt_rejects_out_of_scope_topics():
 def test_prompt_mentions_booking_tool():
     p = build_system_prompt()
     assert "open_booking_form_tool" in p
-    assert "object rỗng `{}`" in p
-    assert "KHÔNG hỏi bổ sung thông tin" in p
-    assert "các dữ liệu hội thoại không được truyền sang phiếu" in p
 
 
 def test_prompt_forbids_agent_from_claiming_booking_done():

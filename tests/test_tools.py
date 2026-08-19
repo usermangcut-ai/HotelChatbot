@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 
 from agent import tools
 
@@ -88,20 +89,51 @@ def test_availability_tool_with_dates_uses_room_total():
 
 def test_open_booking_form_tool_returns_marker():
     _, fn = tools.build_tools()["open_booking_form_tool"]
-    assert json.loads(fn({})) == {"action": "open_booking_form"}
+    check_in = (date.today() + timedelta(days=1)).isoformat()
+    check_out = (date.today() + timedelta(days=3)).isoformat()
+    out = json.loads(fn({"room_type": "Deluxe Queen", "check_in": check_in,
+                         "check_out": check_out, "num_guests": 2}))
+    assert out["action"] == "open_booking_form"
+    assert out["room_type"] == "Deluxe Queen"
 
 
-def test_open_booking_form_tool_ignores_conversation_booking_fields():
+def test_open_booking_form_tool_rejects_unknown_room_type():
     _, fn = tools.build_tools()["open_booking_form_tool"]
-    out = json.loads(fn({"room_type": "Deluxe Queen", "check_in": "2020-01-01",
-                         "check_out": "invalid", "num_guests": 2}))
-    assert out == {"action": "open_booking_form"}
+    out = fn({"room_type": "Phòng Không Tồn Tại", "check_in": "2026-08-01",
+              "check_out": "2026-08-03", "num_guests": 2})
+    assert "không nhận diện được hạng phòng" in out.lower()
+    assert "action" not in out
 
 
-def test_open_booking_form_schema_accepts_no_fields():
-    schema = tools.build_tools()["open_booking_form_tool"][0]["function"]["parameters"]
-    assert schema["properties"] == {}
-    assert schema["additionalProperties"] is False
+def test_open_booking_form_tool_rejects_past_check_in():
+    _, fn = tools.build_tools()["open_booking_form_tool"]
+    out = fn({"room_type": "Deluxe Queen", "check_in": "2020-01-01",
+              "check_out": "2020-01-03", "num_guests": 2})
+    assert "sau ngày hiện tại" in out.lower()
+    assert "action" not in out
+
+
+def test_open_booking_form_tool_rejects_today():
+    _, fn = tools.build_tools()["open_booking_form_tool"]
+    out = fn({"room_type": "Deluxe Queen", "check_in": date.today().isoformat(),
+              "check_out": (date.today() + timedelta(days=1)).isoformat(), "num_guests": 2})
+    assert "sau ngày hiện tại" in out.lower()
+    assert "action" not in out
+
+
+def test_open_booking_form_tool_rejects_malformed_date():
+    _, fn = tools.build_tools()["open_booking_form_tool"]
+    out = fn({"room_type": "Deluxe Queen", "check_in": "01/08/2026",
+              "check_out": "2026-08-03", "num_guests": 2})
+    assert "yyyy-mm-dd" in out.lower()
+    assert "action" not in out
+
+
+def test_open_booking_form_tool_allows_missing_optional_fields():
+    _, fn = tools.build_tools()["open_booking_form_tool"]
+    out = json.loads(fn({}))
+    assert out["action"] == "open_booking_form"
+    assert out["room_type"] is None
 
 
 def test_show_photos_schema_enum_has_hotel_and_rooms():
