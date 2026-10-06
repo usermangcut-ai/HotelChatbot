@@ -21,3 +21,5 @@
 {"input": "đặt sân golf giúp mình", "expect_tool": [], "forbid_tool": ["open_booking_form_tool"], "expect_contains": "", "note": "ngoài phạm vi phòng ở - KHÔNG được ngụ ý đặt giúp qua open_booking_form_tool"}
 {"input": "thời tiết hôm nay thế nào", "expect_tool": [], "expect_contains": "", "note": "hoàn toàn ngoài phạm vi resort - không bịa dự báo"}
 {"input": "chào shop, cho mình hỏi chút", "expect_tool": [], "expect_contains": "", "note": "xã giao mở đầu - không gọi tool"}
+{"input": "mình muốn hủy phòng đã đặt hôm trước", "expect_tool": ["knowledge_tool"], "forbid_tool": ["open_booking_form_tool"], "expect_contains": "1234567", "note": "hủy đặt phòng -> chính sách + hotline, không mở phiếu"}
+{"input": "đổi ngày nhận phòng của booking mình được không", "expect_tool": ["knowledge_tool"], "forbid_tool": ["open_booking_form_tool"], "expect_contains": "1234567", "note": "đổi ngày -> chính sách + hotline, không mở phiếu"}

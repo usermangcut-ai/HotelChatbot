@@ -14,45 +14,48 @@ def _client_as(identity_type, identity_id, role):
     return guest_client
 
 
-def _guest_client(room_id="R101"):
-    return _client_as("guest_account", room_id, "guest")
+def _guest_client(stay):
+    return _client_as("guest_account", str(stay["reservation_id"]), "guest")
 
 
-def test_create_service_request_auto_fills_contact_from_session(monkeypatch):
+def test_create_service_request_auto_fills_contact_from_session(monkeypatch, active_stay):
     seen = {}
 
-    monkeypatch.setattr(agent_db, "get_guest_contact", lambda room_id: ("Nguyen Van A", "0900000000"))
+    monkeypatch.setattr(agent_db, "get_guest_contact",
+                        lambda reservation_id: ("Nguyen Van A", "0900000000"))
 
     def fake_create_service_request(service_type, guest_name, guest_phone, requested_at,
-                                     party_size, note):
-        seen["args"] = (service_type, guest_name, guest_phone, requested_at, party_size, note)
+                                     party_size, note, reservation_id=None):
+        seen["args"] = (service_type, guest_name, guest_phone, requested_at, party_size, note,
+                        reservation_id)
         return {"id": 7, "service_type": service_type, "status": "received"}
 
     monkeypatch.setattr(agent_db, "create_service_request", fake_create_service_request)
-    resp = _guest_client("R101").post("/api/service-requests", json={
+    resp = _guest_client(active_stay).post("/api/service-requests", json={
         "service_type": "spa", "requested_at": "2026-08-01 15:00", "party_size": 2, "note": "massage"})
     assert resp.status_code == 201
     assert resp.json()["id"] == 7
-    assert seen["args"] == ("spa", "Nguyen Van A", "0900000000", "2026-08-01 15:00", 2, "massage")
+    assert seen["args"] == ("spa", "Nguyen Van A", "0900000000", "2026-08-01 15:00", 2, "massage",
+                            active_stay["reservation_id"])
 
 
-def test_create_service_request_rejects_unknown_service_type(monkeypatch):
-    monkeypatch.setattr(agent_db, "get_guest_contact", lambda room_id: (None, None))
-    resp = _guest_client().post("/api/service-requests", json={
+def test_create_service_request_rejects_unknown_service_type(monkeypatch, active_stay):
+    monkeypatch.setattr(agent_db, "get_guest_contact", lambda reservation_id: (None, None))
+    resp = _guest_client(active_stay).post("/api/service-requests", json={
         "service_type": "massage", "requested_at": "2026-08-01 15:00", "party_size": 2, "note": ""})
     assert resp.status_code == 422
 
 
-def test_create_service_request_allows_missing_party_size(monkeypatch):
-    monkeypatch.setattr(agent_db, "get_guest_contact", lambda room_id: (None, None))
+def test_create_service_request_allows_missing_party_size(monkeypatch, active_stay):
+    monkeypatch.setattr(agent_db, "get_guest_contact", lambda reservation_id: (None, None))
 
     def fake_create_service_request(service_type, guest_name, guest_phone, requested_at,
-                                     party_size, note):
+                                     party_size, note, reservation_id=None):
         assert party_size is None
         return {"id": 8, "service_type": service_type, "status": "received"}
 
     monkeypatch.setattr(agent_db, "create_service_request", fake_create_service_request)
-    resp = _guest_client().post("/api/service-requests", json={
+    resp = _guest_client(active_stay).post("/api/service-requests", json={
         "service_type": "restaurant", "requested_at": "2026-08-01 19:00"})
     assert resp.status_code == 201
 

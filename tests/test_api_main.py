@@ -12,3 +12,15 @@ def test_app_exposes_all_public_routes():
     assert "/api/bookings" in paths
     assert "/api/rooms" in paths
     assert "/api/service-requests" in paths
+
+
+def test_startup_runs_init_db(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from api import main
+
+    calls = []
+    monkeypatch.setattr(main, "init_db", lambda: calls.append(1))
+    with TestClient(main.app):
+        pass
+    assert calls == [1]

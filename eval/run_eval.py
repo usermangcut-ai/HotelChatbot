@@ -12,6 +12,7 @@ from agent import guardrail, llm_client, trace  # noqa: E402
 from agent.agent import Agent  # noqa: E402
 from agent.memory import Memory  # noqa: E402
 from agent.prompts import build_system_prompt  # noqa: E402
+from agent.schema import init_db  # noqa: E402
 from agent.tools import build_tools  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,6 +40,7 @@ def _check(turn, out):
 def main():
     if not llm_client.is_configured():
         print("⚠️  Chưa cấu hình .env."); return
+    init_db()
     agent = Agent(llm=llm_client.chat_with_tools, tools=build_tools(),
                   system_prompt=build_system_prompt(), memory=Memory(), tracer=trace.log,
                   guardrail=guardrail.check)

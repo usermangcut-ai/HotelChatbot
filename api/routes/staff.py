@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from agent import db as agent_db
 from api.auth import get_current_identity
-from api.schemas import ServiceRequestRecord, StaffRequestRecord, StatusUpdate
+from api.schemas import RequestStatusUpdate, ServiceRequestRecord, StaffRequestRecord
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ def list_service_requests(identity=Depends(_require_staff_or_admin)):
 
 
 @router.patch("/api/staff/service-requests/{request_id}", response_model=dict)
-def mark_service_request(request_id: int, body: StatusUpdate,
+def mark_service_request(request_id: int, body: RequestStatusUpdate,
                           identity=Depends(_require_staff_or_admin)):
     ok = agent_db.update_service_request_status(request_id, body.status)
     if not ok:
@@ -34,7 +34,7 @@ def list_staff_requests(identity=Depends(_require_staff_or_admin)):
 
 
 @router.patch("/api/staff/requests/{request_id}", response_model=dict)
-def mark_staff_request(request_id: int, body: StatusUpdate,
+def mark_staff_request(request_id: int, body: RequestStatusUpdate,
                         identity=Depends(_require_staff_or_admin)):
     ok = agent_db.update_staff_request_status(request_id, body.status)
     if not ok:

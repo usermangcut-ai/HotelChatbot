@@ -2,7 +2,7 @@
 import json
 from datetime import date
 
-from agent import db, knowledge, photos
+from agent import clock, db, knowledge, photos
 
 SERVICE_TYPES = ("restaurant", "spa")
 
@@ -138,7 +138,7 @@ def open_booking_form_tool(args):
         parsed = _parse_date(args.get(field))
         if parsed == "invalid":
             return f"Ngày '{args.get(field)}' không đúng định dạng YYYY-MM-DD. Vui lòng nhập lại."
-        if isinstance(parsed, date) and parsed <= date.today():
+        if isinstance(parsed, date) and parsed <= clock.today():
             return (f"Ngày {args.get(field)} phải sau ngày hiện tại. "
                     "Vui lòng chọn từ ngày mai trở đi.")
         parsed_dates[field] = parsed

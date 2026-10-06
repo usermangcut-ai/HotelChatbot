@@ -1,12 +1,16 @@
 """Pydantic request/response models cho API — 1 file dùng chung cho mọi route."""
 from datetime import date
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from agent import clock
+
 
 class ChatRequest(BaseModel):
-    session_id: str
+    # id phiên do client sinh (frontend: UUID) — chỉ nhận chữ/số/-/_, 8-64 ký tự, để không dùng chuỗi
+    # rác/khổng lồ làm khóa bộ nhớ chat
+    session_id: str = Field(pattern=r"^[A-Za-z0-9_-]{8,64}$")
     message: str
 
 
@@ -37,7 +41,7 @@ class BookingRequest(BaseModel):
             parsed = date.fromisoformat(v)
         except ValueError:
             raise ValueError("Ngày phải đúng định dạng YYYY-MM-DD") from None
-        if parsed <= date.today():
+        if parsed <= clock.today():
             raise ValueError("Ngày nhận/trả phòng phải sau ngày hiện tại")
         return v
 
@@ -84,6 +88,7 @@ class MeResponse(BaseModel):
     identity_type: str
     identity_id: str
     role: str
+    room_id: str | None = None   # chỉ có với khách lưu trú
 
 
 class StaffAccountBody(BaseModel):
@@ -129,8 +134,13 @@ class ServiceRequestRecord(BaseModel):
     created_at: str
 
 
-class StatusUpdate(BaseModel):
-    status: str
+class ReservationStatusUpdate(BaseModel):
+    status: Literal["paid", "cancelled", "completed"]
+
+
+class RequestStatusUpdate(BaseModel):
+    """Dùng chung cho yêu cầu dịch vụ (nhà hàng/spa) và yêu cầu hỗ trợ."""
+    status: Literal["received", "done", "cancelled"]
 
 
 class StaffRequestRecord(BaseModel):

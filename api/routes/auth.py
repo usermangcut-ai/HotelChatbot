@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Response
 
 from agent import db as agent_db
+from agent.config import COOKIE_SECURE
 from api.auth import COOKIE_NAME, get_current_identity
 from api.schemas import ChangePasswordBody, LoginRequest, MeResponse
 
@@ -10,29 +11,36 @@ router = APIRouter()
 
 @router.post("/api/auth/login", response_model=MeResponse)
 def login(body: LoginRequest, response: Response):
+    room_id = None
     if body.identity_type == "staff":
         role = agent_db.verify_staff_login(body.username, body.password)
         if not role:
             raise HTTPException(status_code=401, detail="Sai tên đăng nhập hoặc mật khẩu.")
-        session_id = agent_db.create_session("staff_account", body.username, role)
         identity_id = body.username
+        session_id = agent_db.create_session("staff_account", identity_id, role)
     elif body.identity_type == "guest":
-        if not agent_db.verify_guest_login(body.room_id, body.password):
+        try:
+            reservation_id = agent_db.verify_guest_login(body.room_id, body.password)
+        except agent_db.StayNotStartedError as exc:
+            raise HTTPException(status_code=401, detail=str(exc)) from exc
+        if not reservation_id:
             raise HTTPException(status_code=401, detail="Sai số phòng hoặc mật khẩu.")
-        session_id = agent_db.create_session("guest_account", body.room_id, "guest")
-        role = "guest"
-        identity_id = body.room_id
+        role, room_id = "guest", body.room_id
+        identity_id = str(reservation_id)
+        session_id = agent_db.create_session("guest_account", identity_id, role)
     else:
         raise HTTPException(status_code=422, detail="identity_type phải là 'staff' hoặc 'guest'.")
 
-    response.set_cookie(COOKIE_NAME, session_id, httponly=True, samesite="lax", max_age=86400)
-    return MeResponse(identity_type=body.identity_type, identity_id=identity_id, role=role)
+    response.set_cookie(COOKIE_NAME, session_id, httponly=True, samesite="lax",
+                        secure=COOKIE_SECURE, max_age=86400)
+    return MeResponse(identity_type=body.identity_type, identity_id=identity_id, role=role,
+                      room_id=room_id)
 
 
 @router.post("/api/auth/logout")
 def logout(response: Response,
-           session_id: str | None = Cookie(default=None, alias=COOKIE_NAME),
-           identity=Depends(get_current_identity)):
+           session_id: str | None = Cookie(default=None, alias=COOKIE_NAME)):
+    """Không đòi phiên còn hiệu lực — khách đã trả phòng (phiên tự hết hạn) vẫn xóa được cookie."""
     if session_id:
         agent_db.delete_session(session_id)
     response.delete_cookie(COOKIE_NAME)

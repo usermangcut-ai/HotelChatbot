@@ -7,7 +7,8 @@ COOKIE_NAME = "session_id"
 
 
 def get_current_identity(session_id: str | None = Cookie(default=None, alias=COOKIE_NAME)):
-    """Trả {'identity_type','identity_id','role'} hoặc raise 401 nếu chưa đăng nhập/session hết hạn."""
+    """Trả {'identity_type','identity_id','role'} (+ 'room_id' với khách lưu trú) hoặc raise 401 nếu
+    chưa đăng nhập/phiên hết hạn."""
     if not session_id:
         raise HTTPException(status_code=401, detail="Chưa đăng nhập.")
     identity = agent_db.get_session(session_id)

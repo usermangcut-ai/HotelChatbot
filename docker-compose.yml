@@ -5,7 +5,8 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      STORAGE_DIR: /app/storage
     volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
+      - ./storage:/app/storage   # dữ liệu động sống ngoài container — rebuild không mất booking
     restart: unless-stopped

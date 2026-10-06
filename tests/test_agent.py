@@ -1,5 +1,4 @@
-from datetime import date
-
+from agent import clock
 from agent.agent import Agent
 from agent.memory import Memory
 
@@ -77,7 +76,7 @@ def test_system_message_includes_current_date():
 
     agent = Agent(llm=llm, tools={}, system_prompt="sys", memory=Memory())
     agent.handle("s1", "hi")
-    assert date.today().isoformat() in seen["system"]
+    assert clock.today().isoformat() in seen["system"]
     assert "sys" in seen["system"]
 
 

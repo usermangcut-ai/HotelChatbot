@@ -1,32 +1,24 @@
-import shutil
 import sqlite3
-from datetime import date, timedelta
+from datetime import timedelta
 
 import pytest
 
-from agent import db
+from agent import clock, db
 
 
-@pytest.fixture
-def tmp_db(tmp_path):
-    path = tmp_path / "hotel_test.db"
-    shutil.copy(db.DB_PATH, path)
-    db._ensure_schema(str(path))
-    return str(path)
-
-
-def test_ensure_schema_creates_tables(tmp_db):
+def test_init_db_creates_tables(tmp_db):
     conn = sqlite3.connect(tmp_db)
     tables = {r[0] for r in conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
     conn.close()
-    assert "reservations" in tables and "service_requests" in tables
+    assert {"rooms", "reservations", "service_requests", "staff_accounts", "guest_accounts",
+            "staff_requests", "sessions"} <= tables
 
 
 def test_available_counts_without_dates_equals_explicit_today(tmp_db):
-    from datetime import date, timedelta
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    from datetime import timedelta
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
     assert (db.available_counts(["Deluxe Park Suite"], db_path=tmp_db)
             == db.available_counts(["Deluxe Park Suite"], today, tomorrow, db_path=tmp_db))
 
@@ -56,8 +48,8 @@ def test_create_reservation_raises_when_sold_out(tmp_db):
 
 
 def test_create_reservation_rejects_today_at_business_layer(tmp_db):
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
     with pytest.raises(db.InvalidDateRangeError):
         db.create_reservation("Deluxe Park Suite", today, tomorrow,
                               "A", "090", "a@test.com", 2, db_path=tmp_db)
@@ -116,6 +108,11 @@ def test_hash_password_roundtrips_via_verify_password(tmp_db):
     assert db.verify_password("wrong", hashed) is False
 
 
+def test_verify_password_rejects_legacy_non_bcrypt_hash():
+    import hashlib
+    assert db.verify_password("s3cret", hashlib.sha256(b"s3cret").hexdigest()) is False
+
+
 def test_hash_password_is_salted_differently_each_call(tmp_db):
     assert db.hash_password("s3cret") != db.hash_password("s3cret")
 
@@ -157,12 +154,12 @@ def test_delete_staff_account_unknown_returns_false(tmp_db):
 def test_delete_reservation_cascades_to_guest_account(tmp_db):
     res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "Nguyen Van A",
                                  "0900000000", "a@t.com", 2, db_path=tmp_db)
-    assert db.get_guest_contact(res["room_id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
+    assert db.get_guest_contact(res["id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
     db.delete_reservation(res["id"], db_path=tmp_db)
-    assert db.get_guest_contact(res["room_id"], db_path=tmp_db) == (None, None)
+    assert db.get_guest_contact(res["id"], db_path=tmp_db) == (None, None)
     conn = sqlite3.connect(tmp_db)
-    row = conn.execute("SELECT COUNT(*) FROM guest_accounts WHERE room_id=?",
-                        (res["room_id"],)).fetchone()
+    row = conn.execute("SELECT COUNT(*) FROM guest_accounts WHERE reservation_id=?",
+                        (res["id"],)).fetchone()
     conn.close()
     assert row[0] == 0
 
@@ -170,12 +167,11 @@ def test_delete_reservation_cascades_to_guest_account(tmp_db):
 def test_get_guest_contact_returns_reservation_name_phone(tmp_db):
     res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "Nguyen Van A",
                                  "0900000000", "a@t.com", 2, db_path=tmp_db)
-    name, phone = db.get_guest_contact(res["room_id"], db_path=tmp_db)
-    assert (name, phone) == ("Nguyen Van A", "0900000000")
+    assert db.get_guest_contact(res["id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
 
 
-def test_get_guest_contact_unknown_room_returns_none(tmp_db):
-    assert db.get_guest_contact("Phòng không tồn tại", db_path=tmp_db) == (None, None)
+def test_get_guest_contact_unknown_reservation_returns_none(tmp_db):
+    assert db.get_guest_contact(999999, db_path=tmp_db) == (None, None)
 
 
 def test_create_service_request_inserts_row(tmp_db):
@@ -190,13 +186,13 @@ def test_create_service_request_inserts_row(tmp_db):
 
 
 def test_checkout_expired_stays_completes_booking_and_removes_guest_access(tmp_db):
-    yesterday = (date.today() - timedelta(days=1)).isoformat()
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
-    day_after = (date.today() + timedelta(days=2)).isoformat()
+    yesterday = (clock.today() - timedelta(days=1)).isoformat()
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
+    day_after = (clock.today() + timedelta(days=2)).isoformat()
     res = db.create_reservation("Deluxe Park Suite", tomorrow, day_after, "A", "090",
                                 "a@t.com", 2, db_path=tmp_db)
-    session_id = db.create_session("guest_account", res["room_id"], "guest", db_path=tmp_db)
+    session_id = db.create_session("guest_account", str(res["id"]), "guest", db_path=tmp_db)
     conn = sqlite3.connect(tmp_db)
     conn.execute("UPDATE reservations SET check_in=?, check_out=? WHERE id=?",
                  (yesterday, today, res["id"]))
