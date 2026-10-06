@@ -18,7 +18,12 @@ def hash_password(raw):
 
 
 def verify_password(raw, hashed):
-    return bcrypt.checkpw(raw.encode("utf-8"), hashed.encode("utf-8"))
+    """False (không raise) với hash không phải bcrypt — vd SHA-256 cũ chưa được migrate — để 1 dòng
+    dữ liệu lỗi không làm hỏng đăng nhập của mọi tài khoản khác cùng phòng."""
+    try:
+        return bcrypt.checkpw(raw.encode("utf-8"), hashed.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 class SoldOutError(Exception):

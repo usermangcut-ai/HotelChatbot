@@ -108,6 +108,11 @@ def test_hash_password_roundtrips_via_verify_password(tmp_db):
     assert db.verify_password("wrong", hashed) is False
 
 
+def test_verify_password_rejects_legacy_non_bcrypt_hash():
+    import hashlib
+    assert db.verify_password("s3cret", hashlib.sha256(b"s3cret").hexdigest()) is False
+
+
 def test_hash_password_is_salted_differently_each_call(tmp_db):
     assert db.hash_password("s3cret") != db.hash_password("s3cret")
 

@@ -1,7 +1,7 @@
 """Route /api/service-requests — bọc create_service_request(). Không thanh toán/QR, khác đặt phòng.
 Chỉ khách ĐANG LƯU TRÚ (đã đăng nhập tài khoản khách, được cấp sau khi đặt phòng) mới đặt được nhà
 hàng/spa — khách vãng lai chưa thuê phòng không có quyền này (giống /api/me/requests). guest_name/
-guest_phone lấy tự động từ reservation gắn với phòng đang đăng nhập, không bắt khách gõ lại."""
+guest_phone lấy tự động từ booking (lượt lưu trú) của phiên đăng nhập, không bắt khách gõ lại."""
 from fastapi import APIRouter, Depends, HTTPException
 
 from agent import db as agent_db
