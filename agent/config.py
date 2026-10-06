@@ -20,6 +20,13 @@ def _env_bool(name, default):
     return raw.strip().lower() in ("1", "true", "yes", "on")
 
 
+def _env_int(name, default):
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == "":
+        return default
+    return int(raw)
+
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(_HERE)
 
@@ -40,6 +47,8 @@ ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")   # trống → không tự tạo admin
 COOKIE_SECURE = _env_bool("COOKIE_SECURE", False)  # bật trên production (HTTPS)
 GUARDRAIL_ENABLED = _env_bool("GUARDRAIL_ENABLED", True)
+CHAT_IDLE_MINUTES = _env_int("CHAT_IDLE_MINUTES", 60)     # phiên chat im lặng quá lâu → xóa khỏi RAM
+CHAT_MAX_SESSIONS = _env_int("CHAT_MAX_SESSIONS", 1000)   # trần số phiên trong RAM
 
 HISTORY_TURNS = 6        # số lượt (mỗi lượt = 1 user + 1 assistant) đưa vào context
 MAX_TOOL_ITERS = 5       # trần số vòng gọi tool trong một lượt chat

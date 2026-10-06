@@ -35,3 +35,12 @@ def test_constants():
     assert config.HISTORY_TURNS == 6
     assert config.MAX_TOOL_ITERS == 5
     assert config.MAX_INPUT_CHARS == 500
+
+
+def test_env_int(monkeypatch):
+    monkeypatch.setenv("X_NUM", "42")
+    assert config._env_int("X_NUM", 7) == 42
+    monkeypatch.setenv("X_NUM", "")
+    assert config._env_int("X_NUM", 7) == 7
+    monkeypatch.delenv("X_NUM")
+    assert config._env_int("X_NUM", 7) == 7
