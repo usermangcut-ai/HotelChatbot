@@ -17,7 +17,9 @@ def create_service_request(body: ServiceRequestBody, identity=Depends(require_ro
     if body.service_type not in SERVICE_TYPES:
         raise HTTPException(status_code=422,
                              detail=f"Loại dịch vụ '{body.service_type}' không được hỗ trợ.")
-    guest_name, guest_phone = agent_db.get_guest_contact(identity["identity_id"])
+    reservation_id = int(identity["identity_id"])
+    guest_name, guest_phone = agent_db.get_guest_contact(reservation_id)
     result = agent_db.create_service_request(
-        body.service_type, guest_name, guest_phone, body.requested_at, body.party_size, body.note)
+        body.service_type, guest_name, guest_phone, body.requested_at, body.party_size, body.note,
+        reservation_id=reservation_id)
     return ServiceRequestResponse(**result)

@@ -56,3 +56,50 @@ def test_init_db_does_not_reseed_admin_when_accounts_exist(tmp_path):
     init_db(path, admin_username="boss", admin_password="first")
     init_db(path, admin_username="boss2", admin_password="second")
     assert _scalar(path, "SELECT COUNT(*) FROM staff_accounts") == 1
+
+
+def test_migrates_legacy_db_to_latest(tmp_path):
+    import hashlib
+
+    path = str(tmp_path / "legacy.db")
+    conn = sqlite3.connect(path)
+    schema._v1_base_schema(conn)   # đúng hình dạng hotel.db cũ, user_version vẫn = 0
+    conn.execute("CREATE TABLE room_types (room_type TEXT PRIMARY KEY, price_vnd INTEGER)")
+    conn.execute("INSERT INTO rooms (room_id, room_type, floor, available) "
+                 "VALUES ('504', 'Deluxe Park Suite', 5, 1)")
+    conn.execute("INSERT INTO staff_accounts (username, password_hash, role, created_at, "
+                 "password_plain) VALUES ('boss', ?, 'admin', '2026-07-01T00:00:00', 'oldpw')",
+                 (hashlib.sha256(b"oldpw").hexdigest(),))
+    conn.execute("INSERT INTO reservations (id, room_type, check_in, check_out, guest_name, status, "
+                 "created_at, room_id) VALUES (1, 'Deluxe Park Suite', '2099-01-01', '2099-01-03', "
+                 "'A', 'paid', '2026-07-01T00:00:00', '504')")
+    conn.execute("INSERT INTO guest_accounts (room_id, password_hash, reservation_id, created_at, "
+                 "password_plain) VALUES ('504', ?, 1, '2026-07-01T00:00:00', 'g1')",
+                 (hashlib.sha256(b"g1").hexdigest(),))
+    conn.execute("INSERT INTO guest_accounts (room_id, password_hash, reservation_id, created_at) "
+                 "VALUES ('505', 'x', NULL, '2026-07-01T00:00:00')")
+    conn.execute("INSERT INTO sessions VALUES ('s-guest', 'guest_account', '504', 'guest', "
+                 "'2026-07-01T00:00:00', '2099-01-01T00:00:00')")
+    conn.commit()
+    conn.close()
+
+    init_db(path, admin_password="")
+
+    conn = sqlite3.connect(path)
+    try:
+        assert conn.execute("PRAGMA user_version").fetchone()[0] == len(schema.MIGRATIONS)
+        tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        assert "room_types" not in tables
+        assert "available" not in schema._columns(conn, "rooms")
+        assert "password_plain" not in schema._columns(conn, "staff_accounts")
+        assert "password_plain" not in schema._columns(conn, "guest_accounts")
+        assert "reservation_id" in schema._columns(conn, "staff_requests")
+        assert "reservation_id" in schema._columns(conn, "service_requests")
+        rows = conn.execute("SELECT reservation_id, room_id, password_hash FROM guest_accounts").fetchall()
+        assert [(r[0], r[1]) for r in rows] == [(1, "504")]
+        assert db.verify_password("g1", rows[0][2])
+        assert conn.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 0
+        assert conn.execute("SELECT COUNT(*) FROM reservations").fetchone()[0] == 1
+    finally:
+        conn.close()
+    assert db.verify_staff_login("boss", "oldpw", db_path=path) == "admin"

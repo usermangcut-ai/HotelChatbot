@@ -86,6 +86,7 @@ class MeResponse(BaseModel):
     identity_type: str
     identity_id: str
     role: str
+    room_id: str | None = None   # chỉ có với khách lưu trú
 
 
 class StaffAccountBody(BaseModel):

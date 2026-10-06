@@ -149,12 +149,12 @@ def test_delete_staff_account_unknown_returns_false(tmp_db):
 def test_delete_reservation_cascades_to_guest_account(tmp_db):
     res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "Nguyen Van A",
                                  "0900000000", "a@t.com", 2, db_path=tmp_db)
-    assert db.get_guest_contact(res["room_id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
+    assert db.get_guest_contact(res["id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
     db.delete_reservation(res["id"], db_path=tmp_db)
-    assert db.get_guest_contact(res["room_id"], db_path=tmp_db) == (None, None)
+    assert db.get_guest_contact(res["id"], db_path=tmp_db) == (None, None)
     conn = sqlite3.connect(tmp_db)
-    row = conn.execute("SELECT COUNT(*) FROM guest_accounts WHERE room_id=?",
-                        (res["room_id"],)).fetchone()
+    row = conn.execute("SELECT COUNT(*) FROM guest_accounts WHERE reservation_id=?",
+                        (res["id"],)).fetchone()
     conn.close()
     assert row[0] == 0
 
@@ -162,12 +162,11 @@ def test_delete_reservation_cascades_to_guest_account(tmp_db):
 def test_get_guest_contact_returns_reservation_name_phone(tmp_db):
     res = db.create_reservation("Deluxe Park Suite", "2099-09-10", "2099-09-11", "Nguyen Van A",
                                  "0900000000", "a@t.com", 2, db_path=tmp_db)
-    name, phone = db.get_guest_contact(res["room_id"], db_path=tmp_db)
-    assert (name, phone) == ("Nguyen Van A", "0900000000")
+    assert db.get_guest_contact(res["id"], db_path=tmp_db) == ("Nguyen Van A", "0900000000")
 
 
-def test_get_guest_contact_unknown_room_returns_none(tmp_db):
-    assert db.get_guest_contact("Phòng không tồn tại", db_path=tmp_db) == (None, None)
+def test_get_guest_contact_unknown_reservation_returns_none(tmp_db):
+    assert db.get_guest_contact(999999, db_path=tmp_db) == (None, None)
 
 
 def test_create_service_request_inserts_row(tmp_db):
@@ -188,7 +187,7 @@ def test_checkout_expired_stays_completes_booking_and_removes_guest_access(tmp_d
     day_after = (clock.today() + timedelta(days=2)).isoformat()
     res = db.create_reservation("Deluxe Park Suite", tomorrow, day_after, "A", "090",
                                 "a@t.com", 2, db_path=tmp_db)
-    session_id = db.create_session("guest_account", res["room_id"], "guest", db_path=tmp_db)
+    session_id = db.create_session("guest_account", str(res["id"]), "guest", db_path=tmp_db)
     conn = sqlite3.connect(tmp_db)
     conn.execute("UPDATE reservations SET check_in=?, check_out=? WHERE id=?",
                  (yesterday, today, res["id"]))

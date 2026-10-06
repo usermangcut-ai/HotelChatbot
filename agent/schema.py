@@ -63,7 +63,51 @@ def _v1_base_schema(conn):
             conn.execute(f"ALTER TABLE {table} ADD COLUMN password_plain TEXT")
 
 
-MIGRATIONS = [_v1_base_schema]
+def _v2_hardening(conn):
+    """Bỏ mật khẩu plaintext; tài khoản khách theo TỪNG booking (không còn khóa theo số phòng — booking
+    sau ghi đè khách đang ở); gắn yêu cầu với booking; dọn bảng/cột phòng lỗi thời."""
+    # 1. Chuyển hash cũ (SHA-256 trần) sang bcrypt, dùng password_plain lần cuối rồi xóa cột.
+    for table, key in (("staff_accounts", "username"), ("guest_accounts", "room_id")):
+        rows = conn.execute(f"SELECT {key}, password_hash, password_plain FROM {table}").fetchall()
+        for ident, pwd_hash, plain in rows:
+            if plain and not (pwd_hash or "").startswith("$2"):
+                conn.execute(f"UPDATE {table} SET password_hash=? WHERE {key}=?",
+                             (hash_password(plain), ident))
+    conn.execute("ALTER TABLE staff_accounts DROP COLUMN password_plain")
+
+    # 2. guest_accounts: khóa chính reservation_id. Tài khoản cũ không gắn booking nào bị bỏ.
+    conn.execute("""
+        CREATE TABLE guest_accounts_v2 (
+            reservation_id INTEGER PRIMARY KEY, room_id TEXT NOT NULL,
+            password_hash TEXT NOT NULL, created_at TEXT NOT NULL)""")
+    conn.execute("INSERT OR IGNORE INTO guest_accounts_v2 "
+                 "(reservation_id, room_id, password_hash, created_at) "
+                 "SELECT reservation_id, room_id, password_hash, created_at FROM guest_accounts "
+                 "WHERE reservation_id IS NOT NULL")
+    conn.execute("DROP TABLE guest_accounts")
+    conn.execute("ALTER TABLE guest_accounts_v2 RENAME TO guest_accounts")
+    conn.execute("CREATE INDEX idx_guest_accounts_room ON guest_accounts(room_id)")
+
+    # 3. rooms: bỏ cột available (lỗi thời — phòng trống tính động từ reservations); bỏ room_types
+    #    (giá/thông số lấy từ knowledge.json).
+    conn.execute("""
+        CREATE TABLE rooms_v2 (
+            room_id TEXT PRIMARY KEY, room_type TEXT NOT NULL, floor INTEGER)""")
+    conn.execute("INSERT INTO rooms_v2 (room_id, room_type, floor) "
+                 "SELECT room_id, room_type, floor FROM rooms")
+    conn.execute("DROP TABLE rooms")
+    conn.execute("ALTER TABLE rooms_v2 RENAME TO rooms")
+    conn.execute("DROP TABLE IF EXISTS room_types")
+
+    # 4. Yêu cầu gắn với booking — khách chỉ thấy yêu cầu của chính lượt lưu trú của mình.
+    conn.execute("ALTER TABLE staff_requests ADD COLUMN reservation_id INTEGER")
+    conn.execute("ALTER TABLE service_requests ADD COLUMN reservation_id INTEGER")
+
+    # 5. Phiên khách cũ lưu identity_id = số phòng; từ v2 là reservation_id → hủy để đăng nhập lại.
+    conn.execute("DELETE FROM sessions WHERE identity_type='guest_account'")
+
+
+MIGRATIONS = [_v1_base_schema, _v2_hardening]
 
 
 def migrate(conn):
