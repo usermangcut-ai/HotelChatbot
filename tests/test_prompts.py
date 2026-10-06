@@ -71,3 +71,9 @@ def test_prompt_includes_hotel_overview_facts_from_knowledge_base():
     p = build_system_prompt()
     overview = knowledge.get_node_by_title("Thông tin chung")
     assert overview["text"] in p
+
+
+def test_prompt_routes_cancel_or_change_booking_to_hotline():
+    p = build_system_prompt()
+    assert "hủy/đổi/sửa một đặt phòng ĐÃ CÓ" in p
+    assert "NEVER hứa tự hủy/đổi đặt phòng" in p
