@@ -140,6 +140,8 @@ Lần khởi động đầu tiên (DB chưa có tài khoản nhân viên nào), 
 | `APP_TZ` | `Asia/Ho_Chi_Minh` | Múi giờ nghiệp vụ |
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | `admin`, trống | Admin tạo lần đầu |
 | `COOKIE_SECURE` | `false` | `true` khi chạy sau HTTPS |
+| `CHAT_IDLE_MINUTES` | `60` | Phiên chat im lặng quá số phút này thì bị xóa khỏi RAM |
+| `CHAT_MAX_SESSIONS` | `1000` | Trần số phiên chat trong RAM |
 | `GUARDRAIL_ENABLED` | `true` | Tắt khi cần đo latency |
 
 **Nâng cấp từ bản cũ** (hotel.db nằm ở `data/`): dời `data/hotel.db*` sang `storage/`, xóa
@@ -166,3 +168,6 @@ prompt injection giữa hội thoại.
 - Phạm vi có chủ đích **không bao gồm**: cá nhân hóa/ghi nhớ khách qua nhiều phiên, embedding/RAG (kho
   kiến thức hiện đủ nhỏ để nhúng thẳng vào prompt), cổng thanh toán thật (QR hiện là bản demo),
   OAuth/SSO.
+- Hội thoại chat chỉ nằm trong RAM của server (không lưu DB): F5 vẫn giữ (trình duyệt lưu trong
+  `sessionStorage`), đóng tab là mất; restart server thì các cuộc chat đang dở mất ngữ cảnh. Vì vậy
+  chạy **1 instance, 1 worker** — nhiều process sẽ mỗi process nhớ một kiểu.

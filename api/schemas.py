@@ -8,7 +8,9 @@ from agent import clock
 
 
 class ChatRequest(BaseModel):
-    session_id: str
+    # id phiên do client sinh (frontend: UUID) — chỉ nhận chữ/số/-/_, 8-64 ký tự, để không dùng chuỗi
+    # rác/khổng lồ làm khóa bộ nhớ chat
+    session_id: str = Field(pattern=r"^[A-Za-z0-9_-]{8,64}$")
     message: str
 
 
