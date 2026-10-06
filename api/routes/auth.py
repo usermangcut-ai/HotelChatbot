@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Response
 
 from agent import db as agent_db
+from agent.config import COOKIE_SECURE
 from api.auth import COOKIE_NAME, get_current_identity
 from api.schemas import ChangePasswordBody, LoginRequest, MeResponse
 
@@ -30,7 +31,8 @@ def login(body: LoginRequest, response: Response):
     else:
         raise HTTPException(status_code=422, detail="identity_type phải là 'staff' hoặc 'guest'.")
 
-    response.set_cookie(COOKIE_NAME, session_id, httponly=True, samesite="lax", max_age=86400)
+    response.set_cookie(COOKIE_NAME, session_id, httponly=True, samesite="lax",
+                        secure=COOKIE_SECURE, max_age=86400)
     return MeResponse(identity_type=body.identity_type, identity_id=identity_id, role=role,
                       room_id=room_id)
 

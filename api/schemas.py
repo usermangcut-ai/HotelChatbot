@@ -1,6 +1,6 @@
 """Pydantic request/response models cho API — 1 file dùng chung cho mọi route."""
 from datetime import date
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -132,8 +132,13 @@ class ServiceRequestRecord(BaseModel):
     created_at: str
 
 
-class StatusUpdate(BaseModel):
-    status: str
+class ReservationStatusUpdate(BaseModel):
+    status: Literal["paid", "cancelled", "completed"]
+
+
+class RequestStatusUpdate(BaseModel):
+    """Dùng chung cho yêu cầu dịch vụ (nhà hàng/spa) và yêu cầu hỗ trợ."""
+    status: Literal["received", "done", "cancelled"]
 
 
 class StaffRequestRecord(BaseModel):

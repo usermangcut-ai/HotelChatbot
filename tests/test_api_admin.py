@@ -74,3 +74,18 @@ def test_delete_staff_account_success(monkeypatch):
     monkeypatch.setattr(agent_db, "delete_staff_account", lambda u: True)
     resp = _admin_client().delete("/api/admin/staff-accounts/nv1")
     assert resp.status_code == 200
+
+
+def test_update_booking_rejects_unknown_status():
+    resp = _admin_client().patch("/api/admin/bookings/1", json={"status": "hacked"})
+    assert resp.status_code == 422
+
+
+def test_update_service_request_rejects_booking_only_status():
+    resp = _admin_client().patch("/api/admin/service-requests/1", json={"status": "paid"})
+    assert resp.status_code == 422
+
+
+def test_staff_update_request_rejects_unknown_status():
+    resp = _admin_client().patch("/api/staff/requests/1", json={"status": "xong"})
+    assert resp.status_code == 422

@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from agent import db as agent_db
 from api.auth import require_role
-from api.schemas import (ReservationRecord, ServiceRequestRecord, StaffAccountBody,
-                          StaffAccountRecord, StatusUpdate)
+from api.schemas import (RequestStatusUpdate, ReservationRecord, ReservationStatusUpdate,
+                          ServiceRequestRecord, StaffAccountBody, StaffAccountRecord)
 
 router = APIRouter(dependencies=[Depends(require_role("admin"))])
 
@@ -16,7 +16,7 @@ def list_bookings():
 
 
 @router.patch("/api/admin/bookings/{booking_id}", response_model=dict)
-def update_booking(booking_id: int, body: StatusUpdate):
+def update_booking(booking_id: int, body: ReservationStatusUpdate):
     ok = agent_db.update_reservation_status(booking_id, body.status)
     if not ok:
         raise HTTPException(status_code=404, detail="Không tìm thấy đặt phòng.")
@@ -37,7 +37,7 @@ def list_admin_service_requests():
 
 
 @router.patch("/api/admin/service-requests/{request_id}", response_model=dict)
-def update_admin_service_request(request_id: int, body: StatusUpdate):
+def update_admin_service_request(request_id: int, body: RequestStatusUpdate):
     ok = agent_db.update_service_request_status(request_id, body.status)
     if not ok:
         raise HTTPException(status_code=404, detail="Không tìm thấy yêu cầu dịch vụ.")

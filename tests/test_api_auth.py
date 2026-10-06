@@ -78,3 +78,14 @@ def test_change_password_rejects_short_new_password():
     resp = _client_as("staff_account", "admin", "admin").post(
         "/api/auth/change-password", json={"old_password": "admin123", "new_password": "abc"})
     assert resp.status_code == 422
+
+
+def test_login_cookie_secure_flag_follows_config(monkeypatch):
+    from api.routes import auth as auth_routes
+
+    monkeypatch.setattr(auth_routes, "COOKIE_SECURE", True)
+    monkeypatch.setattr(agent_db, "verify_staff_login", lambda u, p: "staff")
+    resp = client.post("/api/auth/login",
+                       json={"identity_type": "staff", "username": "nv", "password": "x"})
+    assert resp.status_code == 200
+    assert "secure" in resp.headers["set-cookie"].lower()
