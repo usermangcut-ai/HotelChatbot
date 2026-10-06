@@ -19,6 +19,8 @@ frontend/dist/
 # Bí mật + dữ liệu động — không bake vào image, truyền qua env/volume lúc chạy
 .env
 storage/
+# phòng hờ DB cũ còn sót trong data/ — không bake vào image
+data/*.db*
 
 # Editor/OS
 .vscode/
