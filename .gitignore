@@ -14,11 +14,7 @@ docs/superpowers/
 frontend/node_modules/
 frontend/dist/
 
-# chứa plaintext password (staff_accounts/guest_accounts) + toàn bộ dữ liệu thật — KHÔNG public
-data/hotel.db
-data/hotel.db.bak
-data/hotel.db-shm
-data/hotel.db-wal
-data/hotel_view.json
+# Dữ liệu ĐỘNG (hotel.db, logs) — dữ liệu thật của khách, KHÔNG public; trên server là volume
+storage/
 
 docs/AGENT_KNOWLEDGE.md
