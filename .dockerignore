@@ -16,11 +16,9 @@ logs/
 frontend/node_modules/
 frontend/dist/
 
-# Bí mật + dữ liệu thật — không được bake vào image, truyền qua env/volume lúc chạy
+# Bí mật + dữ liệu động — không bake vào image, truyền qua env/volume lúc chạy
 .env
-data/hotel.db
-data/hotel.db.bak
-data/hotel_view.json
+storage/
 
 # Editor/OS
 .vscode/

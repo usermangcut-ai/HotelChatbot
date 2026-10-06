@@ -86,12 +86,13 @@ api/       FastAPI: main.py (khởi tạo app + phục vụ frontend tĩnh) · a
            thành route HTTP, không chứa logic nghiệp vụ riêng
 frontend/  React + Vite + TypeScript + Tailwind: src/pages/ (trang chủ, đặt phòng, dịch vụ, đăng
            nhập, quản trị, nhân viên, tài khoản khách), src/components/, src/AuthContext.tsx, src/api.ts
-data/      knowledge.json (dữ liệu tĩnh) · hotel.db (SQLite — nguồn dữ liệu thật duy nhất, không
-           track git) · images/ (ảnh phòng/resort, phục vụ qua /images/...)
+data/      Dữ liệu TĨNH (đi cùng code/image): knowledge.json · rooms.json (22 phòng vật lý) ·
+           images/ (ảnh phòng/resort, phục vụ qua /images/...)
+storage/   Dữ liệu ĐỘNG (không track git, là volume khi chạy Docker): hotel.db (SQLite — nguồn
+           dữ liệu thật duy nhất) · logs/traces.jsonl
 eval/      Bộ đánh giá chất lượng agent: golden.jsonl (case đơn lượt) · golden_multi.jsonl (hội
            thoại nhiều lượt) · run_eval.py
 tests/     Unit test Python cho agent/ và api/ (tiêm fake LLM/DB, không gọi mạng thật)
-logs/      traces.jsonl — mỗi lượt chat 1 dòng JSON, phục vụ debug (không track git)
 docs/      Tài liệu vận hành/nghiệp vụ bổ sung
 ```
 
@@ -104,8 +105,7 @@ copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_M
 docker compose up -d --build
 ```
 
-Truy cập `http://localhost:8000`. Dữ liệu (`data/`) và log (`logs/`) được mount ra ngoài container
-nên khởi động lại không mất dữ liệu.
+Truy cập `http://localhost:8000`. Dữ liệu động (`storage/`) được mount ra ngoài container nên build lại/khởi động lại không mất dữ liệu.
 
 > Trên Windows dùng Git Bash: chạy bằng `docker compose`, không dùng `docker run -v ...` trực tiếp —
 > Git Bash tự dịch đường dẫn kiểu Unix trong tham số `-v`, có thể làm sai đường dẫn mount.
@@ -127,8 +127,23 @@ cd ..
 
 Provider LLM cần theo chuẩn OpenAI `/chat/completions` và **hỗ trợ function-calling**.
 
-Tài khoản quản trị mặc định khi khởi tạo lần đầu: `admin` / `admin123` — nên đổi mật khẩu ngay sau
-lần đăng nhập đầu tiên (mục "Tài khoản" trong bảng quản trị).
+Lần khởi động đầu tiên (DB chưa có tài khoản nhân viên nào), app tạo admin từ `ADMIN_USERNAME` /
+`ADMIN_PASSWORD` trong `.env`. Để trống `ADMIN_PASSWORD` thì không tạo.
+
+## Cấu hình (biến môi trường)
+
+| Biến | Mặc định | Ý nghĩa |
+|---|---|---|
+| `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` | — | Provider LLM (bắt buộc để chat) |
+| `STORAGE_DIR` | `./storage` | Thư mục dữ liệu động; trên Docker là `/app/storage` |
+| `DB_PATH` | `$STORAGE_DIR/hotel.db` | File SQLite |
+| `APP_TZ` | `Asia/Ho_Chi_Minh` | Múi giờ nghiệp vụ |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | `admin`, trống | Admin tạo lần đầu |
+| `COOKIE_SECURE` | `false` | `true` khi chạy sau HTTPS |
+| `GUARDRAIL_ENABLED` | `true` | Tắt khi cần đo latency |
+
+**Nâng cấp từ bản cũ** (hotel.db nằm ở `data/`): dời `data/hotel.db*` sang `storage/`, xóa
+`data/hotel_view.json`. Lần khởi động kế tiếp app tự nâng cấp schema (PRAGMA user_version).
 
 ## Kiểm thử & chất lượng
 
@@ -145,9 +160,9 @@ prompt injection giữa hội thoại.
 
 ## Ghi chú vận hành
 
-- `data/hotel.db` là **nguồn dữ liệu thật duy nhất** — các bảng nghiệp vụ được tạo tự động (idempotent)
-  ngay khi ứng dụng khởi động, không cần chạy migration thủ công.
-- Trace debug từng lượt chat nằm ở `logs/traces.jsonl`, lọc theo `session_id`.
+- `storage/hotel.db` là **nguồn dữ liệu thật duy nhất**. Schema được tạo/nâng cấp tự động lúc khởi
+  động bằng migration đánh số (`agent/schema.py`); phòng vật lý seed từ `data/rooms.json`.
+- Trace debug từng lượt chat nằm ở `storage/logs/traces.jsonl`, lọc theo `session_id`.
 - Phạm vi có chủ đích **không bao gồm**: cá nhân hóa/ghi nhớ khách qua nhiều phiên, embedding/RAG (kho
   kiến thức hiện đủ nhỏ để nhúng thẳng vào prompt), cổng thanh toán thật (QR hiện là bản demo),
   OAuth/SSO.

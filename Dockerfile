@@ -30,16 +30,17 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY agent/ ./agent/
 COPY api/ ./api/
-COPY data/knowledge.json ./data/knowledge.json
-COPY data/images/ ./data/images/
+COPY data/ ./data/
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# hotel.db/logs sinh ra lúc chạy — tạo sẵn thư mục + đổi chủ cho user không phải root
-RUN mkdir -p /app/logs && useradd -m -u 1000 appuser && chown -R appuser /app
+# data/ = dữ liệu TĨNH (trong image). storage/ = dữ liệu ĐỘNG (hotel.db, logs) — cắm volume vào đây;
+# KHÔNG cắm volume vào /app/data (sẽ che mất knowledge.json/rooms.json/images trong image).
+ENV STORAGE_DIR=/app/storage
+RUN mkdir -p /app/storage && useradd -m -u 1000 appuser && chown -R appuser /app
 USER appuser
 
 EXPOSE 8000
-VOLUME ["/app/data", "/app/logs"]
+VOLUME ["/app/storage"]
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
     CMD python -c "import urllib.request as u; u.urlopen('http://localhost:8000/')" || exit 1
