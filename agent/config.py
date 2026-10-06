@@ -48,7 +48,7 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")   # trống → không tự t�
 COOKIE_SECURE = _env_bool("COOKIE_SECURE", False)  # bật trên production (HTTPS)
 GUARDRAIL_ENABLED = _env_bool("GUARDRAIL_ENABLED", True)
 CHAT_IDLE_MINUTES = _env_int("CHAT_IDLE_MINUTES", 60)     # phiên chat im lặng quá lâu → xóa khỏi RAM
-CHAT_MAX_SESSIONS = _env_int("CHAT_MAX_SESSIONS", 1000)   # trần số phiên trong RAM
+CHAT_MAX_SESSIONS = max(1, _env_int("CHAT_MAX_SESSIONS", 1000))   # trần số phiên trong RAM (≥1)
 
 HISTORY_TURNS = 6        # số lượt (mỗi lượt = 1 user + 1 assistant) đưa vào context
 MAX_TOOL_ITERS = 5       # trần số vòng gọi tool trong một lượt chat

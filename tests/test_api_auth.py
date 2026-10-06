@@ -89,3 +89,12 @@ def test_login_cookie_secure_flag_follows_config(monkeypatch):
                        json={"identity_type": "staff", "username": "nv", "password": "x"})
     assert resp.status_code == 200
     assert "secure" in resp.headers["set-cookie"].lower()
+
+
+def test_logout_succeeds_even_when_session_already_invalid():
+    # Khách trả phòng xong → phiên hết hiệu lực; đăng xuất vẫn phải xóa được cookie, không trả 401.
+    c = TestClient(app)
+    c.cookies.set(COOKIE_NAME, "phien-da-het-han")
+    resp = c.post("/api/auth/logout")
+    assert resp.status_code == 200
+    assert COOKIE_NAME in resp.headers.get("set-cookie", "")

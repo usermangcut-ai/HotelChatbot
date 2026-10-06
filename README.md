@@ -101,7 +101,8 @@ docs/      Tài liệu vận hành/nghiệp vụ bổ sung
 ### Bằng Docker (khuyến nghị)
 
 ```bash
-copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_MODEL
+copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_MODEL + ADMIN_PASSWORD (tạo admin lần đầu)
+mkdir storage                 # thư mục dữ liệu động — tạo trước để container (user không phải root) ghi được
 docker compose up -d --build
 ```
 
@@ -115,7 +116,7 @@ Truy cập `http://localhost:8000`. Dữ liệu động (`storage/`) được mo
 ```bash
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
-copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_MODEL
+copy .env.example .env        # rồi điền LLM_BASE_URL / LLM_API_KEY / LLM_MODEL + ADMIN_PASSWORD (tạo admin lần đầu)
 
 cd frontend
 npm install
@@ -137,6 +138,7 @@ Lần khởi động đầu tiên (DB chưa có tài khoản nhân viên nào), 
 | `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` | — | Provider LLM (bắt buộc để chat) |
 | `STORAGE_DIR` | `./storage` | Thư mục dữ liệu động; trên Docker là `/app/storage` |
 | `DB_PATH` | `$STORAGE_DIR/hotel.db` | File SQLite |
+| `LOG_PATH` | `$STORAGE_DIR/logs/traces.jsonl` | Trace từng lượt chat |
 | `APP_TZ` | `Asia/Ho_Chi_Minh` | Múi giờ nghiệp vụ |
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | `admin`, trống | Admin tạo lần đầu |
 | `COOKIE_SECURE` | `false` | `true` khi chạy sau HTTPS |
@@ -170,4 +172,5 @@ prompt injection giữa hội thoại.
   OAuth/SSO.
 - Hội thoại chat chỉ nằm trong RAM của server (không lưu DB): F5 vẫn giữ (trình duyệt lưu trong
   `sessionStorage`), đóng tab là mất; restart server thì các cuộc chat đang dở mất ngữ cảnh. Vì vậy
-  chạy **1 instance, 1 worker** — nhiều process sẽ mỗi process nhớ một kiểu.
+  chạy **1 instance, 1 worker** (không truyền `--workers` cho uvicorn) — nhiều process sẽ mỗi process
+  nhớ một kiểu. `--reload` khi dev cũng xóa sạch các cuộc chat mỗi lần code đổi.

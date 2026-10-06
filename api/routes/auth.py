@@ -39,8 +39,8 @@ def login(body: LoginRequest, response: Response):
 
 @router.post("/api/auth/logout")
 def logout(response: Response,
-           session_id: str | None = Cookie(default=None, alias=COOKIE_NAME),
-           identity=Depends(get_current_identity)):
+           session_id: str | None = Cookie(default=None, alias=COOKIE_NAME)):
+    """Không đòi phiên còn hiệu lực — khách đã trả phòng (phiên tự hết hạn) vẫn xóa được cookie."""
     if session_id:
         agent_db.delete_session(session_id)
     response.delete_cookie(COOKIE_NAME)
