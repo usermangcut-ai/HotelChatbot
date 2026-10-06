@@ -1,8 +1,6 @@
-"""Đọc hotel.db chỉ-đọc để đếm phòng; ghi RW có kiểm soát cho đặt phòng/yêu cầu dịch vụ.
-
-Sau mỗi lần ghi, tự xuất thêm 1 bản sao chỉ-để-đọc ra data/hotel_view.json (xem _export_json_view) —
-SQLite vẫn là nguồn dữ liệu thật duy nhất, file JSON chỉ để mở bằng text editor xem nhanh, KHÔNG bao
-giờ được code đọc lại."""
+"""Truy cập dữ liệu hotel.db: đọc (đếm phòng trống, danh sách) và ghi có kiểm soát (đặt phòng, yêu
+cầu dịch vụ, tài khoản, phiên đăng nhập). Tạo/nâng cấp schema + seed nằm ở agent/schema.py — import
+module này KHÔNG ghi gì vào DB."""
 import json
 import os
 import secrets
@@ -13,9 +11,6 @@ import bcrypt
 
 from agent import clock
 from agent.config import DB_PATH
-
-_VIEW_PATH = os.path.join(os.path.dirname(DB_PATH), "hotel_view.json")
-
 
 def hash_password(raw):
     """bcrypt — có salt ngẫu nhiên riêng mỗi lần hash (2 lần hash cùng 1 mật khẩu ra 2 chuỗi khác
@@ -46,117 +41,6 @@ def _connect_rw(db_path=DB_PATH):
     conn.execute("PRAGMA busy_timeout=5000")
     conn.execute("PRAGMA journal_mode=WAL")    # cho phép đọc song song trong lúc đang ghi
     return conn
-
-
-def _ensure_schema(db_path=DB_PATH):
-    """Tạo bảng reservations/service_requests nếu chưa có (idempotent)."""
-    conn = _connect_rw(db_path)
-    try:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS reservations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                room_type TEXT NOT NULL,
-                check_in TEXT NOT NULL,
-                check_out TEXT NOT NULL,
-                guest_name TEXT, guest_phone TEXT, guest_email TEXT,
-                num_guests INTEGER,
-                status TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            )
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS service_requests (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                service_type TEXT NOT NULL,
-                guest_name TEXT, guest_phone TEXT,
-                requested_at TEXT,
-                party_size INTEGER, note TEXT,
-                status TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            )
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS staff_accounts (
-                username TEXT PRIMARY KEY,
-                password_hash TEXT NOT NULL,
-                role TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            )
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS guest_accounts (
-                room_id TEXT PRIMARY KEY,
-                password_hash TEXT NOT NULL,
-                reservation_id INTEGER,
-                created_at TEXT NOT NULL
-            )
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS staff_requests (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                room_id TEXT,
-                request_type TEXT NOT NULL,
-                note TEXT,
-                status TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            )
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS sessions (
-                session_id TEXT PRIMARY KEY,
-                identity_type TEXT NOT NULL,
-                identity_id TEXT NOT NULL,
-                role TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                expires_at TEXT NOT NULL
-            )
-        """)
-        cols = {row[1] for row in conn.execute("PRAGMA table_info(reservations)").fetchall()}
-        if "room_id" not in cols:
-            conn.execute("ALTER TABLE reservations ADD COLUMN room_id TEXT")
-        cols = {row[1] for row in conn.execute("PRAGMA table_info(guest_accounts)").fetchall()}
-        if "password_plain" not in cols:
-            conn.execute("ALTER TABLE guest_accounts ADD COLUMN password_plain TEXT")
-        cols = {row[1] for row in conn.execute("PRAGMA table_info(staff_accounts)").fetchall()}
-        if "password_plain" not in cols:
-            conn.execute("ALTER TABLE staff_accounts ADD COLUMN password_plain TEXT")
-        # backfill admin mặc định tạo trước khi có cột này — mật khẩu demo công khai (README), không
-        # phải bí mật rò rỉ thêm.
-        conn.execute(
-            "UPDATE staff_accounts SET password_plain='admin123' "
-            "WHERE username='admin' AND password_plain IS NULL")
-        # migrate hash cũ (SHA-256 trần) sang bcrypt — tận dụng password_plain vừa có để rehash đúng,
-        # dòng nào không có password_plain (tạo trước khi lưu plaintext) sẽ giữ hash cũ, không login
-        # lại được bằng mật khẩu cũ cho tới khi reset (chấp nhận được, đã biết trước).
-        _migrate_to_bcrypt(conn, "staff_accounts", "username")
-        _migrate_to_bcrypt(conn, "guest_accounts", "room_id")
-        conn.commit()
-    finally:
-        conn.close()
-
-
-def _migrate_to_bcrypt(conn, table, id_col):
-    rows = conn.execute(f"SELECT {id_col}, password_hash, password_plain FROM {table}").fetchall()
-    for ident, pwd_hash, pwd_plain in rows:
-        if pwd_plain and not (pwd_hash or "").startswith("$2"):
-            conn.execute(f"UPDATE {table} SET password_hash=? WHERE {id_col}=?",
-                         (hash_password(pwd_plain), ident))
-
-
-def seed_default_admin(username="admin", password="admin123", db_path=DB_PATH):
-    """Tạo tài khoản admin mặc định nếu bảng staff_accounts còn trống (demo/first-run only)."""
-    conn = _connect_rw(db_path)
-    try:
-        row = conn.execute("SELECT COUNT(*) FROM staff_accounts").fetchone()
-        if row[0] == 0:
-            now = clock.now_iso()
-            conn.execute(
-                "INSERT INTO staff_accounts (username, password_hash, password_plain, role, "
-                "created_at) VALUES (?,?,?,?,?)",
-                (username, hash_password(password), password, "admin", now))
-            conn.commit()
-    finally:
-        conn.close()
 
 
 class DuplicateUsernameError(Exception):
@@ -336,11 +220,6 @@ def _export_json_view(db_path=DB_PATH):
     view_path = os.path.join(os.path.dirname(db_path), "hotel_view.json")
     with open(view_path, "w", encoding="utf-8") as f:
         json.dump(snapshot, f, ensure_ascii=False, indent=2)
-
-
-_ensure_schema()   # chạy 1 lần khi module được import — đảm bảo hotel.db thật có đủ bảng
-seed_default_admin()   # tài khoản admin/admin123 mặc định nếu chưa có ai (demo)
-checkout_expired_stays()   # app restart cũng tự chốt booking đã qua ngày trả phòng
 
 
 def _room_type_totals(conn, room_types=None):
@@ -706,6 +585,3 @@ def delete_session(session_id, db_path=DB_PATH):
         conn.commit()
     finally:
         conn.close()
-
-
-_export_json_view()   # đảm bảo hotel_view.json luôn có ngay từ lúc khởi động, khớp DB hiện tại

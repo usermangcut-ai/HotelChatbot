@@ -6,6 +6,7 @@ from agent import guardrail, llm_client, trace
 from agent.agent import Agent
 from agent.memory import Memory
 from agent.prompts import build_system_prompt
+from agent.schema import init_db
 from agent.tools import build_tools
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -22,6 +23,7 @@ def main():
     if not llm_client.is_configured():
         print("⚠️  Chưa cấu hình .env (LLM_BASE_URL/LLM_API_KEY/LLM_MODEL).")
         return
+    init_db()
     agent = build_agent()
     session_id = "cli-" + uuid.uuid4().hex[:8]
     print("Chatbot Shanghai Resort. Gõ 'quit' để thoát.")

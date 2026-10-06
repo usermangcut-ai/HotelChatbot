@@ -27,6 +27,7 @@ ROOT = os.path.dirname(_HERE)
 DATA_DIR = os.path.join(ROOT, "data")
 KNOWLEDGE_PATH = os.path.join(DATA_DIR, "knowledge.json")
 IMAGES_DIR = os.path.join(DATA_DIR, "images")
+ROOMS_PATH = os.path.join(DATA_DIR, "rooms.json")   # danh sách phòng vật lý (số phòng, hạng, tầng)
 
 # ---------- dữ liệu động (volume) ----------
 STORAGE_DIR = os.getenv("STORAGE_DIR") or os.path.join(ROOT, "storage")

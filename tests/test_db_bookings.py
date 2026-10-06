@@ -1,4 +1,3 @@
-import shutil
 import sqlite3
 from datetime import timedelta
 
@@ -7,20 +6,13 @@ import pytest
 from agent import clock, db
 
 
-@pytest.fixture
-def tmp_db(tmp_path):
-    path = tmp_path / "hotel_test.db"
-    shutil.copy(db.DB_PATH, path)
-    db._ensure_schema(str(path))
-    return str(path)
-
-
-def test_ensure_schema_creates_tables(tmp_db):
+def test_init_db_creates_tables(tmp_db):
     conn = sqlite3.connect(tmp_db)
     tables = {r[0] for r in conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
     conn.close()
-    assert "reservations" in tables and "service_requests" in tables
+    assert {"rooms", "reservations", "service_requests", "staff_accounts", "guest_accounts",
+            "staff_requests", "sessions"} <= tables
 
 
 def test_available_counts_without_dates_equals_explicit_today(tmp_db):
