@@ -9,6 +9,7 @@ KNOWLEDGE_PATH = os.path.join(DATA_DIR, "knowledge.json")
 DB_PATH = os.path.join(DATA_DIR, "hotel.db")
 IMAGES_DIR = os.path.join(DATA_DIR, "images")
 LOG_PATH = os.path.join(ROOT, "logs", "traces.jsonl")
+APP_TZ = os.getenv("APP_TZ", "Asia/Ho_Chi_Minh")   # múi giờ NGHIỆP VỤ — không phụ thuộc giờ máy chủ
 
 HISTORY_TURNS = 6        # số lượt (mỗi lượt = 1 user + 1 assistant) đưa vào context
 MAX_TOOL_ITERS = 5       # trần số vòng gọi tool trong một lượt chat
