@@ -7,10 +7,11 @@ import json
 import os
 import secrets
 import sqlite3
-from datetime import date, datetime, timedelta
+from datetime import timedelta
 
 import bcrypt
 
+from agent import clock
 from agent.config import DB_PATH
 
 _VIEW_PATH = os.path.join(os.path.dirname(DB_PATH), "hotel_view.json")
@@ -148,7 +149,7 @@ def seed_default_admin(username="admin", password="admin123", db_path=DB_PATH):
     try:
         row = conn.execute("SELECT COUNT(*) FROM staff_accounts").fetchone()
         if row[0] == 0:
-            now = datetime.now().isoformat(timespec="seconds")
+            now = clock.now_iso()
             conn.execute(
                 "INSERT INTO staff_accounts (username, password_hash, password_plain, role, "
                 "created_at) VALUES (?,?,?,?,?)",
@@ -172,7 +173,7 @@ def create_staff_account(username, password, role, db_path=DB_PATH):
                                (username,)).fetchone()
         if exists:
             raise DuplicateUsernameError(f"Tên đăng nhập '{username}' đã tồn tại.")
-        now = datetime.now().isoformat(timespec="seconds")
+        now = clock.now_iso()
         conn.execute(
             "INSERT INTO staff_accounts (username, password_hash, password_plain, role, "
             "created_at) VALUES (?,?,?,?,?)",
@@ -263,7 +264,7 @@ def _rooms_status_public(db_path=DB_PATH):
     """Trạng thái từng phòng vật lý HÔM NAY (đang có khách ở hay trống) — tính động từ reservations
     'paid' chồng ngày hôm nay, KHÔNG dùng cờ tĩnh rooms.available (đã lỗi thời, xem available_counts).
     Chỉ để xuất ra hotel_view.json xem nhanh phòng nào còn trống."""
-    today = date.today().isoformat()
+    today = clock.today().isoformat()
     conn = _connect(db_path)
     try:
         rooms = conn.execute(
@@ -289,7 +290,7 @@ def _rooms_status_public(db_path=DB_PATH):
 
 def checkout_expired_stays(db_path=DB_PATH, as_of=None):
     """Hoàn tất booking tới ngày trả phòng và thu hồi account/session của khách."""
-    cutoff = as_of or date.today().isoformat()
+    cutoff = as_of or clock.today().isoformat()
     conn = _connect_rw(db_path)
     try:
         conn.execute("BEGIN IMMEDIATE")
@@ -358,7 +359,7 @@ def available_counts(room_types=None, check_in=None, check_out=None, db_path=DB_
     Không truyền check_in/check_out -> mặc định coi là hỏi trống HÔM NAY (hôm nay -> hôm nay+1),
     luôn phản ánh đúng các booking 'paid' đã có (không còn dùng cờ tĩnh rooms.available cũ)."""
     if not check_in or not check_out:
-        today = date.today()
+        today = clock.today()
         check_in = check_in or today.isoformat()
         check_out = check_out or (today + timedelta(days=1)).isoformat()
 
@@ -411,7 +412,7 @@ def create_reservation(room_type, check_in, check_out, guest_name, guest_phone, 
     Check trống + ghi nằm trong CÙNG một transaction (BEGIN IMMEDIATE giữ write-lock ngay từ đầu) —
     nếu không, 2 request đặt đồng thời phòng cuối cùng có thể cùng đọc thấy "còn 1 phòng" trước khi
     request nào commit, dẫn tới overbook."""
-    today = date.today().isoformat()
+    today = clock.today().isoformat()
     if check_in <= today:
         raise InvalidDateRangeError(
             f"Ngày nhận phòng ({check_in}) phải sau ngày hiện tại ({today}).")
@@ -430,7 +431,7 @@ def create_reservation(room_type, check_in, check_out, guest_name, guest_phone, 
             conn.execute("ROLLBACK")
             raise SoldOutError(f"Hết phòng {room_type} trong khoảng {check_in} - {check_out}")
 
-        now = datetime.now().isoformat(timespec="seconds")
+        now = clock.now_iso()
         room_id = _pick_room_id(conn, room_type, check_in, check_out)
         cur = conn.execute(
             "INSERT INTO reservations (room_type, check_in, check_out, guest_name, guest_phone, "
@@ -466,7 +467,7 @@ def create_service_request(service_type, guest_name, guest_phone, requested_at, 
     """Ghi 1 dòng service_requests status='received'. Không kiểm tra tồn kho (không phải đặt phòng)."""
     conn = _connect_rw(db_path)
     try:
-        now = datetime.now().isoformat(timespec="seconds")
+        now = clock.now_iso()
         cur = conn.execute(
             "INSERT INTO service_requests (service_type, guest_name, guest_phone, requested_at, "
             "party_size, note, status, created_at) VALUES (?,?,?,?,?,?,?,?)",
@@ -589,7 +590,7 @@ def create_staff_request(room_id, request_type, note, db_path=DB_PATH):
     không ép enum (đã chốt trong spec RBAC mục 6 câu 1)."""
     conn = _connect_rw(db_path)
     try:
-        now = datetime.now().isoformat(timespec="seconds")
+        now = clock.now_iso()
         cur = conn.execute(
             "INSERT INTO staff_requests (room_id, request_type, note, status, created_at) "
             "VALUES (?,?,?,?,?)", (room_id, request_type, note, "received", now))
@@ -668,7 +669,7 @@ def create_session(identity_type, identity_id, role, ttl_hours=24, db_path=DB_PA
     conn = _connect_rw(db_path)
     try:
         session_id = secrets.token_urlsafe(32)
-        now = datetime.now()
+        now = clock.now().replace(tzinfo=None)
         conn.execute(
             "INSERT INTO sessions (session_id, identity_type, identity_id, role, created_at, "
             "expires_at) VALUES (?,?,?,?,?,?)",
@@ -691,7 +692,7 @@ def get_session(session_id, db_path=DB_PATH):
         if not row:
             return None
         identity_type, identity_id, role, expires_at = row
-        if datetime.fromisoformat(expires_at) < datetime.now():
+        if expires_at < clock.now_iso():
             return None
         return {"identity_type": identity_type, "identity_id": identity_id, "role": role}
     finally:

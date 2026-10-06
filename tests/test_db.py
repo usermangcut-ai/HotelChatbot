@@ -1,8 +1,8 @@
-from datetime import date, timedelta
+from datetime import timedelta
 
 import pytest
 
-from agent import db
+from agent import clock, db
 
 
 def test_total_available_matches_physical_inventory_far_future():
@@ -19,8 +19,8 @@ def test_by_type_includes_requested_zero():
 
 
 def test_no_dates_defaults_to_today():
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
     assert db.available_counts() == db.available_counts(check_in=today, check_out=tomorrow)
 
 

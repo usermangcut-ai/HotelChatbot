@@ -1,10 +1,10 @@
 import shutil
 import sqlite3
-from datetime import date, timedelta
+from datetime import timedelta
 
 import pytest
 
-from agent import db
+from agent import clock, db
 
 
 @pytest.fixture
@@ -24,9 +24,9 @@ def test_ensure_schema_creates_tables(tmp_db):
 
 
 def test_available_counts_without_dates_equals_explicit_today(tmp_db):
-    from datetime import date, timedelta
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    from datetime import timedelta
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
     assert (db.available_counts(["Deluxe Park Suite"], db_path=tmp_db)
             == db.available_counts(["Deluxe Park Suite"], today, tomorrow, db_path=tmp_db))
 
@@ -56,8 +56,8 @@ def test_create_reservation_raises_when_sold_out(tmp_db):
 
 
 def test_create_reservation_rejects_today_at_business_layer(tmp_db):
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
     with pytest.raises(db.InvalidDateRangeError):
         db.create_reservation("Deluxe Park Suite", today, tomorrow,
                               "A", "090", "a@test.com", 2, db_path=tmp_db)
@@ -190,10 +190,10 @@ def test_create_service_request_inserts_row(tmp_db):
 
 
 def test_checkout_expired_stays_completes_booking_and_removes_guest_access(tmp_db):
-    yesterday = (date.today() - timedelta(days=1)).isoformat()
-    today = date.today().isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
-    day_after = (date.today() + timedelta(days=2)).isoformat()
+    yesterday = (clock.today() - timedelta(days=1)).isoformat()
+    today = clock.today().isoformat()
+    tomorrow = (clock.today() + timedelta(days=1)).isoformat()
+    day_after = (clock.today() + timedelta(days=2)).isoformat()
     res = db.create_reservation("Deluxe Park Suite", tomorrow, day_after, "A", "090",
                                 "a@t.com", 2, db_path=tmp_db)
     session_id = db.create_session("guest_account", res["room_id"], "guest", db_path=tmp_db)

@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
-from datetime import date, timedelta
+from datetime import timedelta
 
-from agent import db as agent_db
+from agent import clock, db as agent_db
 from api.main import app
 
 client = TestClient(app)
@@ -65,8 +65,8 @@ def test_create_booking_rejects_unknown_room_type():
 def test_create_booking_rejects_today():
     resp = client.post("/api/bookings", json={
         "room_type": "Deluxe Queen",
-        "check_in": date.today().isoformat(),
-        "check_out": (date.today() + timedelta(days=1)).isoformat(),
+        "check_in": clock.today().isoformat(),
+        "check_out": (clock.today() + timedelta(days=1)).isoformat(),
         "guest_name": "A", "guest_phone": "090", "guest_email": "a@test.com", "num_guests": 2})
     assert resp.status_code == 422
 

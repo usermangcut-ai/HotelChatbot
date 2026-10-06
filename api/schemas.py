@@ -4,6 +4,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
+from agent import clock
+
 
 class ChatRequest(BaseModel):
     session_id: str
@@ -37,7 +39,7 @@ class BookingRequest(BaseModel):
             parsed = date.fromisoformat(v)
         except ValueError:
             raise ValueError("Ngày phải đúng định dạng YYYY-MM-DD") from None
-        if parsed <= date.today():
+        if parsed <= clock.today():
             raise ValueError("Ngày nhận/trả phòng phải sau ngày hiện tại")
         return v
 

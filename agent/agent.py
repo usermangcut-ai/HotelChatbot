@@ -1,8 +1,8 @@
 """Agent tool-use: dựng messages, gọi LLM có tools, thực thi tool, lặp tới câu cuối."""
 import concurrent.futures
 import json
-from datetime import date
 
+from agent import clock
 from agent.config import AGENT_EXECUTOR_WORKERS, MAX_TOOL_ITERS
 
 
@@ -31,7 +31,7 @@ class Agent:
     def handle(self, session_id, text):
         history = self.memory.get(session_id)
         today_note = (
-            f"\n\n# Ngày hiện tại\nHôm nay là {date.today().isoformat()} (YYYY-MM-DD) — dùng mốc "
+            f"\n\n# Ngày hiện tại\nHôm nay là {clock.today().isoformat()} (YYYY-MM-DD) — dùng mốc "
             f"này để tính các ngày tương đối khách nhắc tới (vd \"ngày mai\", \"2 ngày tới\", "
             f"\"cuối tuần này\"). Luôn truyền check_in/check_out cho tool ở định dạng YYYY-MM-DD, "
             f"tính đúng từ ngày hôm nay — không dùng năm cũ hay ngày tự đoán.")
