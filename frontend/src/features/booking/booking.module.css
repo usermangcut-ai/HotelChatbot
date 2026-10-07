@@ -1,0 +1,76 @@
+/* Chép nguyên văn từ MOCKUP booking.template.html (cỡ chữ px → token --fs-*) — phần dùng chung giữa trang /dat-phong
+   và phiếu đặt phòng trong chat: ô nhập, dòng còn/hết phòng, nút, QR cọc, khối thành công.
+   ĐIỀU CHỈNH: bỏ .note và .demo (chỉ có trong mockup). Phần "Thêm — bản gọn trong chat" ở cuối không có trong mockup. */
+
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.fields .full { grid-column: 1 / -1; }
+.field { display: grid; gap: 8px; align-content: start; }
+.field label { font-size: var(--fs-sm); font-weight: 500; }
+.field .hint { font-size: var(--fs-sm); color: var(--muted); }
+.field .err { font-size: var(--fs-sm); color: var(--danger); }
+.control { width: 100%; font: 400 var(--fs-md)/1.4 var(--font); padding: 13px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); color: var(--ink); transition: border-color var(--t-micro), box-shadow var(--t-micro); appearance: none; }
+select.control { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23625F58' stroke-width='1.5'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
+.control:focus { outline: none; border-color: var(--olive); box-shadow: 0 0 0 3px rgba(88,99,76,.14); }
+.control[aria-invalid="true"] { border-color: var(--danger); }
+
+.avail { display: flex; align-items: center; gap: 10px; margin-top: 24px; padding: 12px 14px; border-radius: var(--r-md); font-size: var(--fs-sm); background: var(--olive-bg); color: var(--ok); }
+.avail.out { background: var(--danger-bg); color: var(--danger); }
+.avail .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+
+.actions { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 500 var(--fs-md)/1 var(--font); padding: 15px 26px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: background var(--t-micro), color var(--t-micro), border-color var(--t-micro); }
+.btn-primary { background: var(--olive); color: var(--on-olive); }
+.btn-primary:hover { background: var(--olive-ink); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-link { background: none; border: 0; padding: 0; color: var(--muted); font: 400 var(--fs-sm)/1 var(--font); cursor: pointer; }
+.btn-link:hover { color: var(--ink); }
+
+.pay { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.qr { aspect-ratio: 1; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); padding: 16px; display: grid; place-items: center; position: relative; }
+.qr canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+.qr .demo-tag { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: var(--bronze); color: #fff; font-size: var(--fs-xs); font-weight: 500; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+.kv { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 10px 16px; margin: 0; font-size: var(--fs-md); }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.callout { margin-top: 20px; font-size: var(--fs-sm); color: var(--muted); padding: 12px 14px; border-left: 2px solid var(--bronze); background: var(--surface); }
+
+/* success */
+.success { max-width: 640px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 500; padding: 5px 10px; border-radius: 999px; background: var(--olive-bg); color: var(--ok); }
+.success h2 { font-weight: 300; font-size: var(--fs-2xl); letter-spacing: -.025em; line-height: 1.25; margin: 16px 0 8px; }
+.success > p { color: var(--muted); margin: 0 0 32px; }
+.secret { border: 1px solid var(--ink); border-radius: var(--r-md); padding: 24px; background: var(--surface); display: grid; gap: 16px; }
+.secret .row { display: grid; grid-template-columns: 140px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.secret .row span:first-child { color: var(--muted); font-size: var(--fs-sm); }
+.secret code { font: 500 var(--fs-xl)/1.2 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .04em; user-select: all; }
+.secret .warn { font-size: var(--fs-sm); color: var(--danger); display: flex; gap: 8px; }
+.copy { font: 500 var(--fs-sm)/1 var(--font); padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: transparent; cursor: pointer; color: var(--ink); }
+.copy:hover { border-color: var(--ink); }
+.next { margin-top: 32px; display: grid; gap: 12px; font-size: var(--fs-md); }
+.next li { padding-left: 4px; }
+
+@media (max-width: 560px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+  .pay { grid-template-columns: minmax(0, 1fr); }
+  .qr { max-width: 220px; }
+  .kv, .secret .row { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .secret .row { gap: 6px; }
+  .actions { flex-direction: column-reverse; align-items: stretch; }
+}
+
+/* ---------- Thêm — bản gọn trong phiếu chat (khung 420px): cùng ô nhập/QR/khối mật khẩu, thu nhỏ khoảng cách ---------- */
+.compact.fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.compact .control { padding-block: 10px; }
+.err-line { font-size: var(--fs-sm); color: var(--danger); }
+.compact-back { justify-self: center; padding: 6px 0; }
+.compact .field { gap: 6px; }
+.compact.pay { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.compact .qr { width: 140px; padding: 10px; }
+.compact.avail { margin-top: 0; padding: 8px 12px; }
+.compact.secret { padding: 16px; gap: 12px; }
+.compact.secret .row { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
+.compact.secret .row span:first-child { grid-column: 1 / -1; font-size: var(--fs-xs); }
+.compact.secret code { font-size: var(--fs-lg); }
+.compact .warn { font-size: var(--fs-xs); }

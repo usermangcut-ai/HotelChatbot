@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Route, Routes } from "react-router-dom";
 import PublicLayout from "./components/PublicLayout";
+import BookingPage from "./features/booking/BookingPage";
 import ChatDrawer from "./features/chat/ChatDrawer";
 import ChatLauncher from "./features/chat/ChatLauncher";
 import { ChatProvider, useChat } from "./features/chat/ChatProvider";
@@ -25,7 +26,7 @@ export default function App() {
     <ChatProvider>
       <Routes>
         <Route path="/" element={<Public><Home /></Public>} />
-        <Route path="/dat-phong" element={<Public><ComingSoon title="Đặt phòng" /></Public>} />
+        <Route path="/dat-phong" element={<Public><BookingPage /></Public>} />
         <Route path="/dang-nhap" element={<Login />} />
         <Route path="/tai-khoan" element={<RequireRole roles={["guest"]}><ComingSoon title="Tài khoản khách" /></RequireRole>} />
         <Route path="/nhan-vien" element={<RequireRole roles={["staff", "admin"]}><ComingSoon title="Nhân viên" /></RequireRole>} />

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEPOSIT_PER_NIGHT, bookingTotals, homeForRole, parseBookingQuery, validateContact } from "./booking";
+import { DEPOSIT_PER_NIGHT, addDaysIso, bookingTotals, dateError, defaultStay, givenName, homeForRole, parseBookingQuery, transferNote, validateContact } from "./booking";
 
 describe("bookingTotals", () => {
   it("computes nights, room total and deposit", () => {
@@ -36,5 +36,43 @@ describe("homeForRole", () => {
     expect(homeForRole("guest")).toBe("/tai-khoan");
     expect(homeForRole("staff")).toBe("/nhan-vien");
     expect(homeForRole("admin")).toBe("/quan-tri");
+  });
+});
+
+describe("transferNote", () => {
+  it("strips diacritics and uppercases", () => {
+    expect(transferNote("Nguyễn Minh Anh")).toBe("SR NGUYEN MINH ANH");
+    expect(transferNote("  Đặng   thị  Ánh ")).toBe("SR DANG THI ANH");
+  });
+  it("shortens long names at a word boundary", () => {
+    expect(transferNote("Nguyễn Thị Phương Hoàng Yến Nhi")).toBe("SR NGUYEN THI PHUONG");
+  });
+  it("falls back when the name is empty or symbols only", () => {
+    expect(transferNote("")).toBe("SR DAT PHONG");
+    expect(transferNote("@@")).toBe("SR DAT PHONG");
+  });
+});
+
+describe("dates", () => {
+  it("adds days in local time across month ends", () => {
+    expect(addDaysIso(new Date(2026, 9, 30), 2)).toBe("2026-11-01");
+  });
+  it("defaults to tomorrow + 9 days for two nights", () => {
+    expect(defaultStay(new Date(2026, 9, 7))).toEqual({ checkIn: "2026-10-17", checkOut: "2026-10-19" });
+  });
+  it("validates the stay range", () => {
+    expect(dateError("2026-10-17", "2026-10-19", "2026-10-08")).toBeNull();
+    expect(dateError("2026-10-07", "2026-10-09", "2026-10-08")).toBe("Ngày nhận phòng từ ngày mai trở đi.");
+    expect(dateError("2026-10-17", "2026-10-17", "2026-10-08")).toBe("Ngày trả phòng phải sau ngày nhận phòng.");
+    expect(dateError("", "2026-10-17", "2026-10-08")).toBe("Chọn ngày nhận và trả phòng.");
+  });
+});
+
+describe("givenName", () => {
+  it("takes the part after the last space", () => {
+    expect(givenName("Nguyễn Minh Anh")).toBe("Anh");
+    expect(givenName("Lan")).toBe("Lan");
+    expect(givenName(null)).toBe("");
+    expect(givenName("  ")).toBe("");
   });
 });
