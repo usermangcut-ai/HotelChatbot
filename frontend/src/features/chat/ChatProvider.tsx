@@ -23,6 +23,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState(false);
 
   useEffect(() => saveChat(state), [state]);
+  // html[data-chat="open"] để CSS co trang (≥1200px) và ẩn thẻ mời khi chat đang mở
+  useEffect(() => {
+    if (isOpen) document.documentElement.dataset.chat = "open";
+    else delete document.documentElement.dataset.chat;
+  }, [isOpen]);
 
   const send = useCallback((raw: string) => {
     const text = raw.trim();

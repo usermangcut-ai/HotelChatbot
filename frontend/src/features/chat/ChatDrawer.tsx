@@ -34,6 +34,7 @@ function BookingCard({ draft }: { draft: BookingDraft }) {
 
 export default function ChatDrawer() {
   const { isOpen, close, messages, pending, send, reset } = useChat();
+  const { rooms } = useRooms();   // giá phòng tải xong làm phiếu cao thêm dòng "Tạm tính" → cuộn lại
   const [text, setText] = useState("");
   const input = useRef<HTMLInputElement>(null);
   const thread = useRef<HTMLDivElement>(null);
@@ -48,13 +49,12 @@ export default function ChatDrawer() {
 
   // bọc trong {} — scrollTo() trả Promise ở trình duyệt mới; trả nó từ effect làm React tưởng là hàm dọn dẹp
   const scrollToEnd = () => { thread.current?.scrollTo({ top: thread.current.scrollHeight }); };
-  useEffect(() => { scrollToEnd(); }, [messages, pending]);
+  useEffect(() => { scrollToEnd(); }, [messages, pending, rooms]);
 
   const submit = (e: FormEvent) => { e.preventDefault(); send(text); setText(""); };
 
   return (
     <>
-      <div className={`${s.scrim} ${isOpen ? s.open : ""}`} onClick={close} />
       <aside className={`${s.drawer} ${isOpen ? s.open : ""}`} role="dialog" aria-label="Trò chuyện với lễ tân" aria-hidden={!isOpen} inert={!isOpen}>
         <div className={s["drawer-head"]}>
           <span className={s.avatar}>S</span>

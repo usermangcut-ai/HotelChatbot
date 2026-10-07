@@ -86,3 +86,5 @@ section.block { padding-block: var(--s9) 0; }
 @media (max-width: 480px) {
   .rooms { grid-template-columns: minmax(0, 1fr); }
 }
+/* Chat ghim cạnh trang (≥1200px) làm vùng nội dung hẹp lại → lưới phòng 3 cột */
+@media (min-width: 1200px) { :global(html[data-chat="open"]) .rooms { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
