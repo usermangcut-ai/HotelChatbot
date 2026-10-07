@@ -1,0 +1,12 @@
+/* Chép nguyên văn từ MOCKUP (landing.template.html) — nút + chip dùng chung. */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); font: 500 14px/1 var(--font-body); padding: 13px 22px; border-radius: 999px; text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: background var(--t-micro), color var(--t-micro), border-color var(--t-micro); white-space: nowrap; }
+.btn-primary { background: var(--olive); color: var(--on-olive); }
+.btn-primary:hover { background: var(--olive-ink); }
+.btn-ghost { border-color: var(--ink); color: var(--ink); background: transparent; }
+.btn-ghost:hover { background: var(--ink); color: var(--bg); }
+.btn-text { padding-inline: 0; color: var(--ink); background: none; }
+.btn-text span { transition: transform var(--t-micro); display: inline-block; }
+.btn-text:hover span { transform: translateX(3px); }
+
+.chip { font: 400 13px/1 var(--font-body); padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; transition: border-color var(--t-micro), background var(--t-micro); }
+.chip:hover { border-color: var(--olive); background: var(--bg); }
