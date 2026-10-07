@@ -7,6 +7,7 @@ import ChatLauncher from "./features/chat/ChatLauncher";
 import { ChatProvider, useChat } from "./features/chat/ChatProvider";
 import { RequireRole } from "./lib/auth";
 import ComingSoon from "./pages/ComingSoon";
+import GuestAccount from "./pages/GuestAccount";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 
@@ -28,7 +29,7 @@ export default function App() {
         <Route path="/" element={<Public><Home /></Public>} />
         <Route path="/dat-phong" element={<Public><BookingPage /></Public>} />
         <Route path="/dang-nhap" element={<Login />} />
-        <Route path="/tai-khoan" element={<RequireRole roles={["guest"]}><ComingSoon title="Tài khoản khách" /></RequireRole>} />
+        <Route path="/tai-khoan" element={<RequireRole roles={["guest"]}><GuestAccount /></RequireRole>} />
         <Route path="/nhan-vien" element={<RequireRole roles={["staff", "admin"]}><ComingSoon title="Nhân viên" /></RequireRole>} />
         <Route path="/quan-tri" element={<RequireRole roles={["admin"]}><ComingSoon title="Quản trị" /></RequireRole>} />
         <Route path="*" element={<Public><ComingSoon title="Không tìm thấy trang" /></Public>} />

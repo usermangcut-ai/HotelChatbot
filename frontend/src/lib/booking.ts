@@ -69,3 +69,10 @@ export function givenName(full: string | null | undefined): string {
   const t = (full ?? "").trim();
   return t ? t.slice(t.lastIndexOf(" ") + 1) : "";
 }
+
+/** Tiến độ kỳ lưu trú tính theo ngày `today` (ISO): ngày thứ mấy, đã qua / còn bao nhiêu đêm. */
+export function stayProgress(checkIn: string, checkOut: string, today: string) {
+  const total = Math.max(0, nightsBetween(checkIn, checkOut));
+  const passed = Math.min(total, Math.max(0, nightsBetween(checkIn, today)));
+  return { total, passed, left: total - passed, day: passed + 1 };
+}

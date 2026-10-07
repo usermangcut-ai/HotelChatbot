@@ -19,3 +19,13 @@ export function nightsBetween(checkIn: string, checkOut: string): number {
 export function toIsoDate(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
+
+/** Mốc giờ "YYYY-MM-DD HH:MM[:SS]" hoặc "YYYY-MM-DDTHH:MM[:SS]" → "Hôm nay 09:42" / "Hôm qua …" / "Ngày mai …" / "17/10 19:00".
+ *  `today` là ngày ISO theo giờ máy (toIsoDate). */
+export function formatWhen(ts: string, today: string): string {
+  const day = ts.slice(0, 10);
+  const time = ts.slice(11, 16);
+  const diff = nightsBetween(today, day);
+  const label = diff === 0 ? "Hôm nay" : diff === -1 ? "Hôm qua" : diff === 1 ? "Ngày mai" : formatDate(day).slice(0, 5);
+  return time ? `${label} ${time}` : label;
+}

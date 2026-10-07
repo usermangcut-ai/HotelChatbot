@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEPOSIT_PER_NIGHT, addDaysIso, bookingTotals, dateError, defaultStay, givenName, homeForRole, parseBookingQuery, transferNote, validateContact } from "./booking";
+import { DEPOSIT_PER_NIGHT, addDaysIso, bookingTotals, dateError, defaultStay, givenName, homeForRole, parseBookingQuery, stayProgress, transferNote, validateContact } from "./booking";
 
 describe("bookingTotals", () => {
   it("computes nights, room total and deposit", () => {
@@ -74,5 +74,17 @@ describe("givenName", () => {
     expect(givenName("Lan")).toBe("Lan");
     expect(givenName(null)).toBe("");
     expect(givenName("  ")).toBe("");
+  });
+});
+
+describe("stayProgress", () => {
+  it("counts the day of the stay and nights left", () => {
+    expect(stayProgress("2026-10-16", "2026-10-18", "2026-10-17")).toEqual({ total: 2, passed: 1, left: 1, day: 2 });
+    expect(stayProgress("2026-10-16", "2026-10-18", "2026-10-16")).toEqual({ total: 2, passed: 0, left: 2, day: 1 });
+    expect(stayProgress("2026-10-16", "2026-10-18", "2026-10-18")).toEqual({ total: 2, passed: 2, left: 0, day: 3 });
+  });
+  it("clamps days outside the stay", () => {
+    expect(stayProgress("2026-10-16", "2026-10-18", "2026-10-10").passed).toBe(0);
+    expect(stayProgress("2026-10-16", "2026-10-18", "2026-10-25").left).toBe(0);
   });
 });
