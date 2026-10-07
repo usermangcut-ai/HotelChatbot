@@ -145,6 +145,7 @@ body.chat-open .scrim { opacity: 1; pointer-events: auto; }
 .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--ink); font-size: 16px; }
 .icon-btn:hover { background: var(--bg); }
 .thread { flex: 1; overflow-y: auto; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+.thread > * { flex-shrink: 0; }   /* luồng dài hơn khung thì cuộn, không ép dẹt thẻ ảnh/phiếu */
 .msg { max-width: 86%; font-size: 15px; line-height: 1.55; padding: var(--s3) var(--s4); border-radius: var(--r-lg); }
 .msg.bot { background: var(--bg); align-self: flex-start; border-top-left-radius: var(--r-sm); }
 .msg.me { background: var(--ink); color: var(--bg); align-self: flex-end; border-top-right-radius: var(--r-sm); }

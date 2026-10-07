@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import ui from "../../components/ui.module.css";
 import { QUICK_ASKS } from "../../content";
@@ -46,7 +46,9 @@ export default function ChatDrawer() {
     return () => { clearTimeout(t); window.removeEventListener("keydown", onKey); };
   }, [isOpen, close]);
 
-  useEffect(() => { thread.current?.scrollTo({ top: thread.current.scrollHeight }); }, [messages, pending]);
+  // bọc trong {} — scrollTo() trả Promise ở trình duyệt mới; trả nó từ effect làm React tưởng là hàm dọn dẹp
+  const scrollToEnd = () => { thread.current?.scrollTo({ top: thread.current.scrollHeight }); };
+  useEffect(() => { scrollToEnd(); }, [messages, pending]);
 
   const submit = (e: FormEvent) => { e.preventDefault(); send(text); setText(""); };
 
@@ -63,15 +65,15 @@ export default function ChatDrawer() {
         <div className={s.thread} ref={thread} aria-live="polite">
           <div className={`${s.msg} ${s.bot}`}>{GREETING}</div>
           {messages.map(m => (
-            <div key={m.id} style={{ display: "contents" }}>
+            <Fragment key={m.id}>
               <div className={`${s.msg} ${m.role === "user" ? s.me : s.bot} ${m.error ? s.error : ""}`}>{m.text}</div>
               {m.attachments?.map((a, i) => a.kind === "photo"
                 ? <figure key={i} className={s["msg-card"]} style={{ margin: 0 }}>
-                    <img src={a.imageUrl} alt={`Ảnh ${a.subject}`} />
+                    <img src={a.imageUrl} alt={`Ảnh ${a.subject}`} onLoad={scrollToEnd} />
                     <div className={s.body}><span className={s.k}>Ảnh</span><h4>{a.subject === "hotel" ? "Toàn cảnh resort" : a.subject}</h4></div>
                   </figure>
                 : <BookingCard key={i} draft={a} />)}
-            </div>
+            </Fragment>
           ))}
           {pending && <div className={`${s.msg} ${s.bot}`} aria-label="Lễ tân đang trả lời"><span className={s.typing}><i /><i /><i /></span></div>}
         </div>

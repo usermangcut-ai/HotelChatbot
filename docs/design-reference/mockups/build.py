@@ -15,5 +15,10 @@ for name in sys.argv[1:]:
     for n in ["hotel", "room_deluxe_ocean_view_queen", "room_deluxe_queen"]:
         t = t.replace("{{IMG_%s}}" % n, img(n))
     assert "{{" not in t, name
+    # bọc giống skeleton của trang artifact (nơi user đã duyệt mockup): doctype, viewport, body margin 0
+    t = ('<!doctype html><html lang="vi"><head><meta charset="utf-8">'
+         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
+         '<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>'
+         + t + "</body></html>")
     (d / "build").mkdir(exist_ok=True)
     (d / "build" / f"{name}.html").write_text(t, encoding="utf-8"); print(name, len(t) // 1024, "KB")

@@ -3,7 +3,7 @@
 /* ---------- header ---------- */
 header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid transparent; transition: border-color var(--t-std); }
 header.top.scrolled { border-bottom-color: var(--line); }
-.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--s5); height: 72px; }
+.top :global(.wrap) { display: flex; align-items: center; justify-content: space-between; gap: var(--s5); height: 72px; }
 .brand { display: flex; align-items: center; gap: var(--s3); text-decoration: none; }
 .brand-name { font-size: 13px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; }
 nav.main { display: flex; gap: var(--s6); font-size: 14px; }
@@ -11,7 +11,7 @@ nav.main a { text-decoration: none; color: var(--muted); transition: color var(-
 nav.main a:hover { color: var(--ink); }
 
 footer.foot { margin-top: var(--s9); border-top: 1px solid var(--line); padding-block: var(--s6) calc(var(--s6) + 64px); color: var(--muted); font-size: 13px; }
-footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); }
+footer.foot :global(.wrap) { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); }
 
 /* ---------- mobile tab bar ---------- */
 .tabbar { display: none; }
