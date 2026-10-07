@@ -373,6 +373,19 @@ def get_guest_contact(reservation_id, db_path=DB_PATH):
         conn.close()
 
 
+def get_reservation(reservation_id, db_path=DB_PATH):
+    """Một booking theo id (dict cùng các cột như list_reservations) hoặc None."""
+    cols = ["id", "room_type", "check_in", "check_out", "guest_name", "guest_phone",
+            "guest_email", "num_guests", "status", "created_at", "room_id"]
+    conn = _connect(db_path)
+    try:
+        row = conn.execute(f"SELECT {', '.join(cols)} FROM reservations WHERE id=?",
+                           (reservation_id,)).fetchone()
+        return dict(zip(cols, row)) if row else None
+    finally:
+        conn.close()
+
+
 # ---------- yêu cầu dịch vụ (nhà hàng/spa) ----------
 
 def create_service_request(service_type, guest_name, guest_phone, requested_at, party_size, note,
@@ -396,16 +409,20 @@ def cancel_service_request(request_id, db_path=DB_PATH):
     return update_service_request_status(request_id, "cancelled", db_path=db_path)
 
 
-def list_service_requests(limit=50, db_path=DB_PATH):
-    """Danh sách yêu cầu dịch vụ mới nhất trước."""
+def list_service_requests(limit=50, reservation_id=None, db_path=DB_PATH):
+    """Danh sách yêu cầu dịch vụ mới nhất trước. Truyền reservation_id → chỉ của lượt lưu trú đó."""
     cols = ["id", "service_type", "guest_name", "guest_phone", "requested_at",
             "party_size", "note", "status", "created_at", "reservation_id"]
+    sql = f"SELECT {', '.join(cols)} FROM service_requests"
+    params = []
+    if reservation_id is not None:
+        sql += " WHERE reservation_id=?"
+        params.append(reservation_id)
+    sql += " ORDER BY id DESC LIMIT ?"
+    params.append(limit)
     conn = _connect(db_path)
     try:
-        rows = conn.execute(
-            f"SELECT {', '.join(cols)} FROM service_requests ORDER BY id DESC LIMIT ?",
-            (limit,)).fetchall()
-        return [dict(zip(cols, r)) for r in rows]
+        return [dict(zip(cols, r)) for r in conn.execute(sql, params).fetchall()]
     finally:
         conn.close()
 

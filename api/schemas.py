@@ -161,3 +161,20 @@ class StaffRequestRecord(BaseModel):
 class MyRequestBody(BaseModel):
     request_type: str
     note: str = ""
+
+
+class AvailabilityResponse(BaseModel):
+    room_type: str
+    check_in: str
+    check_out: str
+    available: int
+
+
+class StayResponse(BaseModel):
+    reservation_id: int
+    room_id: str
+    room_type: str
+    check_in: str
+    check_out: str
+    num_guests: int | None = None
+    guest_name: str | None = None
