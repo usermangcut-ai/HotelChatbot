@@ -1,0 +1,218 @@
+<title>Shanghai Resort Hàng đợi nhân viên</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: ứng dụng vận hành — sidebar 240px cố định + vùng làm việc; mật độ cao hơn trang khách, bảng dễ quét */
+:root {
+  --bg: #F5F3EC; --surface: #FBFAF6; --ink: #171714; --muted: #625F58;
+  --olive: #58634C; --olive-ink: #434C39; --olive-bg: #E9EBE2; --bronze: #A98952; --line: #DDD9CF; --on-olive: #F5F3EC;
+  --amber: #7A5A1E; --amber-bg: #F3EBDA; --ok: #3F5B3A; --grey-bg: #ECEAE3; --danger: #9A3B2E;
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r-sm: 4px; --r-md: 8px; --t-micro: 150ms; --t-std: 250ms;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 2px solid var(--olive); outline-offset: 2px; border-radius: var(--r-sm); }
+.note { background: var(--ink); color: var(--bg); font-size: 13px; text-align: center; padding: 8px 16px; }
+.note b { font-weight: 600; }
+
+.app { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: calc(100% - 37px); }
+aside.side { border-right: 1px solid var(--line); padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 0; height: calc(100vh - 37px); }
+.wordmark { font-size: 12px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; padding: 0 8px; }
+.role { font-size: 12px; color: var(--muted); padding: 0 8px; margin-top: -16px; }
+nav.menu { display: grid; gap: 2px; }
+nav.menu a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--r-md); text-decoration: none; color: var(--muted); font-weight: 400; }
+nav.menu a:hover { background: var(--surface); color: var(--ink); }
+nav.menu a[aria-current="page"] { background: var(--surface); color: var(--ink); font-weight: 500; box-shadow: inset 0 0 0 1px var(--line); }
+nav.menu svg { width: 18px; height: 18px; flex: none; }
+nav.menu .count { margin-left: auto; font-size: 12px; font-variant-numeric: tabular-nums; background: var(--amber-bg); color: var(--amber); padding: 1px 8px; border-radius: 999px; font-weight: 500; }
+.side-foot { margin-top: auto; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 4px; }
+.me { display: flex; align-items: center; gap: 10px; padding: 0 8px 8px; }
+.me .av { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 12px; font-weight: 500; }
+.me b { font-weight: 500; display: block; }
+.me small { color: var(--muted); }
+.side-foot button { text-align: left; background: none; border: 0; font: 400 14px/1 var(--font); color: var(--muted); padding: 9px 10px; border-radius: var(--r-md); cursor: pointer; }
+.side-foot button:hover { background: var(--surface); color: var(--ink); }
+
+main { padding: 32px clamp(16px, 3vw, 40px) 64px; min-width: 0; }
+.head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+.head h1 { font-weight: 300; font-size: 28px; letter-spacing: -.02em; margin: 0; line-height: 1.25; }
+.head p { margin: 4px 0 0; color: var(--muted); }
+.refresh { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.refresh button { font: 500 13px/1 var(--font); padding: 9px 14px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; cursor: pointer; color: var(--ink); }
+.refresh button:hover { border-color: var(--ink); }
+.live { width: 7px; height: 7px; border-radius: 50%; background: #7E9A6E; box-shadow: 0 0 0 3px rgba(126,154,110,.2); }
+
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 16px 18px; display: grid; gap: 4px; }
+.tile small { color: var(--muted); font-size: 12px; }
+.tile b { font-weight: 300; font-size: 30px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tile span { font-size: 12px; color: var(--muted); }
+.tile.attn b { color: var(--amber); }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button { font: 500 13px/1 var(--font); padding: 8px 14px; border: 0; background: none; border-radius: 999px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.search { font: 400 14px/1 var(--font); padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); width: 240px; max-width: 100%; color: var(--ink); }
+.search:focus { outline: none; border-color: var(--olive); }
+
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 760px; }
+th { text-align: left; font-weight: 500; font-size: 12px; color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+tr.fresh td { background: #F6F1E4; }
+td .t { font-weight: 500; }
+td .n { color: var(--muted); font-size: 13px; display: block; max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.type { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.type i { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-style: normal; background: var(--bg); }
+.type svg { width: 15px; height: 15px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.received { background: var(--amber-bg); color: var(--amber); }
+.pill.done { background: var(--olive-bg); color: var(--ok); }
+.pill.cancelled { background: var(--grey-bg); color: var(--muted); }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.row-actions button { font: 500 12px/1 var(--font); padding: 8px 12px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); white-space: nowrap; }
+.row-actions .done-btn { background: var(--olive); border-color: var(--olive); color: var(--on-olive); }
+.row-actions .done-btn:hover { background: var(--olive-ink); }
+.row-actions button:not(.done-btn):hover { border-color: var(--ink); }
+.row-actions .undo { color: var(--muted); border-color: transparent; }
+.empty td { text-align: center; color: var(--muted); padding: 40px 16px; }
+
+.mobile-top { display: none; }
+
+@media (max-width: 960px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  aside.side { display: none; }
+  .mobile-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .mobile-top .wordmark { padding: 0; }
+  .mobile-top button { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; font: 500 12px/1 var(--font); color: var(--ink); }
+  table { min-width: 0; }
+  thead { display: none; }
+  tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  td { padding: 0; border: 0; }
+  td.c-type { grid-column: 1; } td.c-status { grid-column: 2; grid-row: 1; justify-self: end; }
+  td.c-req { grid-column: 1 / -1; } td.c-who, td.c-when { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+  td.c-sent { display: none; } td.c-act { grid-column: 1 / -1; } .row-actions { justify-content: flex-start; }
+  td .n { white-space: normal; }
+  .search { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 1ms !important; } }
+</style>
+
+<div class="note"><b>Mockup nhân viên</b> · dữ liệu mẫu, đúng cấu trúc 2 API /api/staff/service-requests và /api/staff/requests</div>
+
+<div class="app">
+  <aside class="side">
+    <div class="wordmark">Shanghai Resort</div>
+    <div class="role">Bảng điều phối nhân viên</div>
+    <nav class="menu" aria-label="Điều hướng nhân viên">
+      <a href="#" aria-current="page" data-view="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Hàng đợi<span class="count" id="c-all">0</span></a>
+      <a href="#" data-view="service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-3 4-3 7h3v11"/></svg>Nhà hàng &amp; Spa<span class="count" id="c-service">0</span></a>
+      <a href="#" data-view="support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 13a8 8 0 0 1 16 0M4 13v3a2 2 0 0 0 2 2h1v-6H6M20 13v3a2 2 0 0 1-2 2h-1v-6h1"/></svg>Hỗ trợ phòng<span class="count" id="c-support">0</span></a>
+    </nav>
+    <div class="side-foot">
+      <div class="me"><span class="av">LT</span><div><b>lantan1</b><small>Nhân viên</small></div></div>
+      <button>Đổi mật khẩu</button>
+      <button>Đăng xuất</button>
+    </div>
+  </aside>
+
+  <div>
+    <div class="mobile-top"><span class="wordmark">Shanghai Resort</span><button>lantan1 · Đăng xuất</button></div>
+    <main>
+      <div class="head">
+        <div><h1 id="title">Hàng đợi yêu cầu</h1><p>Thứ Tư, 07/10/2026 · ca chiều</p></div>
+        <div class="refresh"><span class="live"></span><span>Tự cập nhật mỗi 30 giây · lúc 15:42</span><button type="button">Làm mới</button></div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile attn"><small>Đang chờ xử lý</small><b id="t-wait">0</b><span>cần người nhận ngay</span></div>
+        <div class="tile"><small>Nhà hàng & spa hôm nay</small><b id="t-today">0</b><span>theo giờ khách hẹn</span></div>
+        <div class="tile"><small>Hỗ trợ phòng đang chờ</small><b id="t-sup">0</b><span>dọn phòng, đồ dùng, sửa chữa</span></div>
+        <div class="tile"><small>Đã hoàn thành hôm nay</small><b id="t-done">0</b><span>tính cả 2 loại</span></div>
+      </div>
+
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Lọc trạng thái">
+          <button aria-pressed="true" data-status="received">Đang chờ</button>
+          <button aria-pressed="false" data-status="done">Hoàn thành</button>
+          <button aria-pressed="false" data-status="all">Tất cả</button>
+        </div>
+        <label for="q" hidden>Tìm theo phòng hoặc tên khách</label>
+        <input class="search" id="q" placeholder="Tìm phòng, tên khách…">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Loại</th><th>Yêu cầu</th><th>Phòng / khách</th><th>Hẹn lúc</th><th>Gửi lúc</th><th>Trạng thái</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const IC = {
+  restaurant: ['Nhà hàng', '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-3 4-3 7h3v11"/>'],
+  spa: ['Spa', '<path d="M12 21c-4 0-7-3-7-7 3 0 5 1 7 3 2-2 4-3 7-3 0 4-3 7-7 7zM12 17c-2-3-2-7 0-11 2 4 2 8 0 11z"/>'],
+  support: ['Hỗ trợ', '<path d="M4 13a8 8 0 0 1 16 0M4 13v3a2 2 0 0 0 2 2h1v-6H6M20 13v3a2 2 0 0 1-2 2h-1v-6h1"/>'],
+};
+const ST = { received: "Đang chờ", done: "Hoàn thành", cancelled: "Đã hủy" };
+// dữ liệu mẫu — đúng các trường API trả về
+let rows = [
+  { id: "s-41", kind: "support", title: "Báo hỏng thiết bị", note: "Điều hòa phòng ngủ không mát", room: "V03", guest: "", when: "Càng sớm càng tốt", sent: "15:38", status: "received", fresh: true },
+  { id: "r-27", kind: "restaurant", title: "Bàn 4 người", note: "Nhà hàng Lotus, có 1 trẻ nhỏ", room: "201", guest: "Nguyễn Minh Anh · 0901 234 567", when: "19:00 hôm nay", sent: "15:12", status: "received" },
+  { id: "p-11", kind: "spa", title: "Lịch spa 2 người", note: "Massage đá nóng 60 phút", room: "504", guest: "Trần Quốc Bảo · 0912 888 101", when: "16:30 hôm nay", sent: "14:50", status: "received" },
+  { id: "s-40", kind: "support", title: "Thêm khăn / đồ dùng", note: "2 khăn tắm, 1 bộ bàn chải", room: "402", guest: "", when: "Càng sớm càng tốt", sent: "14:31", status: "received" },
+  { id: "s-39", kind: "support", title: "Dọn phòng", note: "", room: "305", guest: "", when: "Càng sớm càng tốt", sent: "13:05", status: "done" },
+  { id: "r-26", kind: "restaurant", title: "Bàn 2 người", note: "Orchid, bàn gần cửa sổ", room: "V01", guest: "Lê Thu Hà · 0987 120 334", when: "12:00 hôm nay", sent: "10:20", status: "done" },
+];
+let view = "all", status = "received", q = "";
+const isService = r => r.kind !== "support";
+function render() {
+  const pending = rows.filter(r => r.status === "received");
+  $("c-all").textContent = pending.length; $("c-service").textContent = pending.filter(isService).length; $("c-support").textContent = pending.filter(r => !isService(r)).length;
+  $("t-wait").textContent = pending.length; $("t-today").textContent = rows.filter(isService).length;
+  $("t-sup").textContent = pending.filter(r => !isService(r)).length; $("t-done").textContent = rows.filter(r => r.status === "done").length;
+  const list = rows.filter(r => (view === "all" || (view === "service") === isService(r)) && (status === "all" || r.status === status)
+    && (!q || (r.room + " " + r.guest).toLowerCase().includes(q)));
+  $("rows").innerHTML = list.length ? list.map(r => `
+    <tr class="${r.fresh && r.status === "received" ? "fresh" : ""}" data-id="${r.id}">
+      <td class="c-type"><span class="type"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">${IC[r.kind][1]}</svg></i>${IC[r.kind][0]}</span></td>
+      <td class="c-req"><span class="t"></span><span class="n"></span></td>
+      <td class="c-who"><span class="num">Phòng ${r.room}</span><span class="n g"></span></td>
+      <td class="c-when num">${r.when}</td>
+      <td class="c-sent num">${r.sent}</td>
+      <td class="c-status"><span class="pill ${r.status}">${ST[r.status]}</span></td>
+      <td class="c-act"><div class="row-actions">${r.status === "received"
+        ? `<button class="done-btn" data-act="done">Hoàn thành</button><button data-act="cancelled">Hủy</button>`
+        : `<button class="undo" data-act="received">Mở lại</button>`}</div></td>
+    </tr>`).join("") : `<tr class="empty"><td colspan="7">Không có yêu cầu nào ${status === "received" ? "đang chờ — hàng đợi đã sạch" : "khớp bộ lọc"}.</td></tr>`;
+  $("rows").querySelectorAll("tr[data-id]").forEach(tr => {
+    const r = rows.find(x => x.id === tr.dataset.id);
+    tr.querySelector(".t").textContent = r.title; tr.querySelector(".c-req .n").textContent = r.note || "—";
+    tr.querySelector(".g").textContent = r.guest || "Khách đang lưu trú";
+  });
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (a) { const id = a.closest("tr").dataset.id; rows.find(r => r.id === id).status = a.dataset.act; render(); }
+  const v = e.target.closest("[data-view]");
+  if (v) { e.preventDefault(); view = v.dataset.view; document.querySelectorAll("[data-view]").forEach(x => x.toggleAttribute("aria-current", x === v)); document.querySelectorAll("[data-view][aria-current]").forEach(x => x.setAttribute("aria-current", "page"));
+    $("title").textContent = { all: "Hàng đợi yêu cầu", service: "Nhà hàng & Spa", support: "Hỗ trợ phòng" }[view]; render(); }
+  const s = e.target.closest("[data-status]");
+  if (s) { status = s.dataset.status; document.querySelectorAll("[data-status]").forEach(x => x.setAttribute("aria-pressed", x === s)); render(); }
+});
+$("q").addEventListener("input", e => { q = e.target.value.trim().toLowerCase(); render(); });
+render();
+</script>

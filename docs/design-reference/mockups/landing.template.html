@@ -1,0 +1,423 @@
+<title>Shanghai Resort Trang chủ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: tối giản kiến trúc, một trang dài — ảnh lớn có khung, lưới 12 cột trong container 1240px; chat là ngăn kéo bên phải */
+:root {
+  --bg: #F5F3EC;        /* ngà — nền trang */
+  --surface: #FBFAF6;   /* mặt nổi: thẻ, khung chat */
+  --ink: #171714;       /* chữ chính */
+  --muted: #625F58;     /* chữ phụ — đậm hơn bản GPT (#77756E) để đạt tương phản 4.5:1 */
+  --olive: #58634C;     /* màu hành động */
+  --olive-ink: #434C39; /* olive khi hover */
+  --bronze: #A98952;    /* CHỈ trang trí: đường kẻ, dấu chấm — không dùng cho chữ */
+  --line: #DDD9CF;      /* viền mảnh */
+  --on-olive: #F5F3EC;
+  --font-display: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
+  --t-micro: 150ms; --t-std: 250ms; --t-layout: 400ms;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--olive); outline-offset: 3px; border-radius: var(--r-sm); }
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 40px); }
+
+/* ---------- mockup note ---------- */
+.note { background: var(--ink); color: var(--bg); font-size: 13px; text-align: center; padding: var(--s2) var(--s4); }
+.note b { font-weight: 600; }
+
+/* ---------- header ---------- */
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid transparent; transition: border-color var(--t-std); }
+header.top.scrolled { border-bottom-color: var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--s5); height: 72px; }
+.brand { display: flex; align-items: center; gap: var(--s3); text-decoration: none; }
+.brand-mark { display: none; }
+.brand-name { font-size: 13px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; }
+nav.main { display: flex; gap: var(--s6); font-size: 14px; }
+nav.main a { text-decoration: none; color: var(--muted); transition: color var(--t-micro); }
+nav.main a:hover { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); font: 500 14px/1 var(--font-body); padding: 13px 22px; border-radius: 999px; text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: background var(--t-micro), color var(--t-micro), border-color var(--t-micro); white-space: nowrap; }
+.btn-primary { background: var(--olive); color: var(--on-olive); }
+.btn-primary:hover { background: var(--olive-ink); }
+.btn-ghost { border-color: var(--ink); color: var(--ink); background: transparent; }
+.btn-ghost:hover { background: var(--ink); color: var(--bg); }
+.btn-text { padding-inline: 0; color: var(--ink); background: none; }
+.btn-text span { transition: transform var(--t-micro); display: inline-block; }
+.btn-text:hover span { transform: translateX(3px); }
+
+/* ---------- hero ---------- */
+.hero { padding-block: var(--s4) var(--s8); }
+.hero-frame { position: relative; border-radius: var(--r-md); overflow: hidden; min-height: 560px; display: flex; align-items: flex-end; }
+.hero-frame > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-frame::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(23,23,20,.62) 0%, rgba(23,23,20,.25) 48%, rgba(23,23,20,0) 70%); }
+.hero-copy { position: relative; z-index: 1; padding: var(--s8) clamp(24px, 5vw, 64px); max-width: 620px; color: #F5F3EC; }
+.eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; display: flex; align-items: center; gap: var(--s3); }
+.eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--bronze); }
+.hero h1 { font-family: var(--font-display); font-weight: 300; font-size: clamp(36px, 5vw, 60px); line-height: 1.18; letter-spacing: -0.025em; margin: var(--s5) 0 var(--s5); text-wrap: balance; }
+.hero p.lead { font-size: 17px; line-height: 1.65; margin: 0 0 var(--s6); max-width: 46ch; color: rgba(245,243,236,.9); }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s5); }
+.hero .btn-primary { background: #F5F3EC; color: var(--ink); }
+.hero .btn-primary:hover { background: #fff; }
+.hero .btn-text { color: #F5F3EC; }
+
+/* chat invitation card */
+.invite { position: absolute; z-index: 2; right: clamp(16px, 4vw, 48px); bottom: clamp(16px, 4vw, 48px); width: 300px; background: var(--surface); border-radius: var(--r-lg); padding: var(--s5); box-shadow: 0 12px 40px rgba(23,23,20,.18); }
+.invite-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 12px; font-weight: 500; flex: none; }
+.invite-head small { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
+.invite-head strong { font-weight: 500; font-size: 14px; line-height: 1.3; }
+.invite p { font-size: 17px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.45; margin: 0 0 var(--s4); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.chip { font: 400 13px/1 var(--font-body); padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; transition: border-color var(--t-micro), background var(--t-micro); }
+.chip:hover { border-color: var(--olive); background: var(--bg); }
+
+/* ---------- facts strip ---------- */
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.fact { padding: var(--s5) var(--s4); border-left: 1px solid var(--line); }
+.fact:first-child { border-left: 0; padding-left: 0; }
+.fact dt { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.fact dd { margin: var(--s1) 0 0; font-weight: 300; letter-spacing: -0.02em; font-size: 26px; font-variant-numeric: tabular-nums; }
+
+/* ---------- section heads ---------- */
+section.block { padding-block: var(--s9) 0; }
+.sec-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s6); align-items: end; margin-bottom: var(--s7); }
+.sec-head h2 { font-weight: 300; font-size: clamp(28px, 3.6vw, 40px); line-height: 1.25; letter-spacing: -0.02em; margin: var(--s3) 0 0; text-wrap: balance; }
+.sec-head p { margin: 0; color: var(--muted); max-width: 52ch; }
+
+/* ---------- rooms ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s6); }
+.filters .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.rooms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s7) var(--s5); }
+.room { display: flex; flex-direction: column; gap: var(--s3); }
+.room-img { aspect-ratio: 4 / 3; border-radius: var(--r-md); overflow: hidden; background: var(--line); }
+.room-img img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-layout); }
+.room:hover .room-img img { transform: scale(1.03); }
+.room-meta { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.room h3 { font-weight: 500; font-size: 18px; letter-spacing: -0.01em; line-height: 1.35; margin: 0; }
+.room-spec { font-size: 14px; color: var(--muted); }
+.room-foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--line); margin-top: auto; }
+.price { font-variant-numeric: tabular-nums; font-weight: 500; }
+.price small { font-weight: 400; color: var(--muted); font-size: 13px; }
+.room-foot button { font: 500 13px/1 var(--font-body); background: none; border: 0; color: var(--olive); cursor: pointer; padding: 4px 0; }
+.room-foot button:hover { color: var(--olive-ink); text-decoration: underline; text-underline-offset: 3px; }
+.room[hidden] { display: none; }
+
+/* ---------- amenities ---------- */
+.amen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.amen-item { padding: var(--s6) var(--s6) var(--s6) 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--s4); }
+.amen-item:nth-child(even) { padding-left: var(--s6); border-left: 1px solid var(--line); }
+.amen-no { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); padding-top: 4px; }
+.amen-item h3 { font-weight: 400; font-size: 21px; letter-spacing: -0.015em; margin: 0 0 var(--s2); line-height: 1.3; }
+.amen-item p { margin: 0; color: var(--muted); font-size: 15px; }
+.amen-item .hours { display: inline-block; margin-top: var(--s3); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink); }
+
+/* ---------- policy + contact ---------- */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s5); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s6); }
+.panel h3 { font-weight: 400; font-size: 21px; letter-spacing: -0.015em; margin: 0 0 var(--s4); }
+.panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s3); }
+.panel li { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: var(--s3); font-size: 15px; }
+.panel li span:first-child { color: var(--muted); }
+.copyable { font-variant-numeric: tabular-nums; user-select: all; }
+
+footer.foot { margin-top: var(--s9); border-top: 1px solid var(--line); padding-block: var(--s6) calc(var(--s6) + 64px); color: var(--muted); font-size: 13px; }
+footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); }
+
+/* ---------- chat launcher + drawer ---------- */
+.launcher { position: fixed; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 30; display: inline-flex; align-items: center; gap: var(--s2); background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 14px 20px; font: 500 14px/1 var(--font-body); cursor: pointer; box-shadow: 0 8px 24px rgba(23,23,20,.2); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity var(--t-std), transform var(--t-std); }
+.launcher.show { opacity: 1; transform: none; pointer-events: auto; }
+.launcher .dot { width: 8px; height: 8px; border-radius: 50%; background: #9BB08A; }
+.scrim { position: fixed; inset: 0; background: rgba(23,23,20,.28); z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-layout); }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100%); z-index: 50; background: var(--surface); border-left: 1px solid var(--line); display: flex; flex-direction: column; transform: translateX(100%); transition: transform var(--t-layout) cubic-bezier(.2,.7,.2,1); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body.chat-open .drawer { transform: none; }
+body.chat-open .scrim { opacity: 1; pointer-events: auto; }
+.drawer-head { display: flex; align-items: center; gap: var(--s3); padding: var(--s4) var(--s5); border-bottom: 1px solid var(--line); }
+.drawer-head .title { flex: 1; min-width: 0; }
+.drawer-head strong { display: block; font-weight: 500; font-size: 15px; line-height: 1.3; }
+.drawer-head small { color: var(--muted); font-size: 12px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--ink); font-size: 16px; }
+.icon-btn:hover { background: var(--bg); }
+.thread { flex: 1; overflow-y: auto; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+.msg { max-width: 86%; font-size: 15px; line-height: 1.55; padding: var(--s3) var(--s4); border-radius: var(--r-lg); }
+.msg.bot { background: var(--bg); align-self: flex-start; border-top-left-radius: var(--r-sm); }
+.msg.me { background: var(--ink); color: var(--bg); align-self: flex-end; border-top-right-radius: var(--r-sm); }
+.msg-card { align-self: flex-start; width: 86%; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
+.msg-card img { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
+.msg-card .body { padding: var(--s4); display: grid; gap: var(--s2); }
+.msg-card .k { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.msg-card h4 { margin: 0; font-weight: 500; font-size: 16px; letter-spacing: -0.01em; }
+.msg-card dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s1) var(--s4); font-size: 14px; }
+.msg-card dt { color: var(--muted); }
+.msg-card dd { margin: 0; font-variant-numeric: tabular-nums; }
+.msg-card .btn { margin-top: var(--s2); width: 100%; }
+.composer-chips { display: flex; gap: var(--s2); overflow-x: auto; padding: var(--s3) var(--s5) 0; scrollbar-width: none; }
+.composer-chips .chip { flex: none; }
+.composer { display: flex; gap: var(--s2); padding: var(--s3) var(--s5) var(--s5); }
+.composer input { flex: 1; min-width: 0; font: 400 15px/1.4 var(--font-body); padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); }
+.composer input:focus { outline: none; border-color: var(--olive); }
+.send { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--olive); color: var(--on-olive); cursor: pointer; font-size: 18px; flex: none; }
+.drawer-foot { font-size: 11px; color: var(--muted); text-align: center; padding: 0 var(--s5) var(--s3); }
+
+/* ---------- mobile tab bar ---------- */
+.tabbar { display: none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1024px) {
+  .rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  nav.main { gap: var(--s5); }
+}
+@media (max-width: 768px) {
+  nav.main, .top .btn-ghost { display: none; }
+  .hero-frame { min-height: 520px; flex-direction: column; align-items: stretch; justify-content: flex-end; }
+  .hero-frame::after { background: linear-gradient(0deg, rgba(23,23,20,.7) 0%, rgba(23,23,20,.2) 60%, rgba(23,23,20,0) 100%); }
+  .hero-copy { padding: var(--s6) var(--s5); }
+  .invite { display: none; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact:nth-child(3) { border-left: 0; padding-left: 0; }
+  .fact:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .sec-head, .split { grid-template-columns: minmax(0, 1fr); }
+  .amen { grid-template-columns: minmax(0, 1fr); }
+  .amen-item, .amen-item:nth-child(even) { padding: var(--s5) 0; border-left: 0; }
+  .panel li { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .launcher { display: none; }
+  .drawer { width: 100%; border-left: 0; }
+  .tabbar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .tabbar button { background: none; border: 0; padding: 10px 4px 12px; font: 500 11px/1.2 var(--font-body); color: var(--muted); display: grid; justify-items: center; gap: 4px; cursor: pointer; }
+  .tabbar button[aria-current="page"] { color: var(--ink); }
+  .tabbar svg { width: 20px; height: 20px; }
+}
+@media (max-width: 480px) {
+  .rooms { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 1ms !important; scroll-behavior: auto !important; }
+}
+</style>
+
+<div class="note"><b>Mockup trang chủ — phương án C, tối giản</b> · dữ liệu thật từ knowledge.json · ảnh đang dùng tạm 9 ảnh cũ (1024px) — sẽ thay khi có ảnh mới</div>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#">
+      <span class="brand-mark">S</span>
+      <span class="brand-name">Shanghai Resort</span>
+    </a>
+    <nav class="main" aria-label="Điều hướng chính">
+      <a href="#phong">Hạng phòng</a>
+      <a href="#tien-ich">Tiện ích</a>
+      <a href="#lien-he">Liên hệ</a>
+    </nav>
+    <a class="btn btn-ghost" href="#">Đăng nhập</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-frame">
+        <img src="{{IMG_hotel}}" alt="Toàn cảnh Shanghai Resort nhìn ra biển">
+        <div class="hero-copy">
+          <div class="eyebrow">Khu nghỉ dưỡng 5 sao · Ven biển</div>
+          <h1>533 phòng hướng về một bãi biển riêng</h1>
+          <p class="lead">Nhận phòng từ 15:00, buffet sáng 06:00 – 10:30, lễ tân trực 24/24. Cần gì, nhắn cho chúng tôi.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-open-chat>Trò chuyện với lễ tân</button>
+            <a class="btn btn-text" href="#phong">Xem hạng phòng <span>→</span></a>
+          </div>
+        </div>
+        <aside class="invite" aria-label="Lời mời trò chuyện">
+          <div class="invite-head">
+            <span class="avatar">S</span>
+            <div><strong>Lễ tân Shanghai Resort</strong><small>Trợ lý trực tuyến · trả lời ngay</small></div>
+          </div>
+          <p>Chào anh/chị, em có thể giúp gì cho kỳ nghỉ sắp tới?</p>
+          <div class="chips">
+            <button class="chip" data-open-chat>Còn phòng trống?</button>
+            <button class="chip" data-open-chat>Xem hạng phòng</button>
+            <button class="chip" data-open-chat>Đặt phòng</button>
+            <button class="chip" data-open-chat>Chính sách hủy</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <dl class="facts">
+      <div class="fact"><dt>Nhận phòng</dt><dd>từ 15:00</dd></div>
+      <div class="fact"><dt>Trả phòng</dt><dd>trước 12:00</dd></div>
+      <div class="fact"><dt>Đánh giá</dt><dd>8.9 / 10</dd></div>
+      <div class="fact"><dt>Sân bay quốc tế</dt><dd>~25 km</dd></div>
+    </dl>
+  </div>
+
+  <section class="block" id="phong">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="color:var(--muted)">8 hạng phòng</div>
+          <h2>Từ phòng đôi ấm cúng đến villa có hồ bơi riêng</h2>
+        </div>
+        <p>Giá theo đêm, đã gồm buffet sáng. Muốn biết còn phòng cho ngày cụ thể, hỏi lễ tân trong khung chat — em kiểm tra ngay.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Lọc theo hướng nhìn">
+        <button class="chip" aria-pressed="true" data-filter="all">Tất cả</button>
+        <button class="chip" aria-pressed="false" data-filter="sea">Hướng biển</button>
+        <button class="chip" aria-pressed="false" data-filter="villa">Villa</button>
+      </div>
+      <div class="rooms" id="rooms"></div>
+    </div>
+  </section>
+
+  <section class="block" id="tien-ich">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" style="color:var(--muted)">Tiện ích</div>
+          <h2>Mọi thứ cho một ngày không cần rời resort</h2>
+        </div>
+        <p>Tiện ích chung mở cho khách ở mọi hạng phòng. Khách đang lưu trú đặt bàn nhà hàng hoặc spa ngay trong trang tài khoản.</p>
+      </div>
+      <div class="amen">
+        <article class="amen-item"><span class="amen-no">01</span><div><h3>Nhà hàng & quầy bar</h3><p>Bốn nhà hàng Orchid, Beachcomber, Lotus và buffet — món Việt, Á, quốc tế. Ba quầy bar, trong đó Seaview Lounge có nhạc piano trực tiếp.</p><span class="hours">Room service 24/24</span></div></article>
+        <article class="amen-item"><span class="amen-no">02</span><div><h3>Spa & sức khỏe</h3><p>Massage, tẩy tế bào chết, facial, sauna, phòng gym và sân tennis.</p><span class="hours">Đặt lịch qua tài khoản khách</span></div></article>
+        <article class="amen-item"><span class="amen-no">03</span><div><h3>Biển & hồ bơi</h3><p>Bãi biển riêng dài 700 m với thể thao dưới nước, khu lặn biển, hồ bơi ngoài trời có cầu trượt cho trẻ em.</p><span class="hours">Hồ bơi 06:00 – 22:00</span></div></article>
+        <article class="amen-item"><span class="amen-no">04</span><div><h3>Buffet sáng</h3><p>Món Âu, Á, Trung Hoa và Continental, đã gồm trong hầu hết hạng phòng.</p><span class="hours">06:00 – 10:30</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="lien-he">
+    <div class="wrap split">
+      <div class="panel">
+        <h3>Liên hệ lễ tân</h3>
+        <ul>
+          <li><span>Hotline 24/24</span><span class="copyable">+84-999-1234567</span></li>
+          <li><span>Email</span><span class="copyable">contact@shanghairesort.com</span></li>
+          <li><span>Vị trí</span><span>Ven biển, trung tâm thành phố</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Hủy và đổi đặt phòng</h3>
+        <ul>
+          <li><span>Hủy trước 3 ngày</span><span>Hoàn 100% tiền cọc</span></li>
+          <li><span>Hủy trong 3 ngày</span><span>Mất tiền cọc (kể cả không đến)</span></li>
+          <li><span>Cách thực hiện</span><span>Gọi hotline hoặc gửi email lễ tân</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© Shanghai Resort · Khai trương 2003, cải tạo 2016 · 533 phòng</span>
+    <span>Nhân viên &amp; quản trị: <a href="#">đăng nhập</a></span>
+  </div>
+</footer>
+
+<button class="launcher" id="launcher" data-open-chat><span class="dot"></span>Hỏi lễ tân</button>
+
+<div class="scrim" data-close-chat></div>
+<aside class="drawer" role="dialog" aria-label="Trò chuyện với lễ tân" id="drawer">
+  <div class="drawer-head">
+    <span class="avatar">S</span>
+    <div class="title"><strong>Lễ tân Shanghai Resort</strong><small>Trợ lý trực tuyến</small></div>
+    <button class="icon-btn" title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới">↺</button>
+    <button class="icon-btn" data-close-chat aria-label="Đóng">✕</button>
+  </div>
+  <div class="thread" id="thread">
+    <div class="msg bot">Chào anh/chị, em là lễ tân trực tuyến của Shanghai Resort. Em có thể giúp gì ạ?</div>
+    <div class="msg me">Cuối tuần này còn phòng hướng biển cho 2 người không em?</div>
+    <div class="msg bot">Dạ từ 10/10 đến 12/10 hiện còn 2 phòng Deluxe Ocean View Queen và 1 phòng Deluxe Grand Ocean View ạ. Phòng Ocean View Queen rộng 32m², giường Queen, giá 3.900.000đ/đêm đã gồm buffet sáng.</div>
+    <figure class="msg-card" style="margin:0">
+      <img src="{{IMG_room_deluxe_ocean_view_queen}}" alt="Phòng Deluxe Ocean View Queen">
+      <div class="body"><span class="k">Ảnh phòng</span><h4>Deluxe Ocean View Queen</h4></div>
+    </figure>
+    <div class="msg me">Ok đặt giúp mình phòng đó</div>
+    <div class="msg-card">
+      <div class="body">
+        <span class="k">Phiếu đặt phòng</span>
+        <h4>Deluxe Ocean View Queen</h4>
+        <dl>
+          <dt>Nhận phòng</dt><dd>10/10/2026</dd>
+          <dt>Trả phòng</dt><dd>12/10/2026 · 2 đêm</dd>
+          <dt>Số khách</dt><dd>2</dd>
+          <dt>Tạm tính</dt><dd>7.800.000đ</dd>
+        </dl>
+        <button class="btn btn-primary">Điền thông tin &amp; xác nhận</button>
+      </div>
+    </div>
+  </div>
+  <div class="composer-chips">
+    <button class="chip">Xem hạng phòng</button>
+    <button class="chip">Còn phòng trống?</button>
+    <button class="chip">Giờ buffet sáng</button>
+    <button class="chip">Chính sách hủy</button>
+  </div>
+  <form class="composer" id="composer">
+    <label for="chat-input" class="sr" hidden>Tin nhắn</label>
+    <input id="chat-input" placeholder="Nhập câu hỏi…" autocomplete="off">
+    <button class="send" aria-label="Gửi">↑</button>
+  </form>
+  <div class="drawer-foot">Đóng tab là cuộc trò chuyện kết thúc · tải lại trang vẫn giữ tin nhắn</div>
+</aside>
+
+<nav class="tabbar" aria-label="Điều hướng di động">
+  <button aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Trang chủ</button>
+  <button data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16v11H8l-4 4z"/></svg>Chat</button>
+  <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Đặt phòng</button>
+  <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Tài khoản</button>
+</nav>
+
+<script>
+const ROOMS = {{ROOMS_JSON}};
+const fmt = n => n.toLocaleString("vi-VN").replace(/,/g, ".") + "đ";
+const grid = document.getElementById("rooms");
+grid.innerHTML = ROOMS.map(r => `
+  <article class="room" data-tags="${r.tags}">
+    <div class="room-img"><img src="${r.img}" alt="Phòng ${r.title}" loading="lazy"></div>
+    <div class="room-meta">${r.view} · ${r.bed}</div>
+    <h3>${r.title}</h3>
+    <div class="room-spec">${r.size} m² · tối đa ${r.guests} khách</div>
+    <div class="room-foot">
+      <span class="price">${fmt(r.price)} <small>/ đêm</small></span>
+      <button data-open-chat>Hỏi phòng trống</button>
+    </div>
+  </article>`).join("");
+
+document.querySelectorAll("[data-filter]").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("[data-filter]").forEach(b => b.setAttribute("aria-pressed", b === btn));
+  const f = btn.dataset.filter;
+  grid.querySelectorAll(".room").forEach(el => { el.hidden = f !== "all" && !el.dataset.tags.includes(f); });
+}));
+
+const open = () => { document.body.classList.add("chat-open"); setTimeout(() => document.getElementById("chat-input").focus({preventScroll: true}), 300); };
+const close = () => document.body.classList.remove("chat-open");
+document.addEventListener("click", e => {
+  if (e.target.closest("[data-open-chat]")) open();
+  if (e.target.closest("[data-close-chat]")) close();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+
+const launcher = document.getElementById("launcher"), header = document.getElementById("top");
+const onScroll = () => { launcher.classList.toggle("show", scrollY > 520); header.classList.toggle("scrolled", scrollY > 8); };
+addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+document.getElementById("composer").addEventListener("submit", e => {
+  e.preventDefault();
+  const input = document.getElementById("chat-input"), text = input.value.trim();
+  if (!text) return;
+  const thread = document.getElementById("thread");
+  thread.insertAdjacentHTML("beforeend", `<div class="msg me"></div><div class="msg bot">(Mockup) Bản thật sẽ gửi câu này tới lễ tân AI qua /api/chat.</div>`);
+  thread.querySelectorAll(".msg.me")[thread.querySelectorAll(".msg.me").length - 1].textContent = text;
+  input.value = ""; thread.scrollTop = thread.scrollHeight;
+});
+</script>
