@@ -47,6 +47,8 @@ ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")   # trống → không tự tạo admin
 COOKIE_SECURE = _env_bool("COOKIE_SECURE", False)  # bật trên production (HTTPS)
 GUARDRAIL_ENABLED = _env_bool("GUARDRAIL_ENABLED", True)
+# true = khách đăng nhập được cả TRƯỚC ngày nhận phòng (tới trước ngày trả phòng) — dùng để test/demo; tắt khi chạy thật
+GUEST_LOGIN_ANYTIME = _env_bool("GUEST_LOGIN_ANYTIME", False)
 CHAT_IDLE_MINUTES = _env_int("CHAT_IDLE_MINUTES", 60)     # phiên chat im lặng quá lâu → xóa khỏi RAM
 CHAT_MAX_SESSIONS = max(1, _env_int("CHAT_MAX_SESSIONS", 1000))   # trần số phiên trong RAM (≥1)
 

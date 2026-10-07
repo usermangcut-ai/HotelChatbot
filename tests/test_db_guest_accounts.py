@@ -94,3 +94,11 @@ def test_no_plaintext_password_columns(tmp_db):
             assert "password_plain" not in cols
     finally:
         conn.close()
+
+
+def test_guest_login_anytime_flag_allows_login_before_check_in(tmp_db, monkeypatch):
+    monkeypatch.setattr(db, "GUEST_LOGIN_ANYTIME", True)
+    res = _book(tmp_db)   # nhận phòng sau 30 ngày
+    assert db.verify_guest_login(res["room_id"], res["guest_password"], db_path=tmp_db) == res["id"]
+    sid = db.create_session("guest_account", str(res["id"]), "guest", db_path=tmp_db)
+    assert db.get_session(sid, db_path=tmp_db)["room_id"] == res["room_id"]

@@ -109,16 +109,19 @@ def test_open_booking_form_tool_rejects_past_check_in():
     _, fn = tools.build_tools()["open_booking_form_tool"]
     out = fn({"room_type": "Deluxe Queen", "check_in": "2020-01-01",
               "check_out": "2020-01-03", "num_guests": 2})
-    assert "sau ngày hiện tại" in out.lower()
+    assert "đã qua" in out.lower()
     assert "action" not in out
 
 
-def test_open_booking_form_tool_rejects_today():
+def test_open_booking_form_tool_rejects_past_but_allows_today():
     _, fn = tools.build_tools()["open_booking_form_tool"]
-    out = fn({"room_type": "Deluxe Queen", "check_in": clock.today().isoformat(),
-              "check_out": (clock.today() + timedelta(days=1)).isoformat(), "num_guests": 2})
-    assert "sau ngày hiện tại" in out.lower()
+    out = fn({"room_type": "Deluxe Queen", "check_in": (clock.today() - timedelta(days=1)).isoformat(),
+              "check_out": clock.today().isoformat(), "num_guests": 2})
+    assert "đã qua" in out.lower()
     assert "action" not in out
+    ok = fn({"room_type": "Deluxe Queen", "check_in": clock.today().isoformat(),
+             "check_out": (clock.today() + timedelta(days=1)).isoformat(), "num_guests": 2})
+    assert "open_booking_form" in ok
 
 
 def test_open_booking_form_tool_rejects_malformed_date():

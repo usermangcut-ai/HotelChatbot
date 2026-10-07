@@ -62,7 +62,8 @@ describe("dates", () => {
   });
   it("validates the stay range", () => {
     expect(dateError("2026-10-17", "2026-10-19", "2026-10-08")).toBeNull();
-    expect(dateError("2026-10-07", "2026-10-09", "2026-10-08")).toBe("Ngày nhận phòng từ ngày mai trở đi.");
+    expect(dateError("2026-10-07", "2026-10-09", "2026-10-08")).toBe("Ngày nhận phòng từ hôm nay trở đi.");
+    expect(dateError("2026-10-08", "2026-10-09", "2026-10-08")).toBeNull();
     expect(dateError("2026-10-17", "2026-10-17", "2026-10-08")).toBe("Ngày trả phòng phải sau ngày nhận phòng.");
     expect(dateError("", "2026-10-17", "2026-10-08")).toBe("Chọn ngày nhận và trả phòng.");
   });

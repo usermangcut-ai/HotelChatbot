@@ -47,8 +47,8 @@ class BookingRequest(BaseModel):
             parsed = date.fromisoformat(v)
         except ValueError:
             raise ValueError("Ngày phải đúng định dạng YYYY-MM-DD") from None
-        if parsed <= clock.today():
-            raise ValueError("Ngày nhận/trả phòng phải sau ngày hiện tại")
+        if parsed < clock.today():
+            raise ValueError("Ngày nhận/trả phòng không được trước ngày hiện tại")
         return v
 
     @field_validator("check_out")

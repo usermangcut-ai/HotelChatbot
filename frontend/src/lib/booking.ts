@@ -43,10 +43,10 @@ export function defaultStay(today: Date) {
   return { checkIn: addDaysIso(today, 10), checkOut: addDaysIso(today, 12) };
 }
 
-/** Lỗi khoảng ngày (null = hợp lệ). `tomorrow` là ngày nhận phòng sớm nhất. */
-export function dateError(checkIn: string, checkOut: string, tomorrow: string): string | null {
+/** Lỗi khoảng ngày (null = hợp lệ). `earliest` là ngày nhận phòng sớm nhất (hôm nay). */
+export function dateError(checkIn: string, checkOut: string, earliest: string): string | null {
   if (!ISO.test(checkIn) || !ISO.test(checkOut)) return "Chọn ngày nhận và trả phòng.";
-  if (checkIn < tomorrow) return "Ngày nhận phòng từ ngày mai trở đi.";
+  if (checkIn < earliest) return "Ngày nhận phòng từ hôm nay trở đi.";
   if (checkOut <= checkIn) return "Ngày trả phòng phải sau ngày nhận phòng.";
   return null;
 }

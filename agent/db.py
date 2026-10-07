@@ -8,7 +8,7 @@ from datetime import timedelta
 import bcrypt
 
 from agent import clock
-from agent.config import DB_PATH
+from agent.config import DB_PATH, GUEST_LOGIN_ANYTIME
 
 
 def hash_password(raw):
@@ -211,9 +211,9 @@ def create_reservation(room_type, check_in, check_out, guest_name, guest_phone, 
     Check trống + ghi nằm trong CÙNG một transaction (BEGIN IMMEDIATE giữ write-lock ngay từ đầu) —
     nếu không, 2 request đặt đồng thời phòng cuối cùng có thể cùng đọc thấy "còn 1 phòng"."""
     today = clock.today().isoformat()
-    if check_in <= today:
+    if check_in < today:
         raise InvalidDateRangeError(
-            f"Ngày nhận phòng ({check_in}) phải sau ngày hiện tại ({today}).")
+            f"Ngày nhận phòng ({check_in}) không được trước ngày hiện tại ({today}).")
     if check_out <= check_in:   # so sánh string ISO 8601 (YYYY-MM-DD) sort đúng như so ngày
         raise InvalidDateRangeError(
             f"Ngày trả phòng ({check_out}) phải sau ngày nhận phòng ({check_in}).")
@@ -341,7 +341,7 @@ def verify_guest_login(room_id, password, db_path=DB_PATH):
         conn.close()
     for reservation_id, pwd_hash, check_in in rows:
         if verify_password(password, pwd_hash):
-            if check_in > today:
+            if check_in > today and not GUEST_LOGIN_ANYTIME:
                 raise StayNotStartedError(check_in)
             return reservation_id
     return None
@@ -355,7 +355,8 @@ def get_active_stay(reservation_id, db_path=DB_PATH):
     try:
         row = conn.execute(
             "SELECT id, room_id FROM reservations WHERE id=? AND status='paid' "
-            "AND check_in <= ? AND check_out > ?", (reservation_id, today, today)).fetchone()
+            "AND check_in <= ? AND check_out > ?",
+            (reservation_id, "9999-12-31" if GUEST_LOGIN_ANYTIME else today, today)).fetchone()
         return {"reservation_id": row[0], "room_id": row[1]} if row else None
     finally:
         conn.close()

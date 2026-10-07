@@ -144,6 +144,7 @@ Lần khởi động đầu tiên (DB chưa có tài khoản nhân viên nào), 
 | `COOKIE_SECURE` | `false` | `true` khi chạy sau HTTPS |
 | `CHAT_IDLE_MINUTES` | `60` | Phiên chat im lặng quá số phút này thì bị xóa khỏi RAM |
 | `CHAT_MAX_SESSIONS` | `1000` | Trần số phiên chat trong RAM |
+| `GUEST_LOGIN_ANYTIME` | `false` | `true` = khách đăng nhập được cả trước ngày nhận phòng (test/demo) |
 | `GUARDRAIL_ENABLED` | `true` | Tắt khi cần đo latency |
 
 **Nâng cấp từ bản cũ** (hotel.db nằm ở `data/`): dời `data/hotel.db*` sang `storage/`, xóa

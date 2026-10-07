@@ -67,12 +67,15 @@ def test_create_booking_rejects_unknown_room_type():
     assert resp.status_code == 422
 
 
-def test_create_booking_rejects_today():
-    resp = client.post("/api/bookings", json={
-        "room_type": "Deluxe Queen",
-        "check_in": clock.today().isoformat(),
-        "check_out": (clock.today() + timedelta(days=1)).isoformat(),
-        "guest_name": "A", "guest_phone": "090", "guest_email": "a@test.com", "num_guests": 2})
+def test_create_booking_allows_today_rejects_past():
+    base = {"room_type": "Villa 3 Bedroom Ocean View", "guest_name": "A", "guest_phone": "090",
+            "guest_email": "a@test.com", "num_guests": 2}
+    today, yesterday = clock.today(), clock.today() - timedelta(days=1)
+    resp = client.post("/api/bookings", json={**base, "check_in": today.isoformat(),
+                                              "check_out": (today + timedelta(days=1)).isoformat()})
+    assert resp.status_code == 201
+    resp = client.post("/api/bookings", json={**base, "check_in": yesterday.isoformat(),
+                                              "check_out": today.isoformat()})
     assert resp.status_code == 422
 
 

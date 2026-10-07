@@ -47,11 +47,14 @@ def test_create_reservation_raises_when_sold_out(tmp_db):
                               "C", "092", "c@test.com", 2, db_path=tmp_db)
 
 
-def test_create_reservation_rejects_today_at_business_layer(tmp_db):
+def test_create_reservation_allows_today_rejects_past(tmp_db):
     today = clock.today().isoformat()
     tomorrow = (clock.today() + timedelta(days=1)).isoformat()
+    yesterday = (clock.today() - timedelta(days=1)).isoformat()
+    assert db.create_reservation("Deluxe Park Suite", today, tomorrow,
+                                 "A", "090", "a@test.com", 2, db_path=tmp_db)["status"] == "paid"
     with pytest.raises(db.InvalidDateRangeError):
-        db.create_reservation("Deluxe Park Suite", today, tomorrow,
+        db.create_reservation("Deluxe Park Suite", yesterday, today,
                               "A", "090", "a@test.com", 2, db_path=tmp_db)
 
 
