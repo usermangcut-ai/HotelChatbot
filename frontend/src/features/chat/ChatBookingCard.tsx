@@ -25,7 +25,7 @@ export default function ChatBookingCard({ cacheKey, draft }: { cacheKey: string;
   const { addBotMessage } = useChat();
   const uid = useId();
   const [saved] = useState(() => cache.get(cacheKey));
-  const [tomorrow] = useState(() => addDaysIso(new Date(), 1));
+  const [earliest] = useState(() => addDaysIso(new Date(), 0));
   const [step, setStep] = useState<Snapshot["step"]>(saved?.step ?? 1);
   const [roomType, setRoomType] = useState(saved?.roomType ?? draft.roomType ?? "");
   const [checkIn, setCheckIn] = useState(saved?.checkIn ?? draft.checkIn ?? "");
@@ -40,7 +40,7 @@ export default function ChatBookingCard({ cacheKey, draft }: { cacheKey: string;
   const room = rooms?.find(r => r.room_type === roomType) ?? null;
   const needRoom = editAll || !draft.roomType;
   const needDates = editAll || !draft.checkIn || !draft.checkOut;
-  const dateErr = checkIn && checkOut ? dateError(checkIn, checkOut, tomorrow) : "Chọn ngày nhận và trả phòng.";
+  const dateErr = checkIn && checkOut ? dateError(checkIn, checkOut, earliest) : "Chọn ngày nhận và trả phòng.";
   const avail = useAvailability(room?.room_type ?? null, checkIn, checkOut, !dateErr);
   const totals = room && !dateErr ? bookingTotals(room.price_vnd, checkIn, checkOut) : null;
   const guests = Math.max(1, Math.min(draft.numGuests ?? 2, room?.max_occupancy ?? 2));
@@ -130,11 +130,11 @@ export default function ChatBookingCard({ cacheKey, draft }: { cacheKey: string;
           <div className={`${b.fields} ${b.compact}`}>
             <div className={b.field}>
               <label htmlFor={`${uid}-in`}>Nhận phòng</label>
-              <input className={b.control} type="date" id={`${uid}-in`} min={tomorrow} value={checkIn} onChange={e => setCheckIn(e.target.value)} />
+              <input className={b.control} type="date" id={`${uid}-in`} min={earliest} value={checkIn} onChange={e => setCheckIn(e.target.value)} />
             </div>
             <div className={b.field}>
               <label htmlFor={`${uid}-out`}>Trả phòng</label>
-              <input className={b.control} type="date" id={`${uid}-out`} min={tomorrow} value={checkOut} onChange={e => setCheckOut(e.target.value)} />
+              <input className={b.control} type="date" id={`${uid}-out`} min={earliest} value={checkOut} onChange={e => setCheckOut(e.target.value)} />
             </div>
             {checkIn && checkOut && dateErr && <span className={`${b["err-line"]} ${b.full}`} role="alert">{dateErr}</span>}
           </div>

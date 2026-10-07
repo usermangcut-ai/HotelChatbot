@@ -25,7 +25,7 @@ export default function BookingPage() {
     const q = parseBookingQuery(search);
     const today = new Date();
     const d = defaultStay(today);
-    return { q, tomorrow: addDaysIso(today, 1), dayAfter: addDaysIso(today, 2),
+    return { q, earliest: addDaysIso(today, 0), dayAfter: addDaysIso(today, 2),
              checkIn: q.checkIn ?? d.checkIn, checkOut: q.checkOut ?? d.checkOut };
   });
   const [picked, setPicked] = useState<string | null>(init.q.roomType);
@@ -40,8 +40,8 @@ export default function BookingPage() {
   const room = rooms?.find(r => r.room_type === picked) ?? rooms?.[0] ?? null;
   const maxGuests = room?.max_occupancy ?? 1;
   const guests = Math.max(1, Math.min(guestsWanted, maxGuests));
-  const dateErr = dateError(checkIn, checkOut, init.tomorrow);
-  const errOnIn = !checkIn || checkIn < init.tomorrow;   // lỗi thuộc ô nhận phòng hay ô trả phòng
+  const dateErr = dateError(checkIn, checkOut, init.earliest);
+  const errOnIn = !checkIn || checkIn < init.earliest;   // lỗi thuộc ô nhận phòng hay ô trả phòng
   const avail = useAvailability(room?.room_type ?? null, checkIn, checkOut, !dateErr);
   const totals = room ? bookingTotals(room.price_vnd, checkIn, checkOut) : { nights: 0, total: 0, deposit: 0 };
   const canContinue = !!room && !dateErr && avail?.status === "ok" && avail.available > 0;
@@ -103,9 +103,9 @@ export default function BookingPage() {
                 </div>
                 <div className={b.field}>
                   <label htmlFor="checkin">Nhận phòng</label>
-                  <input className={b.control} type="date" id="checkin" min={init.tomorrow} value={checkIn} onChange={e => setCheckIn(e.target.value)}
+                  <input className={b.control} type="date" id="checkin" min={init.earliest} value={checkIn} onChange={e => setCheckIn(e.target.value)}
                     aria-invalid={dateErr && errOnIn ? true : undefined} aria-describedby={dateErr && errOnIn ? "date-msg" : undefined} />
-                  <span className={b.hint}>Từ 15:00 · chọn từ ngày mai trở đi</span>
+                  <span className={b.hint}>Từ 15:00 · chọn từ hôm nay trở đi</span>
                   {dateErr && errOnIn && <span className={b.err} id="date-msg" role="alert">{dateErr}</span>}
                 </div>
                 <div className={b.field}>
