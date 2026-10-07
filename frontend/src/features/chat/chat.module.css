@@ -1,0 +1,61 @@
+/* Chép nguyên văn từ MOCKUP. ĐIỀU CHỈNH: body.chat-open .drawer/.scrim → .drawer.open/.scrim.open; .msg thêm white-space: pre-line;
+   .msg-card .btn / .composer-chips .chip là class cục bộ, TSX gắn thêm s.btn / s.chip cạnh ui.btn / ui.chip. */
+
+/* chat invitation card */
+.invite { position: absolute; z-index: 2; right: clamp(16px, 4vw, 48px); bottom: clamp(16px, 4vw, 48px); width: 300px; background: var(--surface); border-radius: var(--r-lg); padding: var(--s5); box-shadow: 0 12px 40px rgba(23,23,20,.18); }
+.invite-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 12px; font-weight: 500; flex: none; }
+.invite-head small { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
+.invite-head strong { font-weight: 500; font-size: 14px; line-height: 1.3; }
+.invite p { font-size: 17px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.45; margin: 0 0 var(--s4); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
+
+/* ---------- chat launcher + drawer ---------- */
+.launcher { position: fixed; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 30; display: inline-flex; align-items: center; gap: var(--s2); background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 14px 20px; font: 500 14px/1 var(--font-body); cursor: pointer; box-shadow: 0 8px 24px rgba(23,23,20,.2); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity var(--t-std), transform var(--t-std); }
+.launcher.show { opacity: 1; transform: none; pointer-events: auto; }
+.launcher .dot { width: 8px; height: 8px; border-radius: 50%; background: #9BB08A; }
+.scrim { position: fixed; inset: 0; background: rgba(23,23,20,.28); z-index: 40; opacity: 0; pointer-events: none; transition: opacity var(--t-layout); }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100%); z-index: 50; background: var(--surface); border-left: 1px solid var(--line); display: flex; flex-direction: column; transform: translateX(100%); transition: transform var(--t-layout) cubic-bezier(.2,.7,.2,1); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.drawer.open { transform: none; }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.drawer-head { display: flex; align-items: center; gap: var(--s3); padding: var(--s4) var(--s5); border-bottom: 1px solid var(--line); }
+.drawer-head .title { flex: 1; min-width: 0; }
+.drawer-head strong { display: block; font-weight: 500; font-size: 15px; line-height: 1.3; }
+.drawer-head small { color: var(--muted); font-size: 12px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--ink); font-size: 16px; }
+.icon-btn:hover { background: var(--bg); }
+.thread { flex: 1; overflow-y: auto; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+.msg { max-width: 86%; font-size: 15px; line-height: 1.55; padding: var(--s3) var(--s4); border-radius: var(--r-lg); white-space: pre-line; }
+.msg.bot { background: var(--bg); align-self: flex-start; border-top-left-radius: var(--r-sm); }
+.msg.me { background: var(--ink); color: var(--bg); align-self: flex-end; border-top-right-radius: var(--r-sm); }
+.msg-card { align-self: flex-start; width: 86%; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
+.msg-card img { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
+.msg-card .body { padding: var(--s4); display: grid; gap: var(--s2); }
+.msg-card .k { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.msg-card h4 { margin: 0; font-weight: 500; font-size: 16px; letter-spacing: -0.01em; }
+.msg-card dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s1) var(--s4); font-size: 14px; }
+.msg-card dt { color: var(--muted); }
+.msg-card dd { margin: 0; font-variant-numeric: tabular-nums; }
+.msg-card .btn { margin-top: var(--s2); width: 100%; }
+.composer-chips { display: flex; gap: var(--s2); overflow-x: auto; padding: var(--s3) var(--s5) 0; scrollbar-width: none; }
+.composer-chips .chip { flex: none; }
+.composer { display: flex; gap: var(--s2); padding: var(--s3) var(--s5) var(--s5); }
+.composer input { flex: 1; min-width: 0; font: 400 15px/1.4 var(--font-body); padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); }
+.composer input:focus { outline: none; border-color: var(--olive); }
+.send { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--olive); color: var(--on-olive); cursor: pointer; font-size: 18px; flex: none; }
+.drawer-foot { font-size: 11px; color: var(--muted); text-align: center; padding: 0 var(--s5) var(--s3); }
+
+/* Thêm (không có trong MOCKUP) — trạng thái đang trả lời / lỗi */
+.typing { display: inline-flex; gap: 4px; align-items: center; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); opacity: .4; animation: blink 1.2s infinite; }
+.typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 50% { opacity: 1; } }
+.msg.error { color: var(--danger); background: var(--danger-bg); }
+.send:disabled { opacity: .5; cursor: progress; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 768px) {
+  .invite { display: none; }
+  .launcher { display: none; }
+  .drawer { width: 100%; border-left: 0; }
+}
