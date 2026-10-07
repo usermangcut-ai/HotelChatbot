@@ -10,6 +10,7 @@
   --on-olive: #F5F3EC;
   --font-display: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: var(--font-body);   /* tên dùng trong mockup D2 (login/booking/guest) */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
   --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
   --t-micro: 150ms; --t-std: 250ms; --t-layout: 400ms;

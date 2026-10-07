@@ -1,11 +1,17 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../lib/auth";
+import { homeForRole } from "../lib/booking";
 import ui from "./ui.module.css";
 import s from "./PublicLayout.module.css";
 
 export default function PublicLayout({ children, onOpenChat }: { children: ReactNode; onOpenChat: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
+  const { me } = useAuth();
+  // Nút đầu trang: chưa đăng nhập → Đăng nhập; khách → Tài khoản; nhân viên/quản trị → Bảng điều phối
+  const account = me ? { to: homeForRole(me.role), label: me.role === "guest" ? "Tài khoản" : "Bảng điều phối" } : { to: "/dang-nhap", label: "Đăng nhập" };
+  const accountTab = me?.role === "guest" ? "/tai-khoan" : "/dang-nhap";
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -23,7 +29,7 @@ export default function PublicLayout({ children, onOpenChat }: { children: React
             <a href="/#tien-ich">Tiện ích</a>
             <a href="/#lien-he">Liên hệ</a>
           </nav>
-          <Link className={`${ui.btn} ${ui["btn-ghost"]} ${s.login}`} to="/dang-nhap">Đăng nhập</Link>
+          <Link className={`${ui.btn} ${ui["btn-ghost"]} ${s.login}`} to={account.to}>{account.label}</Link>
         </div>
       </header>
 
@@ -46,7 +52,7 @@ export default function PublicLayout({ children, onOpenChat }: { children: React
         <Link to="/dat-phong" aria-current={pathname === "/dat-phong" ? "page" : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Đặt phòng
         </Link>
-        <Link to="/dang-nhap" aria-current={pathname === "/dang-nhap" ? "page" : undefined}>
+        <Link to={accountTab} aria-current={pathname === accountTab ? "page" : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Tài khoản
         </Link>
       </nav>

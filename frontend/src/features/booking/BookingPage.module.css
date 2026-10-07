@@ -1,0 +1,47 @@
+/* Chép nguyên văn từ MOCKUP booking.template.html (cỡ chữ px → token --fs-*) — phần riêng của trang /dat-phong.
+   ĐIỀU CHỈNH: header.top/.wordmark/.back của mockup không chép — trang nằm trong PublicLayout (header chung + chat) theo plan; .summary top 24px → 96px (header chung dính cao 72px);
+   ô nhập, nút, QR, khối thành công ở booking.module.css (dùng chung với phiếu trong chat). */
+
+.page { padding-block: 48px 96px; }
+.page-head { margin-bottom: 40px; }
+.page-head h1 { font-weight: 300; font-size: clamp(var(--fs-2xl), 4vw, var(--fs-3xl)); line-height: 1.2; letter-spacing: -.025em; margin: 0 0 8px; }
+.page-head p { margin: 0; color: var(--muted); }
+
+.steps { display: flex; gap: 8px; list-style: none; padding: 0; margin: 0 0 32px; flex-wrap: wrap; }
+.steps li { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--muted); }
+.steps li + li::before { content: ""; width: 24px; height: 1px; background: var(--line); }
+.steps .n { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.steps li.done .n { background: var(--olive); border-color: var(--olive); color: var(--on-olive); }
+.steps li.active { color: var(--ink); font-weight: 500; }
+.steps li.active .n { border-color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 48px; align-items: start; }
+.panel[hidden] { display: none; }
+.panel h2 { font-weight: 400; font-size: var(--fs-xl); letter-spacing: -.015em; margin: 0 0 24px; }
+.stepper { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); overflow: hidden; }
+.stepper button { border: 0; background: none; font-size: var(--fs-lg); cursor: pointer; color: var(--ink); }
+.stepper button:disabled { color: #B9B6AD; cursor: not-allowed; }
+.stepper output { display: grid; place-items: center; font-variant-numeric: tabular-nums; font-size: var(--fs-md); border-inline: 1px solid var(--line); padding: 12px 0; }
+
+/* summary */
+.summary { position: sticky; top: 96px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.summary img { aspect-ratio: 16 / 10; width: 100%; object-fit: cover; }
+.summary .body { padding: 24px; display: grid; gap: 16px; }
+.summary .meta { font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.summary h3 { font-weight: 500; font-size: var(--fs-lg); letter-spacing: -.01em; margin: 4px 0 0; }
+.summary .dates { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: var(--r-md); }
+.summary .dates div { padding: 10px 12px; }
+.summary .dates div + div { border-left: 1px solid var(--line); }
+.summary .dates small { display: block; font-size: var(--fs-xs); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.summary .dates span { font-size: var(--fs-md); font-variant-numeric: tabular-nums; }
+.lines { display: grid; gap: 8px; font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.lines div { display: flex; justify-content: space-between; gap: 12px; }
+.lines .muted { color: var(--muted); }
+.lines .total { padding-top: 12px; border-top: 1px solid var(--line); font-size: var(--fs-md); font-weight: 500; }
+.lines .deposit { color: var(--olive); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .summary { position: static; order: -1; }
+  .summary img { display: none; }
+}

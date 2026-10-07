@@ -82,3 +82,7 @@
 .avail-list li.none b { color: var(--muted); font-weight: 400; }
 .book-sm { font: 500 var(--fs-xs)/1 var(--font-body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color var(--t-micro); }
 .book-sm:hover { border-color: var(--ink); }
+button.book-sm { background: transparent; cursor: pointer; }   /* "Đặt" mở phiếu ngay trong chat (nút, không còn là link) */
+
+/* Phiếu đặt phòng điền ngay trong chat — nút chính khóa khi chưa đủ điều kiện (như .btn-primary:disabled của mockup booking) */
+.msg-card .btn:disabled { opacity: .5; cursor: not-allowed; }

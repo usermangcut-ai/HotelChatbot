@@ -75,3 +75,20 @@ def test_create_booking_rejects_today():
         "guest_name": "A", "guest_phone": "090", "guest_email": "a@test.com", "num_guests": 2})
     assert resp.status_code == 422
 
+
+
+def test_availability_counts_free_rooms_for_dates():
+    resp = client.get("/api/availability", params={"room_type": "Deluxe Park Suite",
+                                                   "check_in": "2099-03-01", "check_out": "2099-03-03"})
+    assert resp.status_code == 200
+    assert resp.json() == {"room_type": "Deluxe Park Suite", "check_in": "2099-03-01",
+                           "check_out": "2099-03-03", "available": 2}
+
+
+def test_availability_rejects_unknown_room_and_bad_dates():
+    assert client.get("/api/availability", params={"room_type": "Phòng Ma", "check_in": "2099-03-01",
+                                                   "check_out": "2099-03-03"}).status_code == 422
+    assert client.get("/api/availability", params={"room_type": "Deluxe Queen", "check_in": "2099-03-03",
+                                                   "check_out": "2099-03-01"}).status_code == 422
+    assert client.get("/api/availability", params={"room_type": "Deluxe Queen", "check_in": "03/01/2099",
+                                                   "check_out": "2099-03-05"}).status_code == 422

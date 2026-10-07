@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { postChat } from "../../lib/api";
 import { clearChat, loadChat, saveChat, type ChatMessage, type ChatState } from "../../lib/chatStorage";
-import { extractAttachments } from "../../lib/toolResults";
+import { extractAttachments, type BookingDraft } from "../../lib/toolResults";
 
 type ChatCtx = {
   isOpen: boolean;
@@ -11,6 +11,10 @@ type ChatCtx = {
   pending: boolean;
   send: (text: string) => void;
   reset: () => void;
+  /** Thêm một phiếu đặt phòng mới vào cuối luồng (tin bot không chữ, chỉ có phiếu) — không gọi API chat. */
+  addBookingDraft: (draft: BookingDraft) => void;
+  /** Thêm một dòng chữ của bot chỉ ở frontend (vd "Đã giữ phòng …") — không gọi API chat. */
+  addBotMessage: (text: string) => void;
 };
 
 const Ctx = createContext<ChatCtx | null>(null);
@@ -44,8 +48,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const open = useCallback((ask?: string) => { setOpen(true); if (ask) send(ask); }, [send]);
   const close = useCallback(() => setOpen(false), []);
   const reset = useCallback(() => setState(clearChat()), []);
+  const addBookingDraft = useCallback((draft: BookingDraft) =>
+    setState(s => ({ ...s, messages: [...s.messages, { id: id(), role: "bot", text: "", attachments: [draft] }] })), []);
+  const addBotMessage = useCallback((text: string) =>
+    setState(s => ({ ...s, messages: [...s.messages, { id: id(), role: "bot", text }] })), []);
 
-  return <Ctx.Provider value={{ isOpen, open, close, messages: state.messages, pending, send, reset }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ isOpen, open, close, messages: state.messages, pending, send, reset, addBookingDraft, addBotMessage }}>{children}</Ctx.Provider>;
 }
 
 // eslint-disable-next-line react/only-export-components -- hook đi kèm provider
