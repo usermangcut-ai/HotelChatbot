@@ -1,0 +1,23 @@
+:root {
+  --bg: #F5F3EC;        /* ngà — nền trang */
+  --surface: #FBFAF6;   /* mặt nổi: thẻ, khung chat */
+  --ink: #171714;       /* chữ chính */
+  --muted: #625F58;     /* chữ phụ — đậm hơn bản GPT (#77756E) để đạt tương phản 4.5:1 */
+  --olive: #58634C;     /* màu hành động */
+  --olive-ink: #434C39; /* olive khi hover */
+  --bronze: #A98952;    /* CHỈ trang trí: đường kẻ, dấu chấm — không dùng cho chữ */
+  --line: #DDD9CF;      /* viền mảnh */
+  --on-olive: #F5F3EC;
+  --font-display: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
+  --t-micro: 150ms; --t-std: 250ms; --t-layout: 400ms;
+  --danger: #9A3B2E; --danger-bg: #F6E9E4;
+  --amber: #7A5A1E; --amber-bg: #F3EBDA;
+  --ok: #3F5B3A; --olive-bg: #E9EBE2; --grey-bg: #ECEAE3; --olive-soft: #B9C1AC;
+  /* Thang cỡ chữ — 8 bậc, mọi font-size dùng token này (không đặt số lẻ) */
+  --fs-xs: 12px; --fs-sm: 14px; --fs-md: 16px; --fs-lg: 18px;
+  --fs-xl: 21px; --fs-2xl: 28px; --fs-3xl: 40px; --fs-4xl: 60px;
+  color-scheme: light;
+}

@@ -1,0 +1,29 @@
+/* Chép nguyên văn từ MOCKUP. ĐIỀU CHỈNH: .top .btn-ghost → .top .login; .tabbar button → .tabbar button, .tabbar a. */
+
+/* ---------- header ---------- */
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid transparent; transition: border-color var(--t-std); }
+header.top.scrolled { border-bottom-color: var(--line); }
+.top :global(.wrap) { display: flex; align-items: center; justify-content: space-between; gap: var(--s5); height: 72px; }
+.brand { display: flex; align-items: center; gap: var(--s3); text-decoration: none; }
+.brand-name { font-size: var(--fs-sm); font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; }
+nav.main { display: flex; gap: var(--s6); font-size: var(--fs-sm); }
+nav.main a { text-decoration: none; color: var(--muted); transition: color var(--t-micro); }
+nav.main a:hover { color: var(--ink); }
+
+footer.foot { margin-top: var(--s9); border-top: 1px solid var(--line); padding-block: var(--s6) calc(var(--s6) + 64px); color: var(--muted); font-size: var(--fs-sm); }
+footer.foot :global(.wrap) { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); }
+
+/* ---------- mobile tab bar ---------- */
+.tabbar { display: none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1024px) {
+  nav.main { gap: var(--s5); }
+}
+@media (max-width: 768px) {
+  nav.main, .top .login { display: none; }
+  .tabbar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .tabbar button, .tabbar a { background: none; border: 0; padding: 10px 4px 12px; font: 500 var(--fs-xs)/1.2 var(--font-body); color: var(--muted); display: grid; justify-items: center; gap: 4px; cursor: pointer; text-decoration: none; }
+  .tabbar [aria-current="page"] { color: var(--ink); }
+  .tabbar svg { width: 20px; height: 20px; }
+}

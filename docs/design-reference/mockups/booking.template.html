@@ -1,0 +1,354 @@
+<title>Shanghai Resort Đặt phòng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: 2 cột — các bước đặt phòng bên trái, tóm tắt đơn dính bên phải (lên đầu trên điện thoại) */
+:root {
+  --bg: #F5F3EC; --surface: #FBFAF6; --ink: #171714; --muted: #625F58;
+  --olive: #58634C; --olive-ink: #434C39; --olive-bg: #E9EBE2; --bronze: #A98952; --line: #DDD9CF; --on-olive: #F5F3EC;
+  --danger: #9A3B2E; --danger-bg: #F6E9E4; --ok: #3F5B3A;
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --t-micro: 150ms; --t-std: 250ms;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 2px solid var(--olive); outline-offset: 3px; border-radius: var(--r-sm); }
+.note { background: var(--ink); color: var(--bg); font-size: 13px; text-align: center; padding: 8px 16px; }
+.note b { font-weight: 600; }
+.wrap { max-width: 1180px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 40px); }
+
+header.top { border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
+.wordmark { font-size: 13px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; text-decoration: none; color: var(--ink); }
+.top a.back { font-size: 14px; color: var(--muted); text-decoration: none; }
+.top a.back:hover { color: var(--ink); }
+
+.page { padding-block: 48px 96px; }
+.page-head { margin-bottom: 40px; }
+.page-head h1 { font-weight: 300; font-size: clamp(30px, 4vw, 40px); line-height: 1.2; letter-spacing: -.025em; margin: 0 0 8px; }
+.page-head p { margin: 0; color: var(--muted); }
+
+.steps { display: flex; gap: 8px; list-style: none; padding: 0; margin: 0 0 32px; flex-wrap: wrap; }
+.steps li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.steps li + li::before { content: ""; width: 24px; height: 1px; background: var(--line); }
+.steps .n { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; font-variant-numeric: tabular-nums; }
+.steps li.done .n { background: var(--olive); border-color: var(--olive); color: var(--on-olive); }
+.steps li.active { color: var(--ink); font-weight: 500; }
+.steps li.active .n { border-color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 48px; align-items: start; }
+.panel[hidden] { display: none; }
+.panel h2 { font-weight: 400; font-size: 21px; letter-spacing: -.015em; margin: 0 0 24px; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.fields .full { grid-column: 1 / -1; }
+.field { display: grid; gap: 8px; align-content: start; }
+.field label { font-size: 13px; font-weight: 500; }
+.field .hint { font-size: 13px; color: var(--muted); }
+.field .err { font-size: 13px; color: var(--danger); }
+.control { width: 100%; font: 400 15px/1.4 var(--font); padding: 13px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); color: var(--ink); transition: border-color var(--t-micro), box-shadow var(--t-micro); appearance: none; }
+select.control { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23625F58' stroke-width='1.5'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
+.control:focus { outline: none; border-color: var(--olive); box-shadow: 0 0 0 3px rgba(88,99,76,.14); }
+.control[aria-invalid="true"] { border-color: var(--danger); }
+.stepper { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); overflow: hidden; }
+.stepper button { border: 0; background: none; font-size: 18px; cursor: pointer; color: var(--ink); }
+.stepper button:disabled { color: #B9B6AD; cursor: not-allowed; }
+.stepper output { display: grid; place-items: center; font-variant-numeric: tabular-nums; font-size: 15px; border-inline: 1px solid var(--line); padding: 12px 0; }
+
+.avail { display: flex; align-items: center; gap: 10px; margin-top: 24px; padding: 12px 14px; border-radius: var(--r-md); font-size: 14px; background: var(--olive-bg); color: var(--ok); }
+.avail.out { background: var(--danger-bg); color: var(--danger); }
+.avail .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+
+.actions { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 500 15px/1 var(--font); padding: 15px 26px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: background var(--t-micro), color var(--t-micro), border-color var(--t-micro); }
+.btn-primary { background: var(--olive); color: var(--on-olive); }
+.btn-primary:hover { background: var(--olive-ink); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-link { background: none; border: 0; padding: 0; color: var(--muted); font: 400 14px/1 var(--font); cursor: pointer; }
+.btn-link:hover { color: var(--ink); }
+
+.pay { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.qr { aspect-ratio: 1; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); padding: 16px; display: grid; place-items: center; position: relative; }
+.qr canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+.qr .demo-tag { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: var(--bronze); color: #fff; font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+.kv { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 10px 16px; margin: 0; font-size: 15px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.callout { margin-top: 20px; font-size: 14px; color: var(--muted); padding: 12px 14px; border-left: 2px solid var(--bronze); background: var(--surface); }
+
+/* summary */
+.summary { position: sticky; top: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.summary img { aspect-ratio: 16 / 10; width: 100%; object-fit: cover; }
+.summary .body { padding: 24px; display: grid; gap: 16px; }
+.summary .meta { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.summary h3 { font-weight: 500; font-size: 18px; letter-spacing: -.01em; margin: 4px 0 0; }
+.summary .dates { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: var(--r-md); }
+.summary .dates div { padding: 10px 12px; }
+.summary .dates div + div { border-left: 1px solid var(--line); }
+.summary .dates small { display: block; font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.summary .dates span { font-size: 15px; font-variant-numeric: tabular-nums; }
+.lines { display: grid; gap: 8px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.lines div { display: flex; justify-content: space-between; gap: 12px; }
+.lines .muted { color: var(--muted); }
+.lines .total { padding-top: 12px; border-top: 1px solid var(--line); font-size: 16px; font-weight: 500; }
+.lines .deposit { color: var(--olive); font-weight: 500; }
+
+/* success */
+.success { max-width: 640px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 5px 10px; border-radius: 999px; background: var(--olive-bg); color: var(--ok); }
+.success h2 { font-weight: 300; font-size: 32px; letter-spacing: -.025em; line-height: 1.25; margin: 16px 0 8px; }
+.success > p { color: var(--muted); margin: 0 0 32px; }
+.secret { border: 1px solid var(--ink); border-radius: var(--r-md); padding: 24px; background: var(--surface); display: grid; gap: 16px; }
+.secret .row { display: grid; grid-template-columns: 140px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.secret .row span:first-child { color: var(--muted); font-size: 14px; }
+.secret code { font: 500 20px/1.2 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .04em; user-select: all; }
+.secret .warn { font-size: 13px; color: var(--danger); display: flex; gap: 8px; }
+.copy { font: 500 13px/1 var(--font); padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: transparent; cursor: pointer; color: var(--ink); }
+.copy:hover { border-color: var(--ink); }
+.next { margin-top: 32px; display: grid; gap: 12px; font-size: 15px; }
+.next li { padding-left: 4px; }
+
+.demo { margin-top: 40px; font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.demo button { font: 400 12px/1 var(--font); padding: 7px 10px; border: 1px dashed var(--line); background: transparent; border-radius: 999px; cursor: pointer; color: var(--muted); }
+.demo button:hover { color: var(--ink); border-color: var(--muted); }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .summary { position: static; order: -1; }
+  .summary img { display: none; }
+}
+@media (max-width: 560px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+  .pay { grid-template-columns: minmax(0, 1fr); }
+  .qr { max-width: 220px; }
+  .kv, .secret .row { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .secret .row { gap: 6px; }
+  .actions { flex-direction: column-reverse; align-items: stretch; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 1ms !important; } }
+</style>
+
+<div class="note"><b>Mockup đặt phòng</b> · giá & hạng phòng thật từ knowledge.json · QR là bản demo, không thu tiền thật</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="#">Shanghai Resort</a>
+    <a class="back" href="#">← Về trang chủ</a>
+  </div>
+</header>
+
+<main class="wrap page">
+  <div class="page-head" id="head">
+    <h1>Đặt phòng</h1>
+    <p>Đặt cọc 1.000.000đ mỗi đêm để giữ phòng. Phần còn lại thanh toán khi nhận phòng.</p>
+  </div>
+
+  <ol class="steps" id="steps">
+    <li class="active" data-step="1"><span class="n">1</span>Phòng & ngày</li>
+    <li data-step="2"><span class="n">2</span>Thông tin khách</li>
+    <li data-step="3"><span class="n">3</span>Đặt cọc</li>
+  </ol>
+
+  <div class="grid" id="grid">
+    <div>
+      <section class="panel" data-panel="1">
+        <h2>Chọn phòng và ngày lưu trú</h2>
+        <div class="fields">
+          <div class="field full">
+            <label for="room">Hạng phòng</label>
+            <select class="control" id="room"></select>
+          </div>
+          <div class="field">
+            <label for="checkin">Nhận phòng</label>
+            <input class="control" type="date" id="checkin">
+            <span class="hint">Từ 15:00 · chọn từ ngày mai trở đi</span>
+          </div>
+          <div class="field">
+            <label for="checkout">Trả phòng</label>
+            <input class="control" type="date" id="checkout">
+            <span class="hint">Trước 12:00</span>
+          </div>
+          <div class="field">
+            <label id="guests-label">Số khách</label>
+            <div class="stepper" role="group" aria-labelledby="guests-label">
+              <button type="button" id="g-minus" aria-label="Bớt một khách">−</button>
+              <output id="guests">2</output>
+              <button type="button" id="g-plus" aria-label="Thêm một khách">+</button>
+            </div>
+            <span class="hint" id="guests-hint"></span>
+          </div>
+        </div>
+        <div class="avail" id="avail"><span class="dot"></span><span id="avail-text">Còn 2 phòng Deluxe Queen cho khoảng ngày này</span></div>
+        <div class="actions">
+          <button class="btn-link" type="button">Chưa chắc chọn phòng nào? Hỏi lễ tân</button>
+          <button class="btn btn-primary" type="button" id="to2">Tiếp tục</button>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="2" hidden>
+        <h2>Thông tin người đặt</h2>
+        <div class="fields">
+          <div class="field full">
+            <label for="name">Họ và tên</label>
+            <input class="control" id="name" autocomplete="name" value="Nguyễn Minh Anh">
+          </div>
+          <div class="field">
+            <label for="phone">Số điện thoại</label>
+            <input class="control" id="phone" type="tel" autocomplete="tel" value="0901 234 567">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input class="control" id="email" type="email" autocomplete="email" value="minhanh@example.com">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost" type="button" data-go="1">Quay lại</button>
+          <button class="btn btn-primary" type="button" data-go="3">Tiếp tục</button>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="3" hidden>
+        <h2>Đặt cọc qua mã QR</h2>
+        <div class="pay">
+          <div class="qr"><canvas id="qr" width="29" height="29" aria-label="Mã QR chuyển khoản (demo)"></canvas><span class="demo-tag">Demo</span></div>
+          <div>
+            <dl class="kv">
+              <dt>Số tiền cọc</dt><dd id="pay-amount">2.000.000đ</dd>
+              <dt>Nội dung</dt><dd>SR ĐẶT PHÒNG MINHANH</dd>
+              <dt>Ngân hàng</dt><dd>Bản demo — không chuyển tiền thật</dd>
+            </dl>
+            <div class="callout">Hủy trước 3 ngày so với ngày nhận phòng được hoàn 100% tiền cọc. Muốn hủy hoặc đổi ngày, gọi lễ tân +84-999-1234567.</div>
+          </div>
+        </div>
+        <div class="avail out" id="soldout" hidden><span class="dot"></span><span>Vừa có khách đặt mất phòng cuối cùng cho khoảng ngày này. Chọn ngày hoặc hạng phòng khác giúp em.</span></div>
+        <div class="actions">
+          <button class="btn btn-ghost" type="button" data-go="2">Quay lại</button>
+          <button class="btn btn-primary" type="button" id="confirm">Tôi đã chuyển khoản cọc</button>
+        </div>
+      </section>
+
+      <section class="panel success" data-panel="done" hidden>
+        <span class="badge">● Đã giữ phòng</span>
+        <h2>Cảm ơn anh/chị Minh Anh, phòng đã được giữ</h2>
+        <p>Mã đặt phòng <strong style="color:var(--ink)">#18</strong> · <span id="done-line"></span></p>
+        <div class="secret">
+          <div class="row"><span>Số phòng</span><code>201</code><span></span></div>
+          <div class="row"><span>Mật khẩu khách</span><code id="pw">mT4-xQ9pLk2e</code><button class="copy" id="copy" type="button">Sao chép</button></div>
+          <div class="warn"><span>⚠</span><span>Mật khẩu chỉ hiện một lần. Hãy lưu lại ngay — dùng để đăng nhập từ ngày nhận phòng.</span></div>
+        </div>
+        <ol class="next">
+          <li>Từ ngày nhận phòng, đăng nhập bằng <b>số phòng</b> và <b>mật khẩu</b> ở trên để đặt bàn nhà hàng, spa hoặc gọi hỗ trợ.</li>
+          <li>Cần hủy hoặc đổi ngày: gọi lễ tân <b>+84-999-1234567</b>.</li>
+        </ol>
+        <div class="actions" style="border-top:0;padding-top:0">
+          <a class="btn btn-ghost" href="#">Về trang chủ</a>
+        </div>
+      </section>
+
+      <div class="demo"><span>Xem thử trạng thái:</span>
+        <button data-demo="soldout">Hết phòng khi xác nhận</button>
+        <button data-demo="full">Không còn phòng cho ngày đã chọn</button>
+        <button data-demo="reset">Làm lại từ đầu</button>
+      </div>
+    </div>
+
+    <aside class="summary" id="summary">
+      <img id="sum-img" alt="">
+      <div class="body">
+        <div><div class="meta" id="sum-meta"></div><h3 id="sum-title"></h3></div>
+        <div class="dates">
+          <div><small>Nhận phòng</small><span id="sum-in"></span></div>
+          <div><small>Trả phòng</small><span id="sum-out"></span></div>
+        </div>
+        <div class="lines">
+          <div><span class="muted" id="sum-calc"></span><span id="sum-sub"></span></div>
+          <div><span class="muted">Số khách</span><span id="sum-guests"></span></div>
+          <div class="total"><span>Tổng tiền phòng</span><span id="sum-total"></span></div>
+          <div class="deposit"><span>Đặt cọc bây giờ</span><span id="sum-dep"></span></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+const ROOMS = {{ROOMS_JSON}};
+const DEPOSIT = 1000000;
+const $ = id => document.getElementById(id);
+const vnd = n => n.toLocaleString("vi-VN").replace(/,/g, ".") + "đ";
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const nice = s => { const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+const today = new Date(); const addDays = (n) => { const d = new Date(today); d.setDate(d.getDate() + n); return d; };
+
+$("room").innerHTML = ROOMS.map((r, i) => `<option value="${i}">${r.title} — ${vnd(r.price)}/đêm</option>`).join("");
+$("checkin").value = iso(addDays(10)); $("checkout").value = iso(addDays(12));
+$("checkin").min = iso(addDays(1)); $("checkout").min = iso(addDays(2));
+let guests = 2, step = 1;
+
+function room() { return ROOMS[+$("room").value]; }
+function nights() { return Math.max(0, Math.round((new Date($("checkout").value) - new Date($("checkin").value)) / 864e5)); }
+function render() {
+  const r = room(), n = nights();
+  guests = Math.min(guests, r.guests);
+  $("guests").textContent = guests;
+  $("g-minus").disabled = guests <= 1; $("g-plus").disabled = guests >= r.guests;
+  $("guests-hint").textContent = `Hạng này tối đa ${r.guests} khách`;
+  $("sum-img").src = r.img; $("sum-img").alt = "Phòng " + r.title;
+  $("sum-meta").textContent = `${r.view} · ${r.size} m²`;
+  $("sum-title").textContent = r.title;
+  $("sum-in").textContent = nice($("checkin").value); $("sum-out").textContent = nice($("checkout").value);
+  $("sum-calc").textContent = `${vnd(r.price)} × ${n} đêm`;
+  $("sum-sub").textContent = vnd(r.price * n);
+  $("sum-guests").textContent = guests;
+  $("sum-total").textContent = vnd(r.price * n);
+  $("sum-dep").textContent = vnd(DEPOSIT * n);
+  $("pay-amount").textContent = vnd(DEPOSIT * n);
+  $("avail-text").textContent = `Còn 2 phòng ${r.title} cho khoảng ngày này`;
+  $("done-line").textContent = `${r.title} · ${nice($("checkin").value)} – ${nice($("checkout").value)} (${n} đêm)`;
+}
+["room", "checkin", "checkout"].forEach(id => $(id).addEventListener("change", render));
+$("g-minus").onclick = () => { guests--; render(); };
+$("g-plus").onclick = () => { guests++; render(); };
+
+function go(s) {
+  step = s;
+  document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== String(s));
+  document.querySelectorAll("#steps li").forEach(li => {
+    const n = +li.dataset.step;
+    li.className = s === "done" || n < s ? "done" : n === s ? "active" : "";
+  });
+  const done = s === "done";
+  $("summary").hidden = done; $("head").hidden = done;
+  $("grid").style.gridTemplateColumns = done ? "minmax(0, 1fr)" : "";
+  scrollTo({ top: 0, behavior: "smooth" });
+}
+$("to2").onclick = () => go(2);
+document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => go(+b.dataset.go));
+$("confirm").onclick = () => { $("soldout").hidden ? go("done") : null; };
+$("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText($("pw").textContent); $("copy").textContent = "Đã sao chép"; }
+  catch { const r = document.createRange(); r.selectNodeContents($("pw")); getSelection().removeAllRanges(); getSelection().addRange(r); $("copy").textContent = "Đã chọn — nhấn Ctrl+C"; }
+};
+document.querySelectorAll("[data-demo]").forEach(b => b.onclick = () => {
+  const d = b.dataset.demo;
+  $("soldout").hidden = true; $("avail").classList.remove("out"); $("to2").disabled = false; render();
+  if (d === "soldout") { go(3); $("soldout").hidden = false; }
+  if (d === "full") { go(1); $("avail").classList.add("out"); $("avail-text").textContent = `Hết phòng ${room().title} cho khoảng ngày này — thử ngày khác hoặc hạng phòng khác`; $("to2").disabled = true; }
+  if (d === "reset") go(1);
+});
+
+// QR demo: ô vuông giả lập (không phải mã QR thật)
+(function drawQR() {
+  const c = $("qr"), x = c.getContext("2d"), N = 29; let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  x.fillStyle = "#FBFAF6"; x.fillRect(0, 0, N, N); x.fillStyle = "#171714";
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) if (rnd() > .52) x.fillRect(i, j, 1, 1);
+  const finder = (a, b) => { x.fillStyle = "#171714"; x.fillRect(a, b, 7, 7); x.fillStyle = "#FBFAF6"; x.fillRect(a + 1, b + 1, 5, 5); x.fillStyle = "#171714"; x.fillRect(a + 2, b + 2, 3, 3); };
+  [[0, 0], [N - 7, 0], [0, N - 7]].forEach(([a, b]) => { x.fillStyle = "#FBFAF6"; x.fillRect(a - 1, b - 1, 9, 9); finder(a, b); });
+})();
+render();
+</script>

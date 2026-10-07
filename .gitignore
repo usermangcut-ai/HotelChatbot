@@ -18,3 +18,6 @@ frontend/dist/
 storage/
 
 docs/AGENT_KNOWLEDGE.md
+
+# Mockup đã ghép ảnh base64 — sinh lại bằng docs/design-reference/mockups/build.py
+docs/design-reference/mockups/build/

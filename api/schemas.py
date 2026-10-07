@@ -23,6 +23,12 @@ class ChatResponse(BaseModel):
 class RoomOption(BaseModel):
     room_type: str
     price_vnd: int
+    size_m2: int
+    max_occupancy: int
+    view: str
+    bed_type: str
+    image_url: str | None = None   # /images/<file> hoặc None nếu chưa có ảnh
+    total_rooms: int               # số phòng vật lý của hạng
 
 
 class BookingRequest(BaseModel):

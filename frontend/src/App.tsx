@@ -1,48 +1,35 @@
+import type { ReactNode } from "react";
 import { Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminPage from "./pages/AdminPage";
-import BookingPage from "./pages/BookingPage";
-import GuestAccountPage from "./pages/GuestAccountPage";
+import PublicLayout from "./components/PublicLayout";
+import ChatDrawer from "./features/chat/ChatDrawer";
+import ChatLauncher from "./features/chat/ChatLauncher";
+import { ChatProvider, useChat } from "./features/chat/ChatProvider";
+import ComingSoon from "./pages/ComingSoon";
 import Home from "./pages/Home";
-import LoginPage from "./pages/LoginPage";
-import ServiceRequestPage from "./pages/ServiceRequestPage";
-import StaffPage from "./pages/StaffPage";
+
+function Public({ children }: { children: ReactNode }) {
+  const { open } = useChat();
+  return (
+    <PublicLayout onOpenChat={() => open()}>
+      {children}
+      <ChatLauncher />
+      <ChatDrawer />
+    </PublicLayout>
+  );
+}
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
+    <ChatProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dat-phong" element={<BookingPage />} />
-        <Route path="/dich-vu" element={<ServiceRequestPage />} />
-        <Route path="/dang-nhap" element={<LoginPage />} />
-        <Route
-          path="/tai-khoan"
-          element={
-            <ProtectedRoute role="guest">
-              <GuestAccountPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/nhan-vien"
-          element={
-            <ProtectedRoute role="staff">
-              <StaffPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/quan-tri"
-          element={
-            <ProtectedRoute role="admin">
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/" element={<Public><Home /></Public>} />
+        <Route path="/dat-phong" element={<Public><ComingSoon title="Đặt phòng" /></Public>} />
+        <Route path="/dang-nhap" element={<ComingSoon title="Đăng nhập" />} />
+        <Route path="/tai-khoan" element={<ComingSoon title="Tài khoản khách" />} />
+        <Route path="/nhan-vien" element={<ComingSoon title="Nhân viên" />} />
+        <Route path="/quan-tri" element={<ComingSoon title="Quản trị" />} />
+        <Route path="*" element={<Public><ComingSoon title="Không tìm thấy trang" /></Public>} />
       </Routes>
-    </div>
+    </ChatProvider>
   );
 }
