@@ -147,6 +147,15 @@ def _room_type_totals(conn, room_types=None):
     return dict(rows)
 
 
+def room_totals(db_path=DB_PATH):
+    """{room_type: số phòng vật lý} — dùng cho danh mục phòng (công suất ở trang quản trị)."""
+    conn = _connect(db_path)
+    try:
+        return _room_type_totals(conn)
+    finally:
+        conn.close()
+
+
 def available_counts(room_types=None, check_in=None, check_out=None, db_path=DB_PATH):
     """Trả dict {room_type: số phòng trống} = tổng phòng hạng - reservation 'paid' chồng lấn ngày.
     Không truyền check_in/check_out -> mặc định coi là hỏi trống HÔM NAY (hôm nay -> hôm nay+1)."""

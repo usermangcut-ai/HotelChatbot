@@ -1,9 +1,12 @@
 """Route /api/bookings + /api/rooms — bọc create_reservation() (GHI DB thật duy nhất, chỉ chạy khi
-khách đã xác nhận thanh toán trên giao diện) và danh mục phòng thật từ knowledge.py."""
+khách đã xác nhận thanh toán trên giao diện) và danh mục phòng (thông số từ knowledge.json, số phòng từ bảng rooms)."""
+import os
+
 from fastapi import APIRouter, HTTPException
 
 from agent import db as agent_db
 from agent import knowledge
+from agent import photos
 from api.schemas import BookingRequest, BookingResponse, RoomOption
 
 router = APIRouter()
@@ -11,8 +14,17 @@ router = APIRouter()
 
 @router.get("/api/rooms", response_model=list[RoomOption])
 def list_rooms():
-    return [RoomOption(room_type=t, price_vnd=knowledge.room_price(t))
-            for t in knowledge.room_titles()]
+    totals = agent_db.room_totals()
+    out = []
+    for room in knowledge.load()["rooms"]["types"]:
+        fields, title = room["fields"], room["title"]
+        path = photos.photo_path(title)
+        out.append(RoomOption(
+            room_type=title, price_vnd=fields["price_vnd"], size_m2=fields["size_m2"],
+            max_occupancy=fields["max_occupancy"], view=fields["view"], bed_type=fields["bed_type"],
+            image_url="/images/" + os.path.basename(path) if path else None,
+            total_rooms=totals.get(title, 0)))
+    return out
 
 
 @router.post("/api/bookings", response_model=BookingResponse, status_code=201)

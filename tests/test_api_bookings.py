@@ -12,7 +12,12 @@ def test_list_rooms_returns_all_room_types():
     assert resp.status_code == 200
     data = resp.json()
     assert len(data) == 8
-    assert all("room_type" in r and "price_vnd" in r for r in data)
+    by_type = {r["room_type"]: r for r in data}
+    queen = by_type["Deluxe Queen"]
+    assert queen == {"room_type": "Deluxe Queen", "price_vnd": 3150000, "size_m2": 32,
+                     "max_occupancy": 2, "view": "Tiêu chuẩn", "bed_type": "1 giường Queen",
+                     "image_url": "/images/room_deluxe_queen.jpg", "total_rooms": 3}
+    assert sum(r["total_rooms"] for r in data) == 22
 
 
 def test_create_booking_returns_201_and_booking_id(monkeypatch):

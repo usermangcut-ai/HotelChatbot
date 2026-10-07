@@ -26,3 +26,9 @@ def test_no_dates_defaults_to_today():
 def test_readonly_cannot_write():
     with pytest.raises(Exception):
         db._connect().execute("UPDATE rooms SET floor=0")
+
+
+def test_room_totals_counts_physical_rooms_per_type():
+    totals = db.room_totals()
+    assert sum(totals.values()) == 22
+    assert totals["Deluxe Park Suite"] == 2
