@@ -1,0 +1,59 @@
+/* Chép nguyên văn từ MOCKUP login.template.html (cỡ chữ px → token --fs-*).
+   ĐIỀU CHỈNH: bỏ .note và .demo (chỉ có trong mockup); .shell min-height calc(100% - 37px) → 100vh (không còn thanh .note,
+   html/body không đặt height 100%); h1 / form (selector thẻ toàn cục) → .form-card h1 / .form-card form để không lan ra trang khác;
+   [data-panel][hidden] đã có trong base.css ([hidden] display none). */
+
+.shell { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); min-height: 100vh; }
+.visual { position: relative; overflow: hidden; margin: 16px 0 16px 16px; border-radius: var(--r-md); }
+.visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(23,23,20,.62) 0%, rgba(23,23,20,.1) 55%, rgba(23,23,20,0) 100%); }
+.visual-copy { position: absolute; left: 40px; right: 40px; bottom: 40px; z-index: 1; color: #F5F3EC; }
+.wordmark { font-size: var(--fs-sm); font-weight: 500; letter-spacing: .32em; text-transform: uppercase; }
+.visual-copy p { margin: 12px 0 0; font-weight: 300; font-size: var(--fs-xl); line-height: 1.4; letter-spacing: -.015em; max-width: 26ch; }
+
+.side { display: flex; flex-direction: column; padding: 24px clamp(16px, 5vw, 64px); }
+.side-top { display: flex; justify-content: space-between; align-items: center; height: 48px; font-size: var(--fs-sm); }
+.side-top a { color: var(--muted); text-decoration: none; }
+.side-top a:hover { color: var(--ink); }
+.side-top .wordmark { display: none; }
+.form-wrap { flex: 1; display: grid; place-items: center; padding-block: 48px; }
+.form-card { width: 100%; max-width: 400px; }
+.form-card h1 { font-weight: 300; font-size: var(--fs-3xl); line-height: 1.2; letter-spacing: -.025em; margin: 0 0 8px; }
+.sub { color: var(--muted); margin: 0 0 32px; font-size: var(--fs-md); }
+
+.tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+.tab { background: none; border: 0; padding: 12px 0; font: 500 var(--fs-sm)/1 var(--font); color: var(--muted); cursor: pointer; position: relative; }
+.tab[aria-selected="true"] { color: var(--ink); }
+.tab[aria-selected="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink); }
+
+.form-card form { display: grid; gap: 20px; }
+.field { display: grid; gap: 8px; }
+.field label { font-size: var(--fs-sm); font-weight: 500; }
+.field .hint { font-size: var(--fs-sm); color: var(--muted); }
+.input { position: relative; }
+.input input { width: 100%; font: 400 var(--fs-md)/1.4 var(--font); padding: 13px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); color: var(--ink); transition: border-color var(--t-micro), box-shadow var(--t-micro); }
+.input input::placeholder { color: #9B988F; }
+.input input:focus { outline: none; border-color: var(--olive); box-shadow: 0 0 0 3px rgba(88,99,76,.14); }
+.input input[aria-invalid="true"] { border-color: var(--danger); }
+.reveal { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: 0; font: 500 var(--fs-xs)/1 var(--font); color: var(--muted); padding: 8px; cursor: pointer; border-radius: var(--r-sm); }
+.reveal:hover { color: var(--ink); }
+.alert { display: none; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--danger-bg); color: var(--danger); border-radius: var(--r-md); font-size: var(--fs-sm); line-height: 1.5; }
+.alert.show { display: flex; }
+.alert svg { flex: none; margin-top: 2px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font: 500 var(--fs-md)/1 var(--font); padding: 15px 22px; border-radius: 999px; border: 0; cursor: pointer; background: var(--olive); color: var(--on-olive); transition: background var(--t-micro), opacity var(--t-micro); }
+.btn:hover { background: var(--olive-ink); }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 700ms linear infinite; display: none; }
+.btn[disabled] .spinner { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.help { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); font-size: var(--fs-sm); color: var(--muted); display: grid; gap: 4px; }
+.help strong { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; user-select: all; }
+
+@media (max-width: 860px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .visual { display: none; }
+  .side-top .wordmark { display: block; }
+  .form-wrap { place-items: start center; padding-block: 32px; }
+  .form-card h1 { font-size: var(--fs-2xl); }
+}
