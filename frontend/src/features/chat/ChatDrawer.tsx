@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import ui from "../../components/ui.module.css";
 import { QUICK_ASKS } from "../../content";
 import { formatDate, formatVnd, nightsBetween } from "../../lib/format";
-import { bookingHref, type BookingDraft } from "../../lib/toolResults";
+import { parseRich } from "../../lib/richText";
+import { bookingHref, type AvailabilityCard, type BookingDraft } from "../../lib/toolResults";
 import { useRooms } from "../../lib/useRooms";
 import { useChat } from "./ChatProvider";
 import s from "./chat.module.css";
@@ -27,6 +28,45 @@ function BookingCard({ draft }: { draft: BookingDraft }) {
           {price && nights ? <><dt>Tạm tính</dt><dd>{formatVnd(price * nights)}</dd></> : null}
         </dl>
         <Link className={`${ui.btn} ${ui["btn-primary"]} ${s.btn}`} to={bookingHref(draft)}>Điền thông tin &amp; xác nhận</Link>
+      </div>
+    </div>
+  );
+}
+
+function RichText({ text }: { text: string }) {
+  return (
+    <>
+      {parseRich(text).map((b, i) => b.type === "p"
+        ? <p key={i}>{b.parts.map((p, j) => p.bold ? <strong key={j}>{p.text}</strong> : <Fragment key={j}>{p.text}</Fragment>)}</p>
+        : <ul key={i}>{b.items.map((item, j) => <li key={j}>{item.map((p, k) => p.bold ? <strong key={k}>{p.text}</strong> : <Fragment key={k}>{p.text}</Fragment>)}</li>)}</ul>)}
+    </>
+  );
+}
+
+function AvailabilityCardView({ card }: { card: AvailabilityCard }) {
+  const { rooms } = useRooms();
+  // "23/10 – 25/10" (bỏ năm cho gọn trong thẻ hẹp)
+  const range = card.checkIn && card.checkOut ? `${formatDate(card.checkIn).slice(0, 5)} – ${formatDate(card.checkOut).slice(0, 5)}` : "hôm nay";
+  return (
+    <div className={s["msg-card"]}>
+      <div className={s.body}>
+        <span className={s.k}>Phòng trống · {range}</span>
+        <ul className={s["avail-list"]}>
+          {card.rooms.map(r => {
+            const price = rooms?.find(x => x.room_type === r.roomType)?.price_vnd;
+            return (
+              <li key={r.roomType} className={r.available ? "" : s.none}>
+                <div>
+                  <b>{r.roomType}</b>
+                  <small>{r.available ? `còn ${r.available} phòng` : "hết phòng"}{price ? ` · ${formatVnd(price)}/đêm` : ""}</small>
+                </div>
+                {r.available > 0 && (
+                  <Link className={s["book-sm"]} to={bookingHref({ kind: "booking", roomType: r.roomType, checkIn: card.checkIn, checkOut: card.checkOut, numGuests: null })}>Đặt</Link>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
@@ -59,19 +99,20 @@ export default function ChatDrawer() {
         <div className={s["drawer-head"]}>
           <span className={s.avatar}>S</span>
           <div className={s.title}><strong>Lễ tân Shanghai Resort</strong><small>Trợ lý trực tuyến</small></div>
-          <button type="button" className={s["icon-btn"]} title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới" onClick={reset}>↺</button>
+          <button type="button" className={`${s["icon-btn"]} ${s.subtle}`} title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới" onClick={reset}>↺</button>
           <button type="button" className={s["icon-btn"]} aria-label="Đóng" onClick={close}>✕</button>
         </div>
         <div className={s.thread} ref={thread} aria-live="polite">
           <div className={`${s.msg} ${s.bot}`}>{GREETING}</div>
           {messages.map(m => (
             <Fragment key={m.id}>
-              <div className={`${s.msg} ${m.role === "user" ? s.me : s.bot} ${m.error ? s.error : ""}`}>{m.text}</div>
+              <div className={`${s.msg} ${m.role === "user" ? s.me : s.bot} ${m.error ? s.error : ""}`}>{m.role === "bot" && !m.error ? <RichText text={m.text} /> : m.text}</div>
               {m.attachments?.map((a, i) => a.kind === "photo"
                 ? <figure key={i} className={s["msg-card"]} style={{ margin: 0 }}>
                     <img src={a.imageUrl} alt={`Ảnh ${a.subject}`} onLoad={scrollToEnd} />
                     <div className={s.body}><span className={s.k}>Ảnh</span><h4>{a.subject === "hotel" ? "Toàn cảnh resort" : a.subject}</h4></div>
                   </figure>
+                : a.kind === "availability" ? <AvailabilityCardView key={i} card={a} />
                 : <BookingCard key={i} draft={a} />)}
             </Fragment>
           ))}

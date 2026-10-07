@@ -16,5 +16,8 @@
   --danger: #9A3B2E; --danger-bg: #F6E9E4;
   --amber: #7A5A1E; --amber-bg: #F3EBDA;
   --ok: #3F5B3A; --olive-bg: #E9EBE2; --grey-bg: #ECEAE3; --olive-soft: #B9C1AC;
+  /* Thang cỡ chữ — 8 bậc, mọi font-size dùng token này (không đặt số lẻ) */
+  --fs-xs: 12px; --fs-sm: 14px; --fs-md: 16px; --fs-lg: 18px;
+  --fs-xl: 21px; --fs-2xl: 28px; --fs-3xl: 40px; --fs-4xl: 60px;
   color-scheme: light;
 }

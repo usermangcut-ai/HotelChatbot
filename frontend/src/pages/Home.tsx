@@ -28,7 +28,7 @@ export default function Home() {
               <h1>533 phòng hướng về một bãi biển riêng</h1>
               <p className={s.lead}>Nhận phòng từ 15:00, buffet sáng 06:00 – 10:30, lễ tân trực 24/24. Cần gì, nhắn cho chúng tôi.</p>
               <div className={s["hero-actions"]}>
-                <button type="button" className={`${ui.btn} ${ui["btn-primary"]} ${s["hero-primary"]}`} data-open-chat onClick={() => open()}>Trò chuyện với lễ tân</button>
+                <button type="button" className={`${ui.btn} ${ui["btn-primary"]} ${s["hero-primary"]} ${s["hero-chat"]}`} data-open-chat onClick={() => open()}>Trò chuyện với lễ tân</button>
                 <a className={`${ui.btn} ${ui["btn-text"]} ${s["hero-text"]}`} href="#phong">Xem hạng phòng <span>→</span></a>
               </div>
             </div>

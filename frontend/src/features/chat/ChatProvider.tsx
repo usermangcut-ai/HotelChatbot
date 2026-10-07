@@ -36,7 +36,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setPending(true);
     postChat(state.sessionId, text)
       .then(res => setState(s => ({ ...s, messages: [...s.messages,
-        { id: id(), role: "bot", text: res.reply, attachments: extractAttachments(res.tool_results) }] })))
+        { id: id(), role: "bot", text: res.reply, attachments: extractAttachments(res.tool_results, res.tool_calls) }] })))
       .catch(() => setState(s => ({ ...s, messages: [...s.messages, { id: id(), role: "bot", text: NETWORK_ERROR, error: true }] })))
       .finally(() => setPending(false));
   }, [pending, state.sessionId]);
