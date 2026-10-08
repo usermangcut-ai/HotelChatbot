@@ -6,6 +6,8 @@ import os
 
 from fastapi import APIRouter, Depends
 
+from agent import photos
+
 from api.agent_singleton import get_agent
 from api.schemas import ChatRequest, ChatResponse
 
@@ -25,7 +27,7 @@ def _to_web_tool_results(tool_calls, tool_results):
             continue
         path = payload.get("image_path")
         if path:
-            payload["image_path"] = "/images/" + os.path.basename(path)
+            payload["image_path"] = photos.photo_url(path)
         out.append(json.dumps(payload, ensure_ascii=False))
     return out
 

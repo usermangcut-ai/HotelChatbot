@@ -16,7 +16,8 @@ def test_list_rooms_returns_all_room_types():
     queen = by_type["Deluxe Queen"]
     assert queen == {"room_type": "Deluxe Queen", "price_vnd": 3150000, "size_m2": 32,
                      "max_occupancy": 2, "view": "Tiêu chuẩn", "bed_type": "1 giường Queen",
-                     "image_url": "/images/room_deluxe_queen.jpg", "total_rooms": 3}
+                     "image_url": queen["image_url"], "total_rooms": 3}
+    assert queen["image_url"].startswith("/images/room_deluxe_queen.jpg?v=")
     assert sum(r["total_rooms"] for r in data) == 22
 
 

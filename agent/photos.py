@@ -30,3 +30,9 @@ def photo_path(subject, images_dir=IMAGES_DIR):
         if os.path.exists(path):
             return path
     return None
+
+
+def photo_url(path):
+    """Đường dẫn web của file ảnh, kèm ?v=<thời điểm sửa file>: thay ảnh (giữ nguyên tên) thì URL đổi
+    → trình duyệt buộc tải bản mới thay vì dùng bản cũ trong cache."""
+    return f"/images/{os.path.basename(path)}?v={int(os.path.getmtime(path))}"
