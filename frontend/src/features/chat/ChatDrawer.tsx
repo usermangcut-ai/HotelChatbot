@@ -1,6 +1,4 @@
 import { Fragment, useEffect, useRef, useState, type FormEvent } from "react";
-import ui from "../../components/ui.module.css";
-import { QUICK_ASKS } from "../../content";
 import { formatDate, formatVnd } from "../../lib/format";
 import { parseRich } from "../../lib/richText";
 import type { AvailabilityCard } from "../../lib/toolResults";
@@ -9,7 +7,6 @@ import ChatBookingCard from "./ChatBookingCard";
 import { useChat } from "./ChatProvider";
 import s from "./chat.module.css";
 
-const COMPOSER_CHIPS = ["Xem hạng phòng", "Còn phòng trống?", "Giờ buffet sáng", "Chính sách hủy"];
 const GREETING = "Chào anh/chị, em là lễ tân trực tuyến của Shanghai Resort. Em có thể giúp gì ạ?";
 
 function RichText({ text }: { text: string }) {
@@ -97,9 +94,6 @@ export default function ChatDrawer() {
             </Fragment>
           ))}
           {pending && <div className={`${s.msg} ${s.bot}`} aria-label="Lễ tân đang trả lời"><span className={s.typing}><i /><i /><i /></span></div>}
-        </div>
-        <div className={s["composer-chips"]}>
-          {COMPOSER_CHIPS.map(c => <button key={c} type="button" className={`${ui.chip} ${s.chip}`} disabled={pending} onClick={() => send(QUICK_ASKS[c])}>{c}</button>)}
         </div>
         <form className={s.composer} onSubmit={submit}>
           <label htmlFor="chat-input" hidden>Tin nhắn</label>

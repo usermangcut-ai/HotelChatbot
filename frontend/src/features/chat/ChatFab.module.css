@@ -1,0 +1,15 @@
+/* Chép nguyên văn từ MOCKUP landing-v2 (nút chat: robot mini + nhãn AI + bóng chào tự ẩn). ĐIỀU CHỈNH: html[data-chat="open"] → :global(...). */
+.fab-wrap { position: fixed; right: 28px; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; align-items: flex-end; gap: 12px; transition: opacity var(--t-std), transform var(--t-std); }
+.fab { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--olive); color: var(--on-olive); cursor: pointer; display: grid; place-items: center; position: relative; flex: none; box-shadow: 0 10px 28px rgba(23,23,20,.28); transition: transform var(--t-std), background var(--t-micro); }
+.fab:hover { background: var(--olive-ink); transform: translateY(-2px); }
+.fab .robot { width: 34px; height: 34px; }
+.fab .ai { position: absolute; top: -4px; right: -4px; background: var(--surface); color: var(--olive); font-size: 10px; font-weight: 600; letter-spacing: .06em; padding: 3px 6px; border-radius: 999px; box-shadow: 0 2px 6px rgba(23,23,20,.2); }
+.greet { background: var(--surface); color: var(--ink); padding: 12px 14px; border-radius: 14px 14px 4px 14px; font-size: var(--fs-sm); line-height: 1.4; box-shadow: 0 8px 22px rgba(23,23,20,.22); max-width: 220px; margin-bottom: 8px; position: relative; transition: opacity var(--t-std), transform var(--t-std); }
+.greet b { font-weight: 500; }
+.greet button { position: absolute; top: 2px; right: 4px; border: 0; background: none; color: var(--muted); font-size: 14px; cursor: pointer; padding: 4px; line-height: 1; }
+.greet.hide { opacity: 0; transform: translateY(6px); pointer-events: none; }
+:global(html[data-chat="open"]) .fab-wrap { opacity: 0; pointer-events: none; transform: scale(.9); }
+@media (max-width: 768px) {
+  .fab-wrap { right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .greet { max-width: 190px; }
+}
