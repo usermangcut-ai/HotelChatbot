@@ -36,7 +36,7 @@ export function nightsByRoomType(bookings: Booking[]): [string, number][] {
 
 export type QueueRow = {
   key: string; kind: "restaurant" | "spa" | "support"; id: number; title: string; note: string;
-  room: string | null; guest: string | null; when: string | null; created_at: string; status: RequestStatus;
+  room: string | null; guest: string | null; phone: string | null; when: string | null; created_at: string; status: RequestStatus;
 };
 
 export function mergeQueue(service: ServiceRequest[], support: StaffRequest[]): QueueRow[] {
@@ -44,12 +44,24 @@ export function mergeQueue(service: ServiceRequest[], support: StaffRequest[]): 
     ...service.map((r): QueueRow => ({
       key: `service-${r.id}`, kind: r.service_type, id: r.id,
       title: `${r.service_type === "spa" ? "Lịch spa" : "Bàn"}${r.party_size ? ` ${r.party_size} người` : ""}`,
-      note: r.note ?? "", room: r.room_id, guest: r.guest_name, when: r.requested_at, created_at: r.created_at, status: r.status,
+      note: r.note ?? "", room: r.room_id, guest: r.guest_name, phone: r.guest_phone, when: r.requested_at, created_at: r.created_at, status: r.status,
     })),
     ...support.map((r): QueueRow => ({
       key: `support-${r.id}`, kind: "support", id: r.id, title: r.request_type, note: r.note ?? "",
-      room: r.room_id, guest: null, when: null, created_at: r.created_at, status: r.status,
+      room: r.room_id, guest: null, phone: null, when: null, created_at: r.created_at, status: r.status,
     })),
   ];
   return rows.sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0));
+}
+
+const WEEKDAYS = ["Chủ nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+/** "2026-10-07" → "Thứ Tư" */
+export function weekdayVi(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+}
+
+/** 3_150_000 → "3 tr"; 1_250_000_000 → "1,25 tỷ" */
+export function shortVnd(n: number): string {
+  return n >= 1e9 ? `${(n / 1e9).toFixed(2).replace(".", ",")} tỷ` : `${Math.round(n / 1e6)} tr`;
 }

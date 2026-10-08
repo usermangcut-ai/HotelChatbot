@@ -1,0 +1,53 @@
+/* Chép từ MOCKUP staff/admin.template.html — các khối dùng chung (tiêu đề trang, ô số liệu, thanh lọc, bảng, nhãn trạng thái).
+   ĐIỀU CHỈNH: cỡ chữ → token; selector thẻ (table, th, td) → class; .pill.cancelled của booking (nền đỏ, admin) → .bcancelled
+   vì .pill.cancelled của yêu cầu (nền xám, staff) đã dùng tên đó. */
+
+.head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+.head h1 { font-weight: 300; font-size: var(--fs-2xl); letter-spacing: -.02em; margin: 0; line-height: 1.25; }
+.head p { margin: 4px 0 0; color: var(--muted); }
+
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 16px 18px; display: grid; gap: 4px; }
+.tile small { color: var(--muted); font-size: var(--fs-xs); }
+.tile b { font-weight: 300; font-size: var(--fs-2xl); letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tile span { font-size: var(--fs-xs); color: var(--muted); }
+.tile.attn b { color: var(--amber); }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; flex-wrap: wrap; }
+.seg button { font: 500 var(--fs-sm)/1 var(--font); padding: 8px 14px; border: 0; background: none; border-radius: 999px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.search { font: 400 var(--fs-sm)/1 var(--font); padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); width: 260px; max-width: 100%; color: var(--ink); }
+.search:focus { outline: none; border-color: var(--olive); }
+
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; min-width: 820px; }
+.table th { text-align: left; font-weight: 500; font-size: var(--fs-xs); color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.table td { padding: 13px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table tr:last-child td { border-bottom: 0; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.table .right { text-align: right; }
+.table td .t { font-weight: 500; display: block; }
+.table td .n { color: var(--muted); font-size: var(--fs-sm); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 500; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.received { background: var(--amber-bg); color: var(--amber); }
+.pill.done { background: var(--olive-bg); color: var(--ok); }
+.pill.cancelled { background: var(--grey-bg); color: var(--muted); }
+.pill.paid { background: var(--olive-bg); color: var(--ok); }
+.pill.completed { background: var(--grey-bg); color: var(--muted); }
+.pill.bcancelled { background: var(--danger-bg); color: var(--danger); }
+.pill.admin { background: var(--ink); color: var(--bg); } .pill.admin::before { display: none; }
+.pill.staff { background: var(--grey-bg); color: var(--ink); } .pill.staff::before { display: none; }
+.select-sm { font: 500 var(--fs-xs)/1 var(--font); padding: 7px 28px 7px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='%23625F58' stroke-width='1.4'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 10px center; appearance: none; color: var(--ink); cursor: pointer; }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
+.btn-sm { font: 500 var(--fs-xs)/1 var(--font); padding: 8px 12px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); white-space: nowrap; }
+.btn-sm:hover { border-color: var(--ink); }
+.btn-sm.danger { color: var(--danger); }
+.btn-sm.danger:hover { border-color: var(--danger); }
+.btn-sm.danger-solid { background: var(--danger); border-color: var(--danger); color: #fff; }
+.confirm { font-size: var(--fs-xs); color: var(--danger); white-space: nowrap; }
+.empty-row { text-align: center; color: var(--muted); padding: 40px 16px; }
+
+@media (max-width: 960px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .search { width: 100%; } }
