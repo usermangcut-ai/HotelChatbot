@@ -11,4 +11,4 @@
 | `spa.jpg` | Tiện ích: Spa | Virginia Marinova — Unsplash |
 | `beach.jpg` | Tiện ích: Biển & hồ bơi | Roberto Nickson — Unsplash |
 | `login.jpg` | Nửa trái trang đăng nhập | Hassan Nizam — Unsplash |
-| `room_*.jpg` | 8 hạng phòng (ảnh tạm) | Ảnh tạo bằng AI (bộ cũ) |
+| `room_*.jpg` | 8 hạng phòng | Ảnh tạo bằng AI, phong cách hiện đại (user cung cấp, 512px — chờ bản lớn hơn) |
