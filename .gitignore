@@ -21,3 +21,6 @@ docs/AGENT_KNOWLEDGE.md
 
 # Mockup đã ghép ảnh base64 — sinh lại bằng docs/design-reference/mockups/build.py
 docs/design-reference/mockups/build/
+
+# ảnh gốc tải về (avif/bản lớn) — chỉ giữ ở máy
+data/images/_source/
