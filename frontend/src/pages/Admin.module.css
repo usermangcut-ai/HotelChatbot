@@ -1,0 +1,39 @@
+/* Chép từ MOCKUP admin.template.html. Khung/ô số liệu/bảng/nhãn dùng OpsLayout + ops.module.css; biểu đồ ở BarChart.module.css.
+   ĐIỀU CHỈNH: cỡ chữ → token (15px → --fs-md); selector thẻ (form.create) → class; .mix-row .bar → .mix-bar (tránh trùng tên với biểu đồ);
+   .view[hidden] không cần (React chỉ dựng màn đang chọn); thêm .error-line, .link-btn, .btn[disabled] (không có trong mockup). */
+
+.two-col { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; margin-bottom: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 20px; min-width: 0; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.card-head h2 { font-weight: 500; font-size: var(--fs-md); margin: 0; }
+.card-head span { font-size: var(--fs-xs); color: var(--muted); }
+.mix { display: grid; gap: 12px; }
+.mix-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: var(--fs-sm); }
+.mix-row .mix-bar { grid-column: 1 / -1; height: 6px; background: var(--grey-bg); border-radius: 3px; overflow: hidden; }
+.mix-row .mix-bar i { display: block; height: 100%; background: var(--olive); }
+.mix-row b { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.accounts { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.create { display: grid; gap: 16px; }
+.field { display: grid; gap: 6px; }
+.field label, .field .lbl { font-size: var(--fs-sm); font-weight: 500; }
+.field .hint { font-size: var(--fs-xs); color: var(--muted); }
+.control { width: 100%; font: 400 var(--fs-sm)/1.4 var(--font); padding: 11px 13px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg); color: var(--ink); }
+.control:focus { outline: none; border-color: var(--olive); box-shadow: 0 0 0 3px rgba(88,99,76,.14); }
+.radio { display: flex; gap: 8px; }
+.radio input { position: absolute; opacity: 0; pointer-events: none; }
+.radio label { font: 400 var(--fs-sm)/1 var(--font); padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; background: var(--bg); }
+.radio input:checked + label { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.radio input:focus-visible + label { outline: 2px solid var(--olive); outline-offset: 2px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; font: 500 var(--fs-sm)/1 var(--font); padding: 13px 20px; border-radius: 999px; border: 0; cursor: pointer; background: var(--olive); color: var(--on-olive); }
+.btn:hover { background: var(--olive-ink); }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.err { font-size: var(--fs-sm); color: var(--danger); }
+
+.link-btn { background: none; border: 0; padding: 0; font: inherit; font-size: var(--fs-sm); color: var(--olive); cursor: pointer; }
+.error-line { font-size: var(--fs-sm); color: var(--danger); background: var(--danger-bg); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 16px; }
+.recent { padding: 0; margin-bottom: 0; }
+.recent .card-head { padding: 20px 20px 0; }
+.scroll-x { overflow-x: auto; }
+
+@media (max-width: 1100px) { .two-col, .accounts { grid-template-columns: minmax(0, 1fr); } }
