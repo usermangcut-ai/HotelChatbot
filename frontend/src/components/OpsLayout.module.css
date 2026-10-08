@@ -36,3 +36,7 @@
   .mobile-tabs a, .mobile-tabs button { flex: none; text-decoration: none; color: var(--muted); font: 400 var(--fs-sm)/1.5 var(--font); padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: none; cursor: pointer; }
   .mobile-tabs a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 }
+
+/* tên resort là link về trang chủ — giữ nguyên dáng chữ */
+a.wordmark { color: inherit; text-decoration: none; }
+a.wordmark:hover { opacity: .75; }
