@@ -24,3 +24,19 @@ def test_startup_runs_init_db(monkeypatch):
     with TestClient(main.app):
         pass
     assert calls == [1]
+
+
+def test_images_must_be_revalidated_so_replaced_photos_show_up():
+    # Ảnh thay nội dung nhưng giữ tên file → trình duyệt phải hỏi lại server (ETag), không dùng cache cũ.
+    from fastapi.testclient import TestClient
+
+    resp = TestClient(app).get("/images/hotel.jpg")
+    assert resp.status_code == 200
+    assert resp.headers["cache-control"] == "no-cache"
+
+
+def test_api_responses_keep_default_caching():
+    from fastapi.testclient import TestClient
+
+    resp = TestClient(app).get("/api/rooms")
+    assert "cache-control" not in resp.headers

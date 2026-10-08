@@ -21,7 +21,7 @@ export default function PublicLayout({ children, overlay = false }: { children: 
   return (
     <>
       <header className={`${s.top} ${overlay ? s.overlay : ""} ${solid ? s.solid : ""}`}>
-        <div className={`wrap ${s.bar}`}>
+        <div className={s.bar}>
           <Link className={s.brand} to="/" aria-label="Shanghai Resort">
             <svg viewBox="0 0 52 52" fill="none" stroke="currentColor"><circle cx="26" cy="26" r="24.5" strokeWidth="1" /><text x="26" y="31.5" textAnchor="middle" fill="currentColor" stroke="none" fontSize="16" fontWeight="300" letterSpacing="2" fontFamily="Be Vietnam Pro, system-ui, sans-serif">SR</text></svg>
             <b>Shanghai Resort</b>

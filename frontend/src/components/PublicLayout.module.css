@@ -7,7 +7,7 @@
 .top::before { content: ""; position: absolute; inset: 0 0 -60px; background: linear-gradient(180deg, rgba(23,23,20,.5), rgba(23,23,20,0)); pointer-events: none; transition: opacity var(--t-std); }
 .top.solid { background: var(--surface); color: var(--ink); box-shadow: 0 1px 0 var(--line); }
 .top.solid::before { opacity: 0; }
-.bar { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 104px; transition: height var(--t-std); }
+.bar { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 104px; padding-inline: clamp(16px, 3vw, 48px); transition: height var(--t-std); }   /* full chiều ngang: nút đăng nhập sát mép phải màn hình */
 .top.solid .bar { height: 84px; }
 .brand { grid-column: 2; text-align: center; text-decoration: none; display: grid; justify-items: center; gap: 8px; }
 .brand svg { width: 46px; height: 46px; transition: width var(--t-std), height var(--t-std); }
