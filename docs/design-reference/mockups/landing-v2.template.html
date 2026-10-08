@@ -35,7 +35,7 @@ header.top.solid::before { opacity: 0; }
 .brand { grid-column: 2; text-align: center; text-decoration: none; display: grid; justify-items: center; gap: 8px; }
 .brand svg { width: 46px; height: 46px; transition: width var(--t-std), height var(--t-std); }
 .top.solid .brand svg { width: 38px; height: 38px; }
-.brand b { font-weight: 400; font-size: var(--fs-lg); letter-spacing: .28em; text-transform: uppercase; }
+.brand b { font-weight: 600; font-size: 22px; letter-spacing: .24em; text-transform: uppercase; }   /* tên resort đậm, to — user yêu cầu 2026-10-08 */
 .brand small { font-size: var(--fs-xs); letter-spacing: var(--track-wide); text-transform: uppercase; opacity: .8; }
 .login { grid-column: 3; justify-self: end; font: 500 var(--fs-sm)/1 var(--font); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; padding: 12px 20px; border: 1px solid currentColor; transition: background var(--t-micro), color var(--t-micro); }
 .top:not(.solid) .login:hover { background: #fff; color: var(--ink); }
@@ -135,7 +135,7 @@ html[data-chat="open"] .drawer { transform: none; }
 @media (max-width: 1024px) { .rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 768px) {
   .top .bar { height: 72px; }
-  .brand b { font-size: var(--fs-sm); letter-spacing: .24em; }
+  .brand b { font-size: var(--fs-md); letter-spacing: .2em; }
   .brand small { display: none; }
   .login { padding: 10px 14px; font-size: var(--fs-xs); }
   .intro { padding-block: var(--s9) var(--s8); }

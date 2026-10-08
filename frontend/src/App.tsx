@@ -4,8 +4,8 @@ import PublicLayout from "./components/PublicLayout";
 import Admin from "./pages/Admin";
 import BookingPage from "./features/booking/BookingPage";
 import ChatDrawer from "./features/chat/ChatDrawer";
-import ChatLauncher from "./features/chat/ChatLauncher";
-import { ChatProvider, useChat } from "./features/chat/ChatProvider";
+import ChatFab from "./features/chat/ChatFab";
+import { ChatProvider } from "./features/chat/ChatProvider";
 import { RequireRole } from "./lib/auth";
 import ComingSoon from "./pages/ComingSoon";
 import GuestAccount from "./pages/GuestAccount";
@@ -13,12 +13,11 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Staff from "./pages/Staff";
 
-function Public({ children }: { children: ReactNode }) {
-  const { open } = useChat();
+function Public({ children, overlay }: { children: ReactNode; overlay?: boolean }) {
   return (
-    <PublicLayout onOpenChat={() => open()}>
+    <PublicLayout overlay={overlay}>
       {children}
-      <ChatLauncher />
+      <ChatFab />
       <ChatDrawer />
     </PublicLayout>
   );
@@ -28,7 +27,7 @@ export default function App() {
   return (
     <ChatProvider>
       <Routes>
-        <Route path="/" element={<Public><Home /></Public>} />
+        <Route path="/" element={<Public overlay><Home /></Public>} />
         <Route path="/dat-phong" element={<Public><BookingPage /></Public>} />
         <Route path="/dang-nhap" element={<Login />} />
         <Route path="/tai-khoan" element={<RequireRole roles={["guest"]}><GuestAccount /></RequireRole>} />
