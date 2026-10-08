@@ -60,7 +60,8 @@ export type Stay = { reservation_id: number; room_id: string; room_type: string;
 export type RequestStatus = "received" | "done" | "cancelled";
 export type StaffRequest = { id: number; room_id: string | null; request_type: string; note: string | null; status: RequestStatus; created_at: string };
 export type ServiceRequest = { id: number; service_type: "restaurant" | "spa"; guest_name: string | null; guest_phone: string | null;
-  requested_at: string | null; party_size: number | null; note: string | null; status: RequestStatus; created_at: string };
+  requested_at: string | null; party_size: number | null; note: string | null; status: RequestStatus; created_at: string;
+  room_id: string | null; reservation_id: number | null };
 
 export const getMe = () => apiFetch<Me>("/api/auth/me");
 export const login = (body: { identity_type: "guest"; room_id: string; password: string } | { identity_type: "staff"; username: string; password: string }) =>
@@ -76,3 +77,30 @@ export const createStaffRequest = (request_type: string, note: string) =>
   apiFetch<StaffRequest>("/api/me/requests", { method: "POST", body: JSON.stringify({ request_type, note }) });
 export const createServiceRequest = (body: { service_type: "restaurant" | "spa"; requested_at: string; party_size: number; note: string }) =>
   apiFetch<{ id: number }>("/api/service-requests", { method: "POST", body: JSON.stringify(body) });
+
+export type BookingStatus = "paid" | "cancelled" | "completed";
+export type Booking = { id: number; room_type: string; check_in: string; check_out: string; guest_name: string | null;
+  guest_phone: string | null; guest_email: string | null; num_guests: number | null; status: BookingStatus; created_at: string;
+  room_id: string | null };
+export type StaffAccount = { username: string; role: "staff" | "admin"; created_at: string };
+
+const json = (method: string, body?: unknown): RequestInit => ({ method, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+
+export const getStaffServiceRequests = () => apiFetch<ServiceRequest[]>("/api/staff/service-requests");
+export const getStaffRequests = () => apiFetch<StaffRequest[]>("/api/staff/requests");
+export const setServiceRequestStatus = (id: number, status: RequestStatus, scope: "staff" | "admin") =>
+  apiFetch<unknown>(`/api/${scope}/service-requests/${id}`, json("PATCH", { status }));
+export const setStaffRequestStatus = (id: number, status: RequestStatus) =>
+  apiFetch<unknown>(`/api/staff/requests/${id}`, json("PATCH", { status }));
+export const getAdminBookings = () => apiFetch<Booking[]>("/api/admin/bookings");
+export const setBookingStatus = (id: number, status: BookingStatus) =>
+  apiFetch<unknown>(`/api/admin/bookings/${id}`, json("PATCH", { status }));
+export const deleteBooking = (id: number) => apiFetch<unknown>(`/api/admin/bookings/${id}`, json("DELETE"));
+export const deleteServiceRequest = (id: number) => apiFetch<unknown>(`/api/admin/service-requests/${id}`, json("DELETE"));
+export const getStaffAccounts = () => apiFetch<StaffAccount[]>("/api/admin/staff-accounts");
+export const createStaffAccount = (username: string, password: string, role: "staff" | "admin") =>
+  apiFetch<StaffAccount>("/api/admin/staff-accounts", json("POST", { username, password, role }));
+export const deleteStaffAccount = (username: string) =>
+  apiFetch<unknown>(`/api/admin/staff-accounts/${encodeURIComponent(username)}`, json("DELETE"));
+export const changePassword = (oldPassword: string, newPassword: string) =>
+  apiFetch<unknown>("/api/auth/change-password", json("POST", { old_password: oldPassword, new_password: newPassword }));
