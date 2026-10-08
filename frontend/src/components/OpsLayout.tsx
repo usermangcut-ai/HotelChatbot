@@ -1,5 +1,5 @@
 import { useCallback, useState, type ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { useToast } from "../lib/useToast";
 import ChangePasswordDrawer from "./ChangePasswordDrawer";
@@ -31,7 +31,7 @@ export default function OpsLayout({ subtitle, nav, active, onSelect, mobile, chi
   return (
     <div className={s.app}>
       <aside className={s.side}>
-        <div className={s.wordmark}>Shanghai Resort</div>
+        <Link className={s.wordmark} to="/">Shanghai Resort</Link>
         <div className={s.role}>{subtitle}</div>
         <nav className={s.menu} aria-label="Điều hướng">
           {nav.map(n => (
@@ -53,7 +53,7 @@ export default function OpsLayout({ subtitle, nav, active, onSelect, mobile, chi
       <div>
         {mobile === "bar" ? (
           <div className={s["mobile-bar"]}>
-            <span className={s.wordmark}>Shanghai Resort</span>
+            <Link className={s.wordmark} to="/">Shanghai Resort</Link>
             <div className={s.actions}>
               <button type="button" onClick={() => setPwOpen(true)}>Đổi mật khẩu</button>
               <button type="button" onClick={logout}>{username} · Đăng xuất</button>

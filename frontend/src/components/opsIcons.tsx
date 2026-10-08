@@ -12,5 +12,6 @@ export const ICONS = {
   support: svg(<path d="M4 13a8 8 0 0 1 16 0M4 13v3a2 2 0 0 0 2 2h1v-6H6M20 13v3a2 2 0 0 1-2 2h-1v-6h1" />),
   overview: svg(<><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></>),
   bookings: svg(<><rect x="3" y="5" width="18" height="16" rx="1" /><path d="M3 10h18M8 3v4M16 3v4" /></>),
+  newAccount: svg(<><circle cx="10" cy="8" r="3.5" /><path d="M3.5 20c1-3.5 3.6-5.5 6.5-5.5 1.6 0 3 .5 4.1 1.5M18 14v6M15 17h6" /></>),
   accounts: svg(<><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2 .8 3.2 2.8 3.5 5.5" /></>),
 } satisfies Record<string, ReactNode>;

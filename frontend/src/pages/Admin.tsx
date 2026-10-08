@@ -15,7 +15,7 @@ import { useRooms } from "../lib/useRooms";
 import { useToast } from "../lib/useToast";
 import s from "./Admin.module.css";
 
-type View = "overview" | "bookings" | "requests" | "accounts";
+type View = "overview" | "bookings" | "requests" | "accounts" | "new-account";
 const ST: Record<BookingStatus, string> = { paid: "Đã cọc", completed: "Đã trả phòng", cancelled: "Đã hủy" };
 const pillClass = (st: BookingStatus) => (st === "cancelled" ? ops.bcancelled : ops[st]);
 const dm = (iso: string) => formatDate(iso).slice(0, 5);
@@ -53,6 +53,7 @@ export default function Admin() {
     { key: "bookings", label: "Đặt phòng", icon: ICONS.bookings },
     { key: "requests", label: "Yêu cầu dịch vụ", short: "Yêu cầu", icon: ICONS.queue, count: pending.length },
     { key: "accounts", label: "Tài khoản nhân viên", short: "Tài khoản", icon: ICONS.accounts },
+    { key: "new-account", label: "Tạo tài khoản", short: "Tạo TK", icon: ICONS.newAccount },
   ];
 
   return (
@@ -80,7 +81,13 @@ export default function Admin() {
       )}
 
       {view === "accounts" && accounts && (
-        <AccountsView accounts={accounts} me={me?.identity_id ?? ""} notify={toast.show} onChange={setAccounts} />
+        <AccountsView accounts={accounts} me={me?.identity_id ?? ""} notify={toast.show} onChange={setAccounts}
+          onNew={() => setView("new-account")} />
+      )}
+
+      {view === "new-account" && accounts && (
+        <CreateAccountView accounts={accounts} notify={toast.show}
+          onCreated={created => { setAccounts([...accounts, created]); setView("accounts"); }} />
       )}
 
       <Toast text={toast.text} />
@@ -222,31 +229,10 @@ function BookingsView({ bookings, roomTotal, notify, onChange, onRemove }: {
   );
 }
 
-function AccountsView({ accounts, me, notify, onChange }: {
-  accounts: StaffAccount[]; me: string; notify: (t: string) => void; onChange: (a: StaffAccount[]) => void;
+function AccountsView({ accounts, me, notify, onChange, onNew }: {
+  accounts: StaffAccount[]; me: string; notify: (t: string) => void; onChange: (a: StaffAccount[]) => void; onNew: () => void;
 }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"staff" | "admin">("staff");
-  const [error, setError] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
   const [confirmUser, setConfirmUser] = useState<string | null>(null);
-
-  const create = async (e: FormEvent) => {
-    e.preventDefault();
-    const u = username.trim();
-    if (!u || password.length < 4) { setError("Nhập tên đăng nhập và mật khẩu tối thiểu 4 ký tự."); return; }
-    if (accounts.some(a => a.username === u)) { setError(`Tên đăng nhập “${u}” đã tồn tại.`); return; }
-    setSending(true); setError(null);
-    try {
-      const created = await createStaffAccount(u, password, role);
-      onChange([...accounts, created]);
-      setUsername(""); setPassword(""); setRole("staff");
-      notify(`Đã tạo tài khoản ${u}`);
-    } catch (err) {
-      setError(err instanceof ApiError && err.status === 409 ? `Tên đăng nhập “${u}” đã tồn tại.` : errText(err));
-    } finally { setSending(false); }
-  };
   const revoke = async (u: string) => {
     setConfirmUser(null);
     try { await deleteStaffAccount(u); onChange(accounts.filter(a => a.username !== u)); notify(`Đã thu hồi tài khoản ${u}`); }
@@ -255,50 +241,80 @@ function AccountsView({ accounts, me, notify, onChange }: {
 
   return (
     <>
-      <div className={ops.head}><div><h1>Tài khoản nhân viên</h1><p>Tạo tài khoản cho lễ tân mới hoặc thu hồi khi nghỉ việc</p></div></div>
-      <div className={s.accounts}>
-        <div className={ops["table-wrap"]}>
-          <table className={ops.table} style={{ minWidth: 0 }}>
-            <thead><tr><th>Tên đăng nhập</th><th>Vai trò</th><th>Ngày tạo</th><th></th></tr></thead>
-            <tbody>
-              {accounts.map(a => (
-                <tr key={a.username}>
-                  <td><span className={ops.t}>{a.username}</span></td>
-                  <td><span className={`${ops.pill} ${ops[a.role]}`}>{a.role === "admin" ? "Quản trị" : "Nhân viên"}</span></td>
-                  <td className={ops.num}>{formatDate(a.created_at.slice(0, 10))}</td>
-                  <td className={ops.right}>
-                    {a.username === me ? <span className={ops.n}>Tài khoản của bạn</span> : confirmUser === a.username ? (
-                      <div className={ops["row-actions"]}>
-                        <span className={ops.confirm}>Thu hồi tài khoản này?</span>
-                        <button type="button" className={`${ops["btn-sm"]} ${ops["danger-solid"]}`} onClick={() => { void revoke(a.username); }}>Thu hồi</button>
-                        <button type="button" className={ops["btn-sm"]} onClick={() => setConfirmUser(null)}>Thôi</button>
-                      </div>
-                    ) : (
-                      <button type="button" className={`${ops["btn-sm"]} ${ops.danger}`} onClick={() => setConfirmUser(a.username)}>Thu hồi</button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className={s.card}>
-          <div className={s["card-head"]}><h2>Tạo tài khoản</h2></div>
-          <form className={s.create} onSubmit={create} noValidate>
-            <div className={s.field}><label htmlFor="u">Tên đăng nhập</label>
-              <input className={s.control} id="u" autoComplete="off" placeholder="ví dụ: lantan2" value={username} onChange={e => setUsername(e.target.value)} /></div>
-            <div className={s.field}><label htmlFor="p">Mật khẩu ban đầu</label>
-              <input className={s.control} id="p" type="text" autoComplete="off" placeholder="Tối thiểu 4 ký tự" value={password} onChange={e => setPassword(e.target.value)} />
-              <span className={s.hint}>Nhân viên tự đổi sau lần đăng nhập đầu.</span></div>
-            <div className={s.field}><span className={s.lbl}>Vai trò</span>
-              <div className={s.radio}>
-                <input type="radio" name="role" id="r-staff" checked={role === "staff"} onChange={() => setRole("staff")} /><label htmlFor="r-staff">Nhân viên</label>
-                <input type="radio" name="role" id="r-admin" checked={role === "admin"} onChange={() => setRole("admin")} /><label htmlFor="r-admin">Quản trị</label>
-              </div></div>
-            {error && <span className={s.err} role="alert">{error}</span>}
-            <button className={s.btn} type="submit" disabled={sending}>{sending ? "Đang tạo…" : "Tạo tài khoản"}</button>
-          </form>
-        </div>
+      <div className={ops.head}>
+        <div><h1>Tài khoản nhân viên</h1><p>{accounts.length} tài khoản · thu hồi khi nhân viên nghỉ việc</p></div>
+        <button type="button" className={s.btn} onClick={onNew}>+ Tạo tài khoản</button>
+      </div>
+      <div className={ops["table-wrap"]}>
+        <table className={ops.table} style={{ minWidth: 0 }}>
+          <thead><tr><th>Tên đăng nhập</th><th>Vai trò</th><th>Ngày tạo</th><th></th></tr></thead>
+          <tbody>
+            {accounts.map(a => (
+              <tr key={a.username}>
+                <td><span className={ops.t}>{a.username}</span></td>
+                <td><span className={`${ops.pill} ${ops[a.role]}`}>{a.role === "admin" ? "Quản trị" : "Nhân viên"}</span></td>
+                <td className={ops.num}>{formatDate(a.created_at.slice(0, 10))}</td>
+                <td className={ops.right}>
+                  {a.username === me ? <span className={ops.n}>Tài khoản của bạn</span> : confirmUser === a.username ? (
+                    <div className={ops["row-actions"]}>
+                      <span className={ops.confirm}>Thu hồi tài khoản này?</span>
+                      <button type="button" className={`${ops["btn-sm"]} ${ops["danger-solid"]}`} onClick={() => { void revoke(a.username); }}>Thu hồi</button>
+                      <button type="button" className={ops["btn-sm"]} onClick={() => setConfirmUser(null)}>Thôi</button>
+                    </div>
+                  ) : (
+                    <button type="button" className={`${ops["btn-sm"]} ${ops.danger}`} onClick={() => setConfirmUser(a.username)}>Thu hồi</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+function CreateAccountView({ accounts, notify, onCreated }: {
+  accounts: StaffAccount[]; notify: (t: string) => void; onCreated: (a: StaffAccount) => void;
+}) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"staff" | "admin">("staff");
+  const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+
+  const create = async (e: FormEvent) => {
+    e.preventDefault();
+    const u = username.trim();
+    if (!u || password.length < 4) { setError("Nhập tên đăng nhập và mật khẩu tối thiểu 4 ký tự."); return; }
+    if (accounts.some(a => a.username === u)) { setError(`Tên đăng nhập “${u}” đã tồn tại.`); return; }
+    setSending(true); setError(null);
+    try {
+      onCreated(await createStaffAccount(u, password, role));
+      notify(`Đã tạo tài khoản ${u}`);
+    } catch (err) {
+      setError(err instanceof ApiError && err.status === 409 ? `Tên đăng nhập “${u}” đã tồn tại.` : errText(err));
+    } finally { setSending(false); }
+  };
+
+  return (
+    <>
+      <div className={ops.head}><div><h1>Tạo tài khoản</h1><p>Cấp tài khoản cho lễ tân hoặc quản trị viên mới</p></div></div>
+      <div className={s.card} style={{ maxWidth: 520 }}>
+        <form className={s.create} onSubmit={create} noValidate>
+          <div className={s.field}><label htmlFor="u">Tên đăng nhập</label>
+            <input className={s.control} id="u" autoComplete="off" placeholder="ví dụ: lantan2" value={username} onChange={e => setUsername(e.target.value)} /></div>
+          <div className={s.field}><label htmlFor="p">Mật khẩu ban đầu</label>
+            <input className={s.control} id="p" type="text" autoComplete="off" placeholder="Tối thiểu 4 ký tự" value={password} onChange={e => setPassword(e.target.value)} />
+            <span className={s.hint}>Nhân viên tự đổi sau lần đăng nhập đầu.</span></div>
+          <div className={s.field}><span className={s.lbl}>Vai trò</span>
+            <div className={s.radio}>
+              <input type="radio" name="role" id="r-staff" checked={role === "staff"} onChange={() => setRole("staff")} /><label htmlFor="r-staff">Nhân viên</label>
+              <input type="radio" name="role" id="r-admin" checked={role === "admin"} onChange={() => setRole("admin")} /><label htmlFor="r-admin">Quản trị</label>
+            </div></div>
+          {error && <span className={s.err} role="alert">{error}</span>}
+          <button className={s.btn} type="submit" disabled={sending}>{sending ? "Đang tạo…" : "Tạo tài khoản"}</button>
+        </form>
       </div>
     </>
   );
