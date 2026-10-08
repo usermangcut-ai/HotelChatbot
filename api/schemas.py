@@ -138,6 +138,8 @@ class ServiceRequestRecord(BaseModel):
     note: str | None = None
     status: str
     created_at: str
+    reservation_id: int | None = None
+    room_id: str | None = None
 
 
 class ReservationStatusUpdate(BaseModel):

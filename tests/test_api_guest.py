@@ -51,3 +51,12 @@ def test_me_service_requests_only_mine(make_active_stay):
 
 def test_me_endpoints_require_guest():
     assert TestClient(app).get("/api/me/stay").status_code == 401
+
+
+def test_staff_sees_room_of_service_request(active_stay):
+    _guest(active_stay).post("/api/service-requests", json={
+        "service_type": "restaurant", "requested_at": "2026-10-17 19:00", "party_size": 2, "note": ""})
+    staff = TestClient(app)
+    staff.cookies.set(COOKIE_NAME, agent_db.create_session("staff_account", "nv-test", "staff"))
+    rows = staff.get("/api/staff/service-requests").json()
+    assert rows[0]["room_id"] == active_stay["room_id"]
