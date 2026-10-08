@@ -1,0 +1,46 @@
+/* Chép từ MOCKUP staff.template.html (bảng hàng đợi). Thanh lọc (.toolbar/.seg) lấy từ ops.module.css.
+   ĐIỀU CHỈNH: cỡ chữ → token; selector thẻ (table, th, td, tr) → class; .note/.refresh... không thuộc bảng nên ở Staff.module.css;
+   .search giữ 240px của staff (admin dùng 260px ở ops.module.css); .del / .confirm (nút Xóa của admin, mockup admin .btn-sm.danger) thêm cuối. */
+
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; min-width: 760px; }
+.table th { text-align: left; font-weight: 500; font-size: var(--fs-xs); color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.table td { padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table tr:last-child td { border-bottom: 0; }
+.table tr.fresh td { background: #F6F1E4; }
+.table td .t { font-weight: 500; }
+.table td .n { color: var(--muted); font-size: var(--fs-sm); display: block; max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.type { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.type i { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-style: normal; background: var(--bg); }
+.type svg { width: 15px; height: 15px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 500; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.received { background: var(--amber-bg); color: var(--amber); }
+.pill.done { background: var(--olive-bg); color: var(--ok); }
+.pill.cancelled { background: var(--grey-bg); color: var(--muted); }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
+.row-actions button { font: 500 var(--fs-xs)/1 var(--font); padding: 8px 12px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); white-space: nowrap; }
+.row-actions .done-btn { background: var(--olive); border-color: var(--olive); color: var(--on-olive); }
+.row-actions .done-btn:hover { background: var(--olive-ink); }
+.row-actions button:not(.done-btn):hover { border-color: var(--ink); }
+.row-actions .undo { color: var(--muted); border-color: transparent; }
+.row-actions .danger { color: var(--danger); }
+.row-actions .danger:hover { border-color: var(--danger); }
+.row-actions .danger-solid { background: var(--danger); border-color: var(--danger); color: #fff; }
+.confirm { font-size: var(--fs-xs); color: var(--danger); white-space: nowrap; }
+.empty td { text-align: center; color: var(--muted); padding: 40px 16px; }
+.search { font: 400 var(--fs-sm)/1 var(--font); padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); width: 240px; max-width: 100%; color: var(--ink); }
+.search:focus { outline: none; border-color: var(--olive); }
+
+@media (max-width: 760px) {
+  .table { min-width: 0; }
+  .table thead { display: none; }
+  .table tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .table td { padding: 0; border: 0; }
+  .table td.c-type { grid-column: 1; } .table td.c-status { grid-column: 2; grid-row: 1; justify-self: end; }
+  .table td.c-req { grid-column: 1 / -1; } .table td.c-who, .table td.c-when { grid-column: 1 / -1; color: var(--muted); font-size: var(--fs-sm); }
+  .table td.c-sent { display: none; } .table td.c-act { grid-column: 1 / -1; } .row-actions { justify-content: flex-start; flex-wrap: wrap; }
+  .table td .n { white-space: normal; }
+  .search { width: 100%; }
+}

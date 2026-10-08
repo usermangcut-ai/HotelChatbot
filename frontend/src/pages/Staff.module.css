@@ -1,0 +1,8 @@
+/* Chép từ MOCKUP staff.template.html (.refresh, .live). Khung, ô số liệu, bảng dùng ops.module.css / OpsLayout / QueuePanel.
+   ĐIỀU CHỈNH: cỡ chữ → token; thêm .error-line (báo lỗi tải) không có trong mockup. */
+.refresh { display: flex; align-items: center; gap: 10px; font-size: var(--fs-sm); color: var(--muted); }
+.refresh button { font: 500 var(--fs-sm)/1 var(--font); padding: 9px 14px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; cursor: pointer; color: var(--ink); }
+.refresh button:hover { border-color: var(--ink); }
+.live { width: 7px; height: 7px; border-radius: 50%; background: #7E9A6E; box-shadow: 0 0 0 3px rgba(126,154,110,.2); }
+
+.error-line { font-size: var(--fs-sm); color: var(--danger); background: var(--danger-bg); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 16px; }

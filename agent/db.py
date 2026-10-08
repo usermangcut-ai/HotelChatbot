@@ -414,12 +414,14 @@ def list_service_requests(limit=50, reservation_id=None, db_path=DB_PATH):
     """Danh sách yêu cầu dịch vụ mới nhất trước. Truyền reservation_id → chỉ của lượt lưu trú đó."""
     cols = ["id", "service_type", "guest_name", "guest_phone", "requested_at",
             "party_size", "note", "status", "created_at", "reservation_id"]
-    sql = f"SELECT {', '.join(cols)} FROM service_requests"
+    select = ", ".join(f"s.{c}" for c in cols) + ", r.room_id"
+    cols = cols + ["room_id"]
+    sql = f"SELECT {select} FROM service_requests s LEFT JOIN reservations r ON r.id = s.reservation_id"
     params = []
     if reservation_id is not None:
-        sql += " WHERE reservation_id=?"
+        sql += " WHERE s.reservation_id=?"
         params.append(reservation_id)
-    sql += " ORDER BY id DESC LIMIT ?"
+    sql += " ORDER BY s.id DESC LIMIT ?"
     params.append(limit)
     conn = _connect(db_path)
     try:

@@ -1,0 +1,7 @@
+/* Chép từ MOCKUP admin.template.html (.chart). ĐIỀU CHỈNH: cỡ chữ 11px → --fs-xs; selector lồng .chart → class. */
+.chart { width: 100%; height: auto; display: block; }
+.chart text { fill: var(--muted); font: 400 var(--fs-xs) var(--font); font-variant-numeric: tabular-nums; }
+.chart .grid line { stroke: var(--line); stroke-width: 1; }
+.chart .bar { fill: var(--olive-soft); }
+.chart .bar.today { fill: var(--olive); }
+.chart .val { fill: var(--ink); font-weight: 500; }
