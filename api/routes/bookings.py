@@ -23,7 +23,7 @@ def list_rooms():
         out.append(RoomOption(
             room_type=title, price_vnd=fields["price_vnd"], size_m2=fields["size_m2"],
             max_occupancy=fields["max_occupancy"], view=fields["view"], bed_type=fields["bed_type"],
-            image_url="/images/" + os.path.basename(path) if path else None,
+            image_url=photos.photo_url(path) if path else None,
             total_rooms=totals.get(title, 0)))
     return out
 

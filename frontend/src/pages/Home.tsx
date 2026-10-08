@@ -4,6 +4,7 @@ import { AMENITIES, EMAIL, HOTLINE, POLICY } from "../content";
 import { formatVnd } from "../lib/format";
 import { useRooms } from "../lib/useRooms";
 import s from "./Home.module.css";
+import { imageUrl } from "../lib/assets";
 
 /** Ảnh lỗi thì thử đúng một lần ảnh dự phòng. */
 function withFallback(fallback: string) {
@@ -20,7 +21,7 @@ export default function Home() {
 
   return (
     <main>
-      <section className={s.hero} id="hero"><img src="/images/hotel.jpg" alt="Toàn cảnh Shanghai Resort nhìn ra biển" /></section>
+      <section className={s.hero} id="hero"><img src={imageUrl("hotel.jpg")} alt="Toàn cảnh Shanghai Resort nhìn ra biển" /></section>
 
       <section className={`wrap ${s.intro}`}>
         <h1>Shanghai Resort — nghỉ dưỡng bên bờ biển riêng</h1>
@@ -31,7 +32,7 @@ export default function Home() {
 
       <div className="wrap">
         <div className={s.feature}>
-          <img src="/images/feature.jpg" alt="Villa sát biển có hồ bơi riêng" onError={withFallback("/images/room_villa_3_bedroom_beachfront.jpg")} />
+          <img src={imageUrl("feature.jpg")} alt="Villa sát biển có hồ bơi riêng" onError={withFallback(imageUrl("room_villa_3_bedroom_beachfront.jpg"))} />
         </div>
       </div>
 

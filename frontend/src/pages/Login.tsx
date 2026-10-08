@@ -5,13 +5,14 @@ import { ApiError } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { homeForRole } from "../lib/booking";
 import s from "./Login.module.css";
+import { imageUrl } from "../lib/assets";
 
 type Kind = "guest" | "staff";
 const COPY: Record<Kind, { sub: string; help: string }> = {
   guest: { sub: "Dành cho khách đang lưu trú tại resort.", help: "Quên mật khẩu hoặc chưa nhận được mật khẩu? Gọi lễ tân 24/24:" },
   staff: { sub: "Dành cho nhân viên và quản trị viên.", help: "Quên mật khẩu? Liên hệ quản trị viên hoặc lễ tân:" },
 };
-const FALLBACK_IMG = "/images/hotel.jpg";
+const FALLBACK_IMG = imageUrl("hotel.jpg");
 
 function AlertIcon() {
   return <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4M8 11v.5"/></svg>;
@@ -38,7 +39,7 @@ export default function Login() {
   const [staffPw, setStaffPw] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [img, setImg] = useState("/images/login.jpg");   // chưa có ảnh dọc login.jpg → dùng ảnh toàn cảnh
+  const [img, setImg] = useState(imageUrl("login.jpg"));   // chưa có ảnh dọc login.jpg → dùng ảnh toàn cảnh
 
   if (me) return <Navigate to={homeForRole(me.role)} replace />;
 
