@@ -25,3 +25,6 @@ footer.foot { border-top: 1px solid var(--line); padding-block: var(--s6); color
   .brand b { font-size: var(--fs-md); letter-spacing: .2em; }
   .login { padding: 10px 14px; font-size: var(--fs-xs); }
 }
+
+/* nút đăng nhập không xuống dòng trên điện thoại */
+.login { white-space: nowrap; }
