@@ -27,6 +27,20 @@ app.include_router(admin.router)
 app.include_router(staff.router)
 app.include_router(guest.router)
 
+
+@app.middleware("http")
+async def revalidate_static(request: Request, call_next):
+    """Ảnh và index.html giữ nguyên tên khi thay nội dung → buộc trình duyệt hỏi lại server (ETag,
+    rẻ: 304 nếu không đổi) thay vì hiện bản cũ trong cache. JS/CSS trong /assets đã có hash trong
+    tên file nên cho cache lâu. /api giữ mặc định."""
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/assets/"):
+        response.headers.setdefault("Cache-Control", "public, max-age=31536000, immutable")
+    elif not path.startswith("/api"):
+        response.headers.setdefault("Cache-Control", "no-cache")
+    return response
+
 if os.path.isdir(IMAGES_DIR):
     app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
 
