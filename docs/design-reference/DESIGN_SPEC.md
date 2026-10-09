@@ -12,7 +12,7 @@ The reference image is the visual source of truth for the overall feeling and co
 
 ## Product Direction
 
-Shanghai Resort — Quiet Luxury Hospitality × Modern AI Concierge.
+Khaifrost Resort — Quiet Luxury Hospitality × Modern AI Concierge.
 
 The interface should feel:
 - calm

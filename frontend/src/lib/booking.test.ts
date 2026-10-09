@@ -41,15 +41,15 @@ describe("homeForRole", () => {
 
 describe("transferNote", () => {
   it("strips diacritics and uppercases", () => {
-    expect(transferNote("Nguyễn Minh Anh")).toBe("SR NGUYEN MINH ANH");
-    expect(transferNote("  Đặng   thị  Ánh ")).toBe("SR DANG THI ANH");
+    expect(transferNote("Nguyễn Minh Anh")).toBe("KR NGUYEN MINH ANH");
+    expect(transferNote("  Đặng   thị  Ánh ")).toBe("KR DANG THI ANH");
   });
   it("shortens long names at a word boundary", () => {
-    expect(transferNote("Nguyễn Thị Phương Hoàng Yến Nhi")).toBe("SR NGUYEN THI PHUONG");
+    expect(transferNote("Nguyễn Thị Phương Hoàng Yến Nhi")).toBe("KR NGUYEN THI PHUONG");
   });
   it("falls back when the name is empty or symbols only", () => {
-    expect(transferNote("")).toBe("SR DAT PHONG");
-    expect(transferNote("@@")).toBe("SR DAT PHONG");
+    expect(transferNote("")).toBe("KR DAT PHONG");
+    expect(transferNote("@@")).toBe("KR DAT PHONG");
   });
 });
 

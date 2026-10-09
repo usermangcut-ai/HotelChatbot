@@ -1,4 +1,4 @@
-# Shanghai Resort — Hotel Chatbot
+# Khaifrost Resort — Hotel Chatbot
 
 Chatbot lễ tân ảo **tiếng Việt** cho một khu nghỉ dưỡng, đóng vai một quản lý lễ tân thật: trả lời
 câu hỏi có căn cứ (không bịa số liệu), nhớ ngữ cảnh nhiều lượt, và có thể **thực hiện hành động thật**

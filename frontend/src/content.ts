@@ -1,7 +1,7 @@
 import { imageUrl } from "./lib/assets";
 // Chữ tĩnh trang chủ. Số liệu lấy từ data/knowledge.json — đổi ở đó thì sửa cả ở đây.
 export const HOTLINE = "+84-999-1234567";
-export const EMAIL = "contact@shanghairesort.com";
+export const EMAIL = "contact@khaifrostresort.com";
 
 export const SERVICES = "Đưa đón sân bay (có phụ phí), giữ xe miễn phí, đặt tour và vé, giặt ủi, trông trẻ — cứ gọi hoặc nhắn lễ tân.";
 

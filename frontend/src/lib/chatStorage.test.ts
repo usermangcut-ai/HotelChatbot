@@ -14,9 +14,9 @@ describe("chatStorage", () => {
     expect(loadChat()).toEqual({ sessionId: s.sessionId, messages: [{ id: "1", role: "user", text: "xin chào" }] });
   });
   it("ignores corrupted storage", () => {
-    sessionStorage.setItem("sr-chat-v1", "{not json");
+    sessionStorage.setItem("kr-chat-v1", "{not json");
     expect(loadChat().messages).toEqual([]);
-    sessionStorage.setItem("sr-chat-v1", JSON.stringify({ sessionId: "x", messages: [] }));
+    sessionStorage.setItem("kr-chat-v1", JSON.stringify({ sessionId: "x", messages: [] }));
     expect(loadChat().sessionId).not.toBe("x");
   });
   it("clearChat starts a new session", () => {

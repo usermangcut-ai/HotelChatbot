@@ -7,7 +7,7 @@ import ChatBookingCard from "./ChatBookingCard";
 import { useChat } from "./ChatProvider";
 import s from "./chat.module.css";
 
-const GREETING = "Chào anh/chị, em là lễ tân trực tuyến của Shanghai Resort. Em có thể giúp gì ạ?";
+const GREETING = "Chào anh/chị, em là lễ tân trực tuyến của Khaifrost Resort. Em có thể giúp gì ạ?";
 
 function RichText({ text }: { text: string }) {
   return (
@@ -75,7 +75,7 @@ export default function ChatDrawer() {
       <aside className={`${s.drawer} ${isOpen ? s.open : ""}`} role="dialog" aria-label="Trò chuyện với lễ tân" aria-hidden={!isOpen} inert={!isOpen}>
         <div className={s["drawer-head"]}>
           <span className={s.avatar}>S</span>
-          <div className={s.title}><strong>Lễ tân Shanghai Resort</strong><small>Trợ lý trực tuyến</small></div>
+          <div className={s.title}><strong>Lễ tân Khaifrost Resort</strong><small>Trợ lý trực tuyến</small></div>
           <button type="button" className={`${s["icon-btn"]} ${s.subtle}`} title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới" onClick={reset}>↺</button>
           <button type="button" className={s["icon-btn"]} aria-label="Đóng" onClick={close}>✕</button>
         </div>

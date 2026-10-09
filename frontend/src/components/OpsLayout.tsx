@@ -31,7 +31,7 @@ export default function OpsLayout({ subtitle, nav, active, onSelect, mobile, chi
   return (
     <div className={s.app}>
       <aside className={s.side}>
-        <Link className={s.wordmark} to="/">Shanghai Resort</Link>
+        <Link className={s.wordmark} to="/">Khaifrost Resort</Link>
         <div className={s.role}>{subtitle}</div>
         <nav className={s.menu} aria-label="Điều hướng">
           {nav.map(n => (
@@ -53,7 +53,7 @@ export default function OpsLayout({ subtitle, nav, active, onSelect, mobile, chi
       <div>
         {mobile === "bar" ? (
           <div className={s["mobile-bar"]}>
-            <Link className={s.wordmark} to="/">Shanghai Resort</Link>
+            <Link className={s.wordmark} to="/">Khaifrost Resort</Link>
             <div className={s.actions}>
               <button type="button" onClick={() => setPwOpen(true)}>Đổi mật khẩu</button>
               <button type="button" onClick={logout}>{username} · Đăng xuất</button>

@@ -18,7 +18,7 @@ async def lifespan(_app):
     yield
 
 
-app = FastAPI(title="Shanghai Resort API", lifespan=lifespan)
+app = FastAPI(title="Khaifrost Resort API", lifespan=lifespan)
 app.include_router(chat.router)
 app.include_router(bookings.router)
 app.include_router(service_requests.router)

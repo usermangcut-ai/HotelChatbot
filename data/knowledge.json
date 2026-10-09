@@ -1,6 +1,6 @@
 {
   "hotel": {
-    "name": "Shanghai Resort",
+    "name": "Khaifrost Resort",
     "text": "Khu nghỉ dưỡng 5 sao ven biển, 533 phòng, cách sân bay quốc tế ~25 km."
   },
   "rooms": {
@@ -418,7 +418,7 @@
       "type": "section",
       "branch": "info",
       "title": "Thông tin chung",
-      "text": "- **Hạng:** Khu nghỉ dưỡng 5 sao. Khai trương 2003, cải tạo 2016.\n- **Vị trí:** Ven biển, trung tâm thành phố.\n- **Quy mô:** 533 phòng.\n- **Khoảng cách:** Sân bay quốc tế ~25 km.\n- **Liên hệ:** +84-999-1234567 · contact@shanghairesort.com\n- **Đánh giá:** 8.9/10 (901 review).",
+      "text": "- **Hạng:** Khu nghỉ dưỡng 5 sao. Khai trương 2003, cải tạo 2016.\n- **Vị trí:** Ven biển, trung tâm thành phố.\n- **Quy mô:** 533 phòng.\n- **Khoảng cách:** Sân bay quốc tế ~25 km.\n- **Liên hệ:** +84-999-1234567 · contact@khaifrostresort.com\n- **Đánh giá:** 8.9/10 (901 review).",
       "summary": "Giới thiệu resort: hạng sao, vị trí, quy mô, liên hệ, đánh giá.",
       "keywords": [
         "giới thiệu",
