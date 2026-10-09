@@ -24,3 +24,6 @@ docs/design-reference/mockups/build/
 
 # ảnh gốc tải về (avif/bản lớn) — chỉ giữ ở máy
 data/images/_source/
+
+# Ảnh chụp màn hình dán tạm ở gốc repo — không bao giờ commit (có thể lộ key)
+/image.png

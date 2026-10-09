@@ -52,3 +52,20 @@ jobs:
           docker run -d --name app -e PORT=8000 -p 8000:8000 khaifrost:ci
           for i in $(seq 1 30); do curl -sf localhost:8000/api/health && exit 0; sleep 1; done
           docker logs app; exit 1
+
+  # CD: CI xanh trên main → đẩy code lên Railway bằng Railway CLI (không cần app GitHub của Railway).
+  # Cần secret RAILWAY_TOKEN = Project Token (Railway → Project Settings → Tokens, môi trường production).
+  deploy:
+    needs: [docker]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      SVC_ID: 992936aa-5950-445a-ae71-c93e5ef6874f   # service HotelChatbot (project ravishing-warmth)
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then echo "Chưa có secret RAILWAY_TOKEN — bỏ qua deploy"; exit 0; fi
+          railway up --service="$SVC_ID" --ci

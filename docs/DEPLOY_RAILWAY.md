@@ -1,10 +1,14 @@
 # Deploy lên Railway
 
 Mỗi khi `main` có commit mới, GitHub Actions chạy CI (`.github/workflows/ci.yml`): test backend, test
-và lint frontend, build Docker, gọi thử `/api/health`. Railway chỉ build và chạy lại container khi CI
-xanh. Toàn bộ dữ liệu (`hotel.db`, log) nằm trên **Volume** cắm vào `/app/storage`, nên deploy lại
-không mất đặt phòng.
+và lint frontend, build Docker, gọi thử `/api/health`. Khi tất cả xanh, job `deploy` dùng Railway CLI
+(`railway up`) đẩy code lên Railway, nên **không cần cài app GitHub của Railway**. Toàn bộ dữ liệu
+(`hotel.db`, log) nằm trên **Volume** cắm vào `/app/storage`, nên deploy lại không mất đặt phòng.
 
+```
+git push main ──► GitHub Actions: test ─► build ─► deploy (railway up) ──► Railway chạy container
+                                                                              │
+                                                                Volume /app/storage (hotel.db)
 ```
 git push main ──► GitHub Actions (CI) ──xanh──► Railway build Dockerfile ──► chạy container
                                                          │
@@ -31,7 +35,10 @@ git push main ──► GitHub Actions (CI) ──xanh──► Railway build Do
    Không cần đặt `PORT` vì Railway tự cấp. Không đặt `STORAGE_DIR` vì Dockerfile đã đặt sẵn.
 3. Thêm **Volume** cho service, **Mount path** là `/app/storage`.
 4. Vào **Settings → Networking → Generate Domain** để lấy địa chỉ `*.up.railway.app`.
-5. Vào **Settings**, bật **Wait for CI** để Railway chờ GitHub Actions xanh rồi mới deploy.
+5. Tạo **Project Token**: **Project Settings → Tokens**, môi trường `production`. Sau đó vào GitHub repo
+   → **Settings → Secrets and variables → Actions → New repository secret**, tên `RAILWAY_TOKEN`,
+   dán token vào. Nếu tạo service mới thì sửa `SVC_ID` trong `ci.yml` (lấy trong URL của service,
+   đoạn sau `/service/`).
 
 ## Kiểm tra sau khi deploy
 
