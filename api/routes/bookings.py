@@ -3,11 +3,12 @@ khách đã xác nhận thanh toán trên giao diện) và danh mục phòng (th
 import os
 from datetime import date
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from agent import db as agent_db
 from agent import knowledge
 from agent import photos
+from api.ratelimit import rate_limit
 from api.schemas import AvailabilityResponse, BookingRequest, BookingResponse, RoomOption
 
 router = APIRouter()
@@ -28,7 +29,8 @@ def list_rooms():
     return out
 
 
-@router.post("/api/bookings", response_model=BookingResponse, status_code=201)
+@router.post("/api/bookings", response_model=BookingResponse, status_code=201,
+             dependencies=[Depends(rate_limit("bookings", 5, 600))])   # chặn giữ hết phòng bằng đặt ảo
 def create_booking(body: BookingRequest):
     if body.room_type not in knowledge.room_titles():
         raise HTTPException(status_code=422,

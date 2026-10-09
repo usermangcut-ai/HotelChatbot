@@ -1,14 +1,15 @@
 """FastAPI app — điểm vào duy nhất, ghép các router + phục vụ frontend đã build."""
 import os
+import sqlite3
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exception_handlers import http_exception_handler
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from agent.config import IMAGES_DIR
+from agent.config import DB_PATH, IMAGES_DIR
 from agent.schema import init_db
 from api.routes import admin, auth, bookings, chat, guest, service_requests, staff
 
@@ -26,6 +27,17 @@ app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(staff.router)
 app.include_router(guest.router)
+
+
+@app.get("/api/health")
+def health():
+    """Cho Railway/Docker biết app còn sống: trả 200 khi DB đọc được, 503 nếu không."""
+    try:
+        with sqlite3.connect(DB_PATH, timeout=2) as conn:
+            conn.execute("SELECT 1")
+    except sqlite3.Error:
+        return JSONResponse({"status": "db_error"}, status_code=503)
+    return {"status": "ok"}
 
 
 @app.middleware("http")

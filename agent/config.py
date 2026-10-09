@@ -51,6 +51,9 @@ GUARDRAIL_ENABLED = _env_bool("GUARDRAIL_ENABLED", True)
 GUEST_LOGIN_ANYTIME = _env_bool("GUEST_LOGIN_ANYTIME", False)
 CHAT_IDLE_MINUTES = _env_int("CHAT_IDLE_MINUTES", 60)     # phiên chat im lặng quá lâu → xóa khỏi RAM
 CHAT_MAX_SESSIONS = max(1, _env_int("CHAT_MAX_SESSIONS", 1000))   # trần số phiên trong RAM (≥1)
+RATE_LIMIT_ENABLED = _env_bool("RATE_LIMIT_ENABLED", True)   # giới hạn số request/IP (api/ratelimit.py)
+# true khi chạy sau proxy của PaaS (Railway): lấy IP khách từ X-Forwarded-For. Chạy trần thì để false
+TRUST_PROXY = _env_bool("TRUST_PROXY", False)
 
 HISTORY_TURNS = 6        # số lượt (mỗi lượt = 1 user + 1 assistant) đưa vào context
 MAX_TOOL_ITERS = 5       # trần số vòng gọi tool trong một lượt chat

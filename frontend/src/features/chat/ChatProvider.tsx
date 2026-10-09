@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { postChat } from "../../lib/api";
+import { ApiError, postChat } from "../../lib/api";
 import { clearChat, loadChat, saveChat, type ChatMessage, type ChatState } from "../../lib/chatStorage";
 import { extractAttachments, type BookingDraft } from "../../lib/toolResults";
 
@@ -41,7 +41,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     postChat(state.sessionId, text)
       .then(res => setState(s => ({ ...s, messages: [...s.messages,
         { id: id(), role: "bot", text: res.reply, attachments: extractAttachments(res.tool_results, res.tool_calls) }] })))
-      .catch(() => setState(s => ({ ...s, messages: [...s.messages, { id: id(), role: "bot", text: NETWORK_ERROR, error: true }] })))
+      .catch((err: unknown) => {
+        const msg = err instanceof ApiError && err.status === 429 ? err.message : NETWORK_ERROR;
+        setState(s => ({ ...s, messages: [...s.messages, { id: id(), role: "bot", text: msg, error: true }] }));
+      })
       .finally(() => setPending(false));
   }, [pending, state.sessionId]);
 
