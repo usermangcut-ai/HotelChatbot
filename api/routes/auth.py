@@ -4,12 +4,14 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException, Response
 from agent import db as agent_db
 from agent.config import COOKIE_SECURE
 from api.auth import COOKIE_NAME, get_current_identity
+from api.ratelimit import rate_limit
 from api.schemas import ChangePasswordBody, LoginRequest, MeResponse
 
 router = APIRouter()
 
 
-@router.post("/api/auth/login", response_model=MeResponse)
+@router.post("/api/auth/login", response_model=MeResponse,
+             dependencies=[Depends(rate_limit("login", 10, 300))])   # chống dò mật khẩu
 def login(body: LoginRequest, response: Response):
     room_id = None
     if body.identity_type == "staff":
@@ -52,7 +54,7 @@ def me(identity=Depends(get_current_identity)):
     return MeResponse(**identity)
 
 
-@router.post("/api/auth/change-password")
+@router.post("/api/auth/change-password", dependencies=[Depends(rate_limit("change_password", 10, 300))])
 def change_password(body: ChangePasswordBody, identity=Depends(get_current_identity)):
     if identity["identity_type"] != "staff_account":
         raise HTTPException(status_code=403, detail="Chỉ tài khoản nhân viên/admin đổi được mật khẩu ở đây.")

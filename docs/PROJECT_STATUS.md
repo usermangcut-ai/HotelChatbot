@@ -126,9 +126,7 @@ Kiểm thử (trạng thái lúc viết):
 | Ảnh phòng độ phân giải cao | Hiện 512px, mờ trên màn lớn. |
 | Bot lặp lại thông tin khi đã có thẻ | Đã hiện bảng phòng trống mà câu trả lời vẫn liệt kê lại từng hạng → thêm quy tắc vào prompt, cập nhật eval. |
 | Làm sạch eval | Một số case dùng ngày cố định đã qua. Case "hủy phòng mã 45" còn kỳ vọng theo logic cũ (giờ là đưa hotline). |
-| Rate limit | `/api/chat` và đăng nhập chưa giới hạn. Ai đó có thể tạo 1000 `session_id` giả để đẩy hết phiên thật ra khỏi RAM. |
-| Cấu hình khi deploy | `COOKIE_SECURE=true`, `GUEST_LOGIN_ANYTIME=false`, đặt `ADMIN_PASSWORD` mạnh. |
-| Quyền volume trên PaaS | Volume thường được mount với quyền root, trong khi container chạy bằng uid 1000 → cần entrypoint `chown` hoặc cấu hình UID. |
+| Cấu hình khi deploy | Đặt biến môi trường trên Railway theo [DEPLOY_RAILWAY.md](DEPLOY_RAILWAY.md). |
 | Dọn file trên máy dev | `storage/hotel.db.before-v2` (bản DB cũ, chứa mật khẩu dạng plaintext, không có trong git) và `image.png` ở thư mục gốc (chưa track, chưa rõ dùng làm gì). |
 
 ## 7. Hướng tiếp theo
@@ -155,11 +153,9 @@ Các điểm gây chậm đã biết trong code hiện tại (dùng làm baselin
 Bước đầu tiên dù chọn phương pháp nào: **đo trước**. Ghi thời gian từng lần gọi LLM và tool vào trace
 (`agent/trace.py`), chạy bộ eval để có số liệu p50/p95, rồi mới so trước/sau.
 
-### 7.2 CI/CD + deploy (làm cuối)
+### 7.2 CI/CD + deploy — đã làm (2026-10-09)
 
-GitHub Actions chạy pytest + vitest + lint + build Docker → deploy lên PaaS (Railway hoặc Render) có
-volume cho `/app/storage`. Trước khi deploy phải xử lý hết các mục "Cấu hình khi deploy", "Quyền
-volume" và "Rate limit" ở mục 6. Eval gọi LLM thật để chạy tay hoặc chạy theo lịch, không chặn merge.
+Thứ tự được đổi lại: deploy trước, giảm độ trễ cho agent làm sau. Đã có rate limit theo IP (`api/ratelimit.py`), `/api/health`, entrypoint sửa quyền volume, `railway.json` và GitHub Actions (`.github/workflows/ci.yml`). Hướng dẫn: [DEPLOY_RAILWAY.md](DEPLOY_RAILWAY.md). Eval gọi LLM thật không nằm trong CI.
 
 ## 8. Đánh giá mức độ hiện tại
 

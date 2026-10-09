@@ -19,6 +19,7 @@ os.environ["LOG_PATH"] = os.path.join(_TEST_STORAGE, "logs", "traces.jsonl")
 os.environ["ADMIN_PASSWORD"] = ""
 os.environ["APP_TZ"] = "Asia/Ho_Chi_Minh"
 os.environ["COOKIE_SECURE"] = "false"
+os.environ["RATE_LIMIT_ENABLED"] = "false"   # test riêng bật lại trong tests/test_ratelimit.py
 os.environ["GUEST_LOGIN_ANYTIME"] = "false"   # test luôn chạy luật chặt, không phụ thuộc .env cá nhân
 
 

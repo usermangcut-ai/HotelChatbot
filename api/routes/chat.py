@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends
 from agent import photos
 
 from api.agent_singleton import get_agent
+from api.ratelimit import rate_limit
 from api.schemas import ChatRequest, ChatResponse
 
 router = APIRouter()
@@ -32,7 +33,8 @@ def _to_web_tool_results(tool_calls, tool_results):
     return out
 
 
-@router.post("/api/chat", response_model=ChatResponse)
+@router.post("/api/chat", response_model=ChatResponse,
+             dependencies=[Depends(rate_limit("chat", 20, 60))])   # mỗi tin tốn tiền LLM
 def chat(body: ChatRequest, agent=Depends(get_agent)):
     out = agent.handle(body.session_id, body.message)
     tool_calls = out["trace"]["tool_calls"]
