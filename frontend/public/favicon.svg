@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Favicon Shanghai Resort: SR trong vòng tròn — cùng kiểu logo ở giữa thanh trên cùng -->
+  <!-- Favicon Khaifrost Resort: KR trong vòng tròn — cùng kiểu logo ở giữa thanh trên cùng -->
   <circle cx="32" cy="32" r="31" fill="#58634C"/>
   <circle cx="32" cy="32" r="26.5" fill="none" stroke="#F5F3EC" stroke-width="1.5"/>
-  <text x="32" y="40.5" text-anchor="middle" fill="#F5F3EC" font-family="'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif" font-size="23" font-weight="500" letter-spacing="1">SR</text>
+  <text x="32" y="40.5" text-anchor="middle" fill="#F5F3EC" font-family="'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif" font-size="23" font-weight="500" letter-spacing="1">KR</text>
 </svg>

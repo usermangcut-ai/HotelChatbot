@@ -1,4 +1,4 @@
-# Trạng thái dự án — Shanghai Resort (cập nhật 2026-10-08)
+# Trạng thái dự án — Khaifrost Resort (cập nhật 2026-10-08)
 
 Tài liệu bàn giao. Đọc file này là đủ để nắm dự án đang ở đâu và bước tiếp theo là gì, kể cả khi
 chưa đọc lịch sử trò chuyện hay commit. Xem thêm: [README.md](../README.md) (kiến trúc, cách chạy),
@@ -10,7 +10,7 @@ chưa đọc lịch sử trò chuyện hay commit. Xem thêm: [README.md](../REA
 
 ## 1. Dự án là gì
 
-Web app cho một resort hư cấu tên **Shanghai Resort**. Trọng tâm là **lễ tân AI tiếng Việt** (chatbot
+Web app cho một resort hư cấu tên **Khaifrost Resort**. Trọng tâm là **lễ tân AI tiếng Việt** (chatbot
 có gọi tool) giúp khách hỏi thông tin và đặt phòng. Mục tiêu: bản **demo/portfolio "như thật"** cho
 doanh nghiệp nhỏ, và là bài tập để học quy trình CI/CD + deploy. Chưa có khách hàng thật.
 
@@ -56,7 +56,7 @@ FastAPI  api/main.py ── phục vụ luôn frontend/dist và /images
 
 | Trang | Đường dẫn | Có gì |
 |---|---|---|
-| Trang chủ | `/` | Ảnh tràn màn hình, logo SR ở giữa, giới thiệu, 8 hạng phòng, ẩm thực/spa/bãi biển, dịch vụ, chính sách. Nút chat tròn ("AI") mở khung chat bên phải, **không làm mờ trang**. |
+| Trang chủ | `/` | Ảnh tràn màn hình, logo KR ở giữa, giới thiệu, 8 hạng phòng, ẩm thực/spa/bãi biển, dịch vụ, chính sách. Nút chat tròn ("AI") mở khung chat bên phải, **không làm mờ trang**. |
 | Chat | (khung nổi) | Hỏi đáp, thẻ ảnh, thẻ phòng trống, **phiếu đặt phòng ngay trong chat** (điền liên hệ → QR demo → xác nhận). |
 | Đặt phòng | `/dat-phong` | Đặt phòng không cần chat: chọn ngày → xem phòng trống → điền thông tin → QR → xác nhận, nhận mã booking + mật khẩu (hiện đúng 1 lần). |
 | Đăng nhập | `/dang-nhap` | Chung cho khách (số phòng/mã booking + mật khẩu) và nhân viên. Báo lỗi cụ thể khi chưa tới ngày nhận phòng. |

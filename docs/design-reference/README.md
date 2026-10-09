@@ -1,4 +1,4 @@
-# Shanghai Resort Frontend Design Reference
+# Khaifrost Resort Frontend Design Reference
 
 Put this folder into the HotelChatbot repository, preferably:
 

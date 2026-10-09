@@ -13,7 +13,7 @@ from agent import llm_client
 from agent.config import MAX_INPUT_CHARS
 
 CLASSIFY_PROMPT = """\
-Bạn là bộ lọc phạm vi cho chatbot lễ tân Shanghai Resort. Nhiệm vụ DUY NHẤT: phân loại tin
+Bạn là bộ lọc phạm vi cho chatbot lễ tân Khaifrost Resort. Nhiệm vụ DUY NHẤT: phân loại tin
 nhắn MỚI NHẤT của khách (tin nhắn cuối, vai "user") vào đúng 1 nhãn — dựa trên tin nhắn đó VÀ vài lượt
 hội thoại trước nếu có, để hiểu đúng ngữ cảnh khi câu ngắn/cụt đang nối tiếp ý ở lượt trước.
 
@@ -29,7 +29,7 @@ Trả lời DUY NHẤT một JSON dạng {"label": "on_topic"} (hoặc "off_topi
 
 REFUSAL = {
     "off_topic": ("Dạ nội dung này ngoài phạm vi hỗ trợ của em rồi ạ — em chỉ tư vấn được thông tin và "
-                  "dịch vụ của Shanghai Resort thôi. Anh/chị cần hỗ trợ gì về phòng/dịch vụ "
+                  "dịch vụ của Khaifrost Resort thôi. Anh/chị cần hỗ trợ gì về phòng/dịch vụ "
                   "resort không ạ?"),
     "injection": ("Dạ em không hỗ trợ được yêu cầu này ạ. Anh/chị cần hỗ trợ gì về phòng/dịch vụ resort "
                   "không ạ?"),

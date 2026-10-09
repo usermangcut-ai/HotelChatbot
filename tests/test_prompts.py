@@ -4,7 +4,7 @@ from agent.prompts import build_system_prompt
 
 def test_prompt_mentions_persona_tools_scope():
     p = build_system_prompt()
-    assert "Shanghai Resort" in p
+    assert "Khaifrost Resort" in p
     assert "lễ tân" in p or "quản lý" in p
     assert "knowledge_tool" in p and "availability_tool" in p
     assert "Danh sách hạng phòng" in p

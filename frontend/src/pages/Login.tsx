@@ -78,16 +78,16 @@ export default function Login() {
   return (
     <div className={s.shell}>
       <div className={s.visual}>
-        <img src={img} alt="Shanghai Resort lúc hoàng hôn" onError={() => { if (img !== FALLBACK_IMG) setImg(FALLBACK_IMG); }} />
+        <img src={img} alt="Khaifrost Resort lúc hoàng hôn" onError={() => { if (img !== FALLBACK_IMG) setImg(FALLBACK_IMG); }} />
         <div className={s["visual-copy"]}>
-          <Link className={s.wordmark} to="/">Shanghai Resort</Link>
+          <Link className={s.wordmark} to="/">Khaifrost Resort</Link>
           <p>Chào mừng trở lại. Mọi yêu cầu trong kỳ nghỉ, chỉ cách một lần chạm.</p>
         </div>
       </div>
 
       <div className={s.side}>
         <div className={s["side-top"]}>
-          <Link className={s.wordmark} to="/">Shanghai Resort</Link>
+          <Link className={s.wordmark} to="/">Khaifrost Resort</Link>
           <Link to="/">← Về trang chủ</Link>
         </div>
 

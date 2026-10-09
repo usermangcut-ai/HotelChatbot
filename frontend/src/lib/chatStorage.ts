@@ -3,7 +3,7 @@ import type { Attachment } from "./toolResults";
 export type ChatMessage = { id: string; role: "user" | "bot"; text: string; attachments?: Attachment[]; error?: boolean };
 export type ChatState = { sessionId: string; messages: ChatMessage[] };
 
-const KEY = "sr-chat-v1";
+const KEY = "kr-chat-v1";
 const SESSION_RE = /^[A-Za-z0-9_-]{8,64}$/;   // khớp kiểm tra của backend (api/schemas.py)
 
 const fresh = (): ChatState => ({ sessionId: crypto.randomUUID(), messages: [] });

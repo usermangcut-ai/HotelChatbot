@@ -51,7 +51,7 @@ export function dateError(checkIn: string, checkOut: string, earliest: string): 
   return null;
 }
 
-/** Nội dung chuyển khoản cọc: "Nguyễn Minh Anh" → "SR NGUYEN MINH ANH" (không dấu, viết hoa, tên dài rút còn ≤ 20 ký tự). */
+/** Nội dung chuyển khoản cọc: "Nguyễn Minh Anh" → "KR NGUYEN MINH ANH" (không dấu, viết hoa, tên dài rút còn ≤ 20 ký tự). */
 export function transferNote(name: string): string {
   const words = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "D")
     .toUpperCase().replace(/[^A-Z0-9 ]/g, " ").split(/\s+/).filter(Boolean);
@@ -61,7 +61,7 @@ export function transferNote(name: string): string {
     if (next.length > 20) break;
     short = next;
   }
-  return `SR ${short || (words[0]?.slice(0, 20) ?? "") || "DAT PHONG"}`;
+  return `KR ${short || (words[0]?.slice(0, 20) ?? "") || "DAT PHONG"}`;
 }
 
 /** Tên gọi: phần sau khoảng trắng cuối ("Nguyễn Minh Anh" → "Anh"); không có tên → "". */

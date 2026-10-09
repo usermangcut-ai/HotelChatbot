@@ -120,7 +120,7 @@ export default function GuestAccount() {
     <>
       <header className={s.top}>
         <div className="wrap">
-          <Link className={s.wordmark} to="/">Shanghai Resort</Link>
+          <Link className={s.wordmark} to="/">Khaifrost Resort</Link>
           <div className={s.who}>
             {roomId && <span className={s["room-chip"]}><span className={s.dot} /><span className={s.label}>Phòng</span> {roomId}</span>}
             <button type="button" className={s.logout} onClick={logout}>Đăng xuất</button>

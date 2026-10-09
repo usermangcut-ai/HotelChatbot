@@ -26,7 +26,7 @@ def main():
     init_db()
     agent = build_agent()
     session_id = "cli-" + uuid.uuid4().hex[:8]
-    print("Chatbot Shanghai Resort. Gõ 'quit' để thoát.")
+    print("Chatbot Khaifrost Resort. Gõ 'quit' để thoát.")
     while True:
         try:
             text = input("\nBạn: ").strip()
